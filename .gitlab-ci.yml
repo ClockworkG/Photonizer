@@ -1,1 +1,12 @@
-image: registry.gitlab.com/epita-image/docker/cpp
+image: registry.gitlab.com/epita-image/docker/cpp/staging:add-git
+
+stages:
+    - build
+
+build:all:
+    stage: build
+    before_script:
+        - mkdir build
+        - cd build
+    script:
+        - cmake .. && make

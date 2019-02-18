@@ -3,6 +3,7 @@ image: registry.gitlab.com/epita-image/docker/cpp/staging:add-git
 stages:
     - build
     - tests
+    - check
 
 build:all:
     stage: build
@@ -27,3 +28,8 @@ unit-tests:math:
     extends: .unit-tests
     variables:
         module_name: "math"
+
+clang-tidy:all:
+    stage: check
+    script:
+        - find src -name '*.cc' -exec clang-tidy -header-filter='.*' {} -- -Isrc -std=c++17 \;

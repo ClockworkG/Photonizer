@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.12...3.13)
 
+set(RAYTRACER_VERSION "0.0.0")
+
 project(Raytracer
-        VERSION 1.0
+        VERSION ${RAYTRACER_VERSION}
         DESCRIPTION "Raytracer with photon mapping extension.")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)

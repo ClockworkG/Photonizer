@@ -1,6 +1,8 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 
+constexpr auto version = (RAYTRACER_VERSION);
+
 namespace boostopt = boost::program_options;
 
 int main(int argc, char **argv)
@@ -24,13 +26,15 @@ int main(int argc, char **argv)
 
     if (opts.count("help"))
     {
-        std::cout << desc << std::endl;
+        std::cout << desc;
         return EXIT_SUCCESS;
     }
 
     if (opts.count("version"))
     {
-        std::cout << "Version - 0.0.1" << std::endl;
+        std::cout << "Raytracer & Photon Mapping - ISIM Project\n"
+                  << "Alexandre Lamure, Robin Le Bihan - EPITA Image 2020\n"
+                  << "Version " << version << '\n';
         return EXIT_SUCCESS;
     }
 

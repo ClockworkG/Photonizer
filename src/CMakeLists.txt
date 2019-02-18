@@ -4,7 +4,7 @@ target_link_libraries(raytracer
     PRIVATE Boost::program_options
             gsl)
 target_compile_options(raytracer PRIVATE
-    -Wall -Wextra -pedantic)
+    -Wall -Wextra -pedantic -DRAYTRACER_VERSION="${RAYTRACER_VERSION}")
 set_target_properties(raytracer PROPERTIES CXX_STANDARD 20)
 
 add_subdirectory(math)

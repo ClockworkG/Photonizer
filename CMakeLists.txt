@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.12...3.13)
 
-project(Sample
+project(Raytracer
         VERSION 1.0
-        DESCRIPTION "Example projet for C++ CMake")
+        DESCRIPTION "Raytracer with photon mapping extension.")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 

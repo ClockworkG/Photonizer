@@ -1,13 +1,11 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 
-#include "math/math.hh"
-
 namespace boostopt = boost::program_options;
 
 int main(int argc, char **argv)
 {
-    boostopt::options_description desc{"sample [--version]"};
+    boostopt::options_description desc{"raytracer [--version]"};
     desc.add_options()
         ("help,h", "Display help message.")
         ("version,v", "Display version information.\n");
@@ -32,11 +30,9 @@ int main(int argc, char **argv)
 
     if (opts.count("version"))
     {
-        std::cout << "Version - 1.0.0" << std::endl;
+        std::cout << "Version - 0.0.1" << std::endl;
         return EXIT_SUCCESS;
     }
-
-    std::cout << add(3, 4) << std::endl;
 
     return EXIT_SUCCESS;
 }

@@ -1,4 +1,4 @@
-image: registry.gitlab.com/epita-image/docker/cpp/staging:add-git
+image: registry.gitlab.com/epita-image/docker/cpp:latest
 
 stages:
     - build

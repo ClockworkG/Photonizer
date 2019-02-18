@@ -1,11 +1,10 @@
-add_executable(sample)
-target_sources(sample PRIVATE "sample.cc")
-target_link_libraries(sample
+add_executable(raytracer)
+target_sources(raytracer PRIVATE "raytracer.cc")
+target_link_libraries(raytracer
     PRIVATE Boost::program_options
-            gsl
-            math)
-target_compile_options(sample PRIVATE
+            gsl)
+target_compile_options(raytracer PRIVATE
     -Wall -Wextra -pedantic)
-set_target_properties(sample PROPERTIES CXX_STANDARD 20)
+set_target_properties(raytracer PROPERTIES CXX_STANDARD 20)
 
 add_subdirectory(math)

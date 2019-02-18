@@ -1,2 +1,5 @@
-add_executable(sample sample.cc)
-target_link_libraries(sample PRIVATE gsl)
+add_executable(sample)
+target_sources(sample PRIVATE "sample.cc")
+target_link_libraries(sample
+    PRIVATE Boost::program_options
+            gsl)

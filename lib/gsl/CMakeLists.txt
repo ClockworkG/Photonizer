@@ -9,7 +9,7 @@ ExternalProject_Add(
     gsl-extern
     GIT_REPOSITORY ${GSL_LITE_URL}
     TIMEOUT 10
-    UPDATE_COMMAND ${GIT_EXECUTABLE} pull
+    UPDATE_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""

@@ -1,6 +1,7 @@
 #include <iostream>
-
 #include <boost/program_options.hpp>
+
+#include "math/math.hh"
 
 namespace boostopt = boost::program_options;
 
@@ -34,6 +35,8 @@ int main(int argc, char **argv)
         std::cout << "Version - 1.0.0" << std::endl;
         return EXIT_SUCCESS;
     }
+
+    std::cout << add(3, 4) << std::endl;
 
     return EXIT_SUCCESS;
 }

@@ -2,6 +2,7 @@ image: registry.gitlab.com/epita-image/docker/cpp/staging:add-git
 
 stages:
     - build
+    - tests
 
 build:all:
     stage: build
@@ -10,3 +11,19 @@ build:all:
         - cd build
     script:
         - cmake .. && make
+    artifacts:
+        paths:
+            - build
+        untracked: true
+
+.unit-tests:
+    stage: tests
+    script:
+        - ./build/tests/${module_name}/tests
+    dependencies:
+        - build:all
+
+unit-tests:math:
+    extends: .unit-tests
+    variables:
+        module_name: "math"

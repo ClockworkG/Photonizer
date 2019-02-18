@@ -9,3 +9,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(lib)
 add_subdirectory(src)
 add_subdirectory(tests)
+
+add_custom_target(doc
+                  COMMAND doxygen "${CMAKE_SOURCE_DIR}/doc/Doxyfile"
+                  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")

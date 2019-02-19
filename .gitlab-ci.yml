@@ -24,11 +24,6 @@ build:all:
     dependencies:
         - build:all
 
-unit-tests:math:
-    extends: .unit-tests
-    variables:
-        module_name: "math"
-
 clang-tidy:all:
     stage: check
     script:

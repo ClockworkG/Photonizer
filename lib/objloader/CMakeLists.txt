@@ -21,5 +21,4 @@ ExternalProject_Get_Property(objloader-extern BINARY_DIR)
 set(OBJLOADER_INCLUDE_DIR ${SOURCE_DIR} CACHE INTERNAL "Include folder for objloader")
 
 add_library(tinyobjloader STATIC IMPORTED GLOBAL)
-target_include_directories(tinyobjloader INTERFACE ${OBJLOADER_INCLUDE_DIR})
 set_target_properties(tinyobjloader PROPERTIES IMPORTED_LOCATION ${BINARY_DIR}/libtinyobjloader.a)

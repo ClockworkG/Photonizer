@@ -10,6 +10,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(lib)
 include(lib/boost/CMakeLists.txt)
+include(lib/objloader/CMakeLists.txt)
 
 add_subdirectory(src)
 add_subdirectory(tests)

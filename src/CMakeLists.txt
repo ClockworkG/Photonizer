@@ -7,6 +7,7 @@ add_executable(raytracer)
 target_sources(raytracer PRIVATE "raytracer.cc")
 target_link_libraries(raytracer
     PRIVATE Boost::program_options
+            tinyobjloader
             gsl)
 
 if (CMAKE_BUILD_TYPE MATCHES "DEBUG")

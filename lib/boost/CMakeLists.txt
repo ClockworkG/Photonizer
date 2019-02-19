@@ -8,9 +8,3 @@ set(Boost_COMPILER             "-clang")
 
 find_package(Boost ${BOOST_VERSION} EXACT REQUIRED
     COMPONENTS program_options)
-
-if (Boost_FOUND)
-    set_target_properties(Boost::boost
-                          Boost::program_options
-        PROPERTIES IMPORTED_GLOBAL TRUE)
-endif ()

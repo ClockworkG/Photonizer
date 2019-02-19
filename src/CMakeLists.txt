@@ -1,5 +1,6 @@
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "DEBUG" CACHE STRING "Choose the type of build: DEBUG or RELEASE" FORCE)
+    message(WARNING "Not build type specified. Falling back to DEBUG.")
 endif()
 
 add_executable(raytracer)

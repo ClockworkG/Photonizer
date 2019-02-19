@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+#include "scene/libscene.hh"
+
 #include <boost/program_options.hpp>
 
 constexpr auto version = (PHOTONIZER_VERSION);
@@ -54,6 +56,11 @@ int main(int argc, char **argv)
                   << "Version " << version << '\n';
         return EXIT_SUCCESS;
     }
+
+    auto filename = opts["scene"].as<std::string>();
+    auto the_scene = scene::load_scene(filename);
+    if (!the_scene)
+        return EXIT_FAILURE;
 
     return EXIT_SUCCESS;
 }

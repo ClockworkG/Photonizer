@@ -11,7 +11,7 @@ build:all:
         - mkdir build
         - cd build
     script:
-        - cmake .. && make
+        - cmake -DCMAKE_BUILD_TYPE=RELEASE .. && make
     artifacts:
         paths:
             - build

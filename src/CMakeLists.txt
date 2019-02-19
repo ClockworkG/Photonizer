@@ -1,10 +1,22 @@
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "DEBUG" CACHE STRING "Choose the type of build: DEBUG or RELEASE" FORCE)
+endif()
+
 add_executable(raytracer)
 target_sources(raytracer PRIVATE "raytracer.cc")
 target_link_libraries(raytracer
     PRIVATE Boost::program_options
             gsl)
-target_compile_options(raytracer PRIVATE
-    -Wall -Wextra -pedantic -DRAYTRACER_VERSION="${RAYTRACER_VERSION}")
+
+if (CMAKE_BUILD_TYPE MATCHES "DEBUG")
+    target_compile_options(raytracer PRIVATE -Wall -Wextra -pedantic -Werror -g -Og)
+elseif (CMAKE_BUILD_TYPE MATCHES "RELEASE")
+    target_compile_options(raytracer PRIVATE -Wall -Wextra -pedantic -O3)
+endif()
+
+message(STATUS "Building in ${CMAKE_BUILD_TYPE} mode.")
+
+target_compile_definitions(raytracer PRIVATE -DRAYTRACER_VERSION="${RAYTRACER_VERSION}")
 set_target_properties(raytracer PROPERTIES CXX_STANDARD 20)
 
 add_subdirectory(math)

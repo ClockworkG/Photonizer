@@ -1,13 +1,13 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 
-constexpr auto version = (RAYTRACER_VERSION);
+constexpr auto version = (PHOTONIZER_VERSION);
 
 namespace boostopt = boost::program_options;
 
 int main(int argc, char **argv)
 {
-    boostopt::options_description desc{"raytracer [--version]"};
+    boostopt::options_description desc{"photonizer [--version]"};
     desc.add_options()
         ("help,h", "Display help message.")
         ("version,v", "Display version information.\n");

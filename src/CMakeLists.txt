@@ -3,8 +3,7 @@ if (NOT CMAKE_BUILD_TYPE)
     message(WARNING "Not build type specified. Falling back to DEBUG.")
 endif()
 
-add_executable(raytracer)
-target_sources(raytracer PRIVATE "raytracer.cc")
+add_executable(raytracer "raytracer.cc")
 target_link_libraries(raytracer
     PRIVATE Boost::program_options
             tinyobjloader
@@ -19,6 +18,6 @@ endif()
 message(STATUS "Building in ${CMAKE_BUILD_TYPE} mode.")
 
 target_compile_definitions(raytracer PRIVATE -DRAYTRACER_VERSION="${RAYTRACER_VERSION}")
-set_target_properties(raytracer PROPERTIES CXX_STANDARD 20)
+set_target_properties(raytracer PROPERTIES CXX_STANDARD 17)
 
 add_subdirectory(math)

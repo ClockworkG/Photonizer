@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "object-factory.hh"
+
 namespace ptree = boost::property_tree;
 
 namespace scene::detail
@@ -24,7 +26,12 @@ namespace scene::detail
 
     void SceneBuilder::set_objects(const ptree::ptree& pt)
     {
-        (void)pt;
+        ObjectFactory factory{};
+
+        for (const auto& obj_datas : pt)
+        {
+            product_->objects_.push_back(factory());
+        }
     }
 
 } // namespace scene::detail

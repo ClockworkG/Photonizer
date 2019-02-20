@@ -7,15 +7,27 @@ Vector3<T>::Vector3(T x, T y, T z)
     : x(x), y(y), z(z)
 {}
 
+template <typename T>
+T& Vector3<T>::operator[](size_t index)
+{
+    if (index == 0)
+        return x;
+    else if (index == 1)
+        return y;
+    else if (index == 2)
+        return z;
+    else
+        throw std::out_of_range("Index out of bounds");
+}
 
 template <typename T>
-inline bool operator==(Vector3<T> const& a, Vector3<T> const& b)
+inline bool operator==(const Vector3<T>& a, const Vector3<T>& b)
 {
     return a.x == b.x && a.y == b.y && a.z == b.z;
 }
 
 template <typename T>
-inline bool operator!=(Vector3<T> const& a, Vector3<T> const& b)
+inline bool operator!=(const Vector3<T>& a, const Vector3<T>& b)
 {
     return !(a == b);
 }
@@ -39,27 +51,34 @@ inline Vector3<T>& Vector3<T>::operator-=(const Vector3<T>& b)
 }
 
 template <typename T>
-inline Vector3<T> operator+(Vector3<T> const& a, Vector3<T> const& b)
+inline Vector3<T> operator+(const Vector3<T>& a, const Vector3<T>& b)
 {
     return Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
 template <typename T>
-inline Vector3<T> operator-(Vector3<T> const& a, Vector3<T> const& b)
+inline Vector3<T> operator-(const Vector3<T>& a, const Vector3<T>& b)
 {
     return Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
 template <typename T>
-inline T operator*(Vector3<T> const& a, Vector3<T> const& b)
+inline T operator*(const Vector3<T>& a, const Vector3<T>& b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 template <typename T>
-inline Vector3<T> operator^(Vector3<T> const& a, Vector3<T> const& b)
+inline Vector3<T> operator^(const Vector3<T>& a, const Vector3<T>& b)
 {
     return Vector3(a.y * b.z - a.z * b.y,
                    a.z * b.x - a.x * b.z,
                    a.x * b.y - a.y * b.x);
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const Vector3<T>& a)
+{
+    out << "x: " << a.x << ", y: " << a.y << ", z: " << a.z << std::endl;
+    return out;
 }

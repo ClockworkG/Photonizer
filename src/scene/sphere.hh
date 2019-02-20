@@ -1,6 +1,7 @@
 #pragma once
 
 #include "object.hh"
+#include "vector3.hh"
 
 namespace scene
 {
@@ -15,7 +16,7 @@ namespace scene
         Sphere& operator=(Sphere&&) = delete;
 
         // FIXME: intersection
-    public:
-        // FIXME: position, radius
+    private:
+        Vector3f position;
     };
 } // namespace scene

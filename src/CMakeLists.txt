@@ -9,9 +9,9 @@ add_executable(photonizer "photonizer.cc")
 target_link_libraries(photonizer
     PRIVATE Boost::program_options
             tinyobjloader
-            Photonizer::Misc
             Photonizer::Scene
-            gsl)
+            gsl
+            Photonizer::Misc)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O3")

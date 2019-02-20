@@ -36,6 +36,7 @@ namespace scene
         height_t    height_ = 0;
         std::string name_;
         objects_t   objects_;
+        Camera      cam_;
     };
 
 } // namespace scene

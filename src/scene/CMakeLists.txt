@@ -1,4 +1,5 @@
 add_library(libscene STATIC libscene.cc
+                            camera.cc
                             detail/scene-builder.cc
                             detail/mesh-storage.cc
                             detail/object-factory.cc)

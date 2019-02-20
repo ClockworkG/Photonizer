@@ -1,6 +1,8 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 
+#include "vector3.hh"
+
 constexpr auto version = (PHOTONIZER_VERSION);
 
 namespace boostopt = boost::program_options;

@@ -22,6 +22,7 @@ namespace scene
             builder.set_toplevel(scene_tree);
             builder.set_camera(scene_tree.get_child("camera"));
             builder.set_objects(scene_tree.get_child("objects"));
+            builder.set_lights(scene_tree.get_child("lights"));
         }
         catch (const ptree::ptree_bad_path& err)
         {

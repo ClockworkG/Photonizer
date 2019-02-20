@@ -17,6 +17,7 @@ namespace scene::detail
         void        set_toplevel(const boost::property_tree::ptree& pt);
         void        set_camera(const boost::property_tree::ptree& pt);
         void        set_objects(const boost::property_tree::ptree& pt);
+        void        set_lights(const boost::property_tree::ptree& pt);
         product_t   product() noexcept;
 
     private:

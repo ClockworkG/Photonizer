@@ -30,8 +30,14 @@ namespace scene::detail
 
         for (const auto& obj_datas : pt)
         {
+            (void)obj_datas;
             product_->objects_.push_back(factory());
         }
+    }
+
+    void SceneBuilder::set_lights(const ptree::ptree& pt)
+    {
+        (void)pt;
     }
 
 } // namespace scene::detail

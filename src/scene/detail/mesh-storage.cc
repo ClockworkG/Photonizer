@@ -2,12 +2,6 @@
 
 namespace scene::detail
 {
-    MeshStorage* MeshStorage::get_instance()
-    {
-        static MeshStorage storage{};
-        return &storage;
-    }
-
     void MeshStorage::load(const std::string& id, const std::string& filename)
     {
         auto [it, inserted] = loaded_.insert(filename);

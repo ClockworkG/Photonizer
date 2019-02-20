@@ -1,5 +1,6 @@
 #include "scene-builder.hh"
 
+#include <map>
 #include <string>
 
 #include "object-factory.hh"
@@ -28,10 +29,10 @@ namespace scene::detail
     {
         ObjectFactory factory{};
 
-        for (const auto& obj_datas : pt)
+        for (const auto& [key, value] : pt)
         {
-            (void)obj_datas;
-            product_->objects_.push_back(factory());
+            const auto type = value.get<std::string>("type");
+            product_->objects_.push_back(factory(type, value));
         }
     }
 

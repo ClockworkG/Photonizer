@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <gsl/gsl-lite.hpp>
+
 #include "mesh-impl.hh"
 
 namespace scene::detail
@@ -15,7 +17,9 @@ namespace scene::detail
         using meshes_t = std::unordered_map<id_t, MeshImpl>;
 
     public:
-        MeshStorage() = default;
+        using self_ptr_t = gsl::not_null<MeshStorage*>;
+
+        MeshStorage() noexcept = default;
         ~MeshStorage() = default;
         MeshStorage(const MeshStorage&) = delete;
         MeshStorage(MeshStorage&&) = delete;
@@ -25,10 +29,17 @@ namespace scene::detail
         void        load(const id_t& id, const std::string& filename);
         MeshImpl*   get(const id_t& id);
 
-        static MeshStorage* get_instance();
+        static self_ptr_t get_instance() noexcept;
 
     private:
         filenames_t loaded_;
         meshes_t    meshes_;
     };
+
+    inline MeshStorage::self_ptr_t MeshStorage::get_instance() noexcept
+    {
+        static MeshStorage storage{};
+        return &storage;
+    }
+
 } // namespace scene::detail

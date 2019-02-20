@@ -1,6 +1,9 @@
 #pragma once
 
 #include <memory>
+#include <string>
+
+#include <boost/property_tree/ptree.hpp>
 
 #include "object.hh"
 
@@ -10,6 +13,7 @@ namespace scene::detail
     {
     public:
         using object_ptr_t = std::unique_ptr<Object>;
+        using type_t = std::string;
 
         ObjectFactory() = default;
         ~ObjectFactory() = default;
@@ -18,11 +22,7 @@ namespace scene::detail
         ObjectFactory& operator=(const ObjectFactory&) = delete;
         ObjectFactory& operator=(ObjectFactory&&) = delete;
 
-        // FIXME: add factory methods
-        // object_ptr_t operator()(Position p, float radius) const;
-        object_ptr_t operator()() const
-        {
-            return std::make_unique<Object>();
-        }
+        object_ptr_t operator()(const type_t& type,
+                                const boost::property_tree::ptree& pt) const;
     };
 } // namespace scene::detail

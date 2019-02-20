@@ -9,6 +9,12 @@ namespace boostopt = boost::program_options;
 
 int main(int argc, char **argv)
 {
+    Vector3<int> v1(1, 2, 3);
+    Vector3<int> v2(2, 0, -1); 
+    Vector3<int> v3 = v1 + v2;
+    v3 = v1 - v2;
+    v3 = v1 ^ v2;
+    std::cout << v1 * v2 << std::endl;
     boostopt::options_description desc{"photonizer [--version]"};
     desc.add_options()
         ("help,h", "Display help message.")

@@ -7,7 +7,8 @@ add_executable(photonizer "photonizer.cc")
 target_link_libraries(photonizer
     PRIVATE Boost::program_options
             tinyobjloader
-            gsl)
+            gsl
+            Photonizer::Misc)
 
 if (CMAKE_BUILD_TYPE MATCHES "DEBUG")
     target_compile_options(photonizer PRIVATE -Wall -Wextra -pedantic -Werror -g -Og)

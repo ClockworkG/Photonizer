@@ -11,9 +11,14 @@ namespace scene
 
     using mesh_t = const Mesh* const;
 
+    namespace detail
+    {
+        class MeshManager;
+    }
+
     class Mesh
     {
-        friend class MeshStorage;
+        friend detail::MeshManager;
 
     public:
         using vertex_t = std::pair<Vector3f, Vector3f>;

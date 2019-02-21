@@ -21,18 +21,6 @@ T& Vector3<T>::operator[](size_t index)
 }
 
 template <typename T>
-inline bool operator==(const Vector3<T>& a, const Vector3<T>& b)
-{
-    return a.x == b.x && a.y == b.y && a.z == b.z;
-}
-
-template <typename T>
-inline bool operator!=(const Vector3<T>& a, const Vector3<T>& b)
-{
-    return !(a == b);
-}
-
-template <typename T>
 inline Vector3<T>& Vector3<T>::operator+=(const Vector3<T>& b)
 {
     this->x += b.x;
@@ -48,6 +36,37 @@ inline Vector3<T>& Vector3<T>::operator-=(const Vector3<T>& b)
     this->y -= b.y;
     this->z -= b.z;
     return *this;
+}
+
+template <typename T>
+inline T Vector3<T>::norm()
+{
+    return std::sqrt(x * x + y * y + z * z);
+}
+
+template <typename T>
+inline Vector3<T>& Vector3<T>::normalize()
+{
+    T norm = this->norm();
+    if ((float)norm != 0.0f)
+    {
+        x /= norm;
+        y /= norm;
+        z /= norm;
+    }
+    return *this;
+}
+
+template <typename T>
+inline bool operator==(const Vector3<T>& a, const Vector3<T>& b)
+{
+    return a.x == b.x && a.y == b.y && a.z == b.z;
+}
+
+template <typename T>
+inline bool operator!=(const Vector3<T>& a, const Vector3<T>& b)
+{
+    return !(a == b);
 }
 
 template <typename T>

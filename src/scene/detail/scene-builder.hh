@@ -2,6 +2,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 
+#include "object.hh"
 #include "scene.hh"
 
 namespace scene::detail

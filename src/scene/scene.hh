@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <gsl/gsl-lite.hpp>
+
 #include "camera.hh"
 #include "object.hh"
 
@@ -20,7 +22,7 @@ namespace scene
 
         using width_t = unsigned short;
         using height_t = unsigned short;
-        using objects_t = std::vector<std::unique_ptr<Object>>;
+        using objects_t = std::vector<Object>;
 
     public:
         Scene() = default;
@@ -38,5 +40,4 @@ namespace scene
         objects_t   objects_;
         Camera      cam_;
     };
-
 } // namespace scene

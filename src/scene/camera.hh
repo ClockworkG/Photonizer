@@ -8,7 +8,9 @@ namespace scene
     {
     public:
         Camera() = default;
-        Camera(Vector3f pos, Vector3f fwd, Vector3f up) noexcept;
+        Camera(const Vector3f& pos,
+               const Vector3f& fwd,
+               const Vector3f& up) noexcept;
         ~Camera() = default;
         Camera(const Camera&) = delete;
         Camera(Camera&&) = delete;
@@ -20,4 +22,13 @@ namespace scene
         Vector3f fwd_;
         Vector3f up_;
     };
+
+    inline
+    Camera::Camera(const Vector3f& pos,
+                   const Vector3f& fwd,
+                   const Vector3f& up) noexcept
+        : pos_(pos)
+        , fwd_(fwd)
+        , up_(up)
+    {}
 } // namespace scene

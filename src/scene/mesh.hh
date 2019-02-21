@@ -4,5 +4,5 @@
 
 namespace scene
 {
-    using mesh_t = MeshImpl*;
+    using mesh_t = const MeshImpl* const;
 } // namespace scene

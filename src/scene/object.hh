@@ -1,17 +1,29 @@
 #pragma once
 
+#include "mesh.hh"
+#include "vector3.hh"
+
 namespace scene
 {
     class Object
     {
     public:
-        Object() = default;
-        virtual ~Object() = default;
-        Object(const Object&) = delete;
-        Object(Object&&) = delete;
-        Object& operator=(const Object&) = delete;
-        Object& operator=(Object&&) = delete;
+        using pos_t = Vector3f;
 
-        // FIXME: intersection
+        Object(const pos_t& position, mesh_t mesh) noexcept;
+        ~Object() = default;
+        Object(const Object&) = default;
+        Object(Object&&) = default;
+        Object& operator=(const Object&) = default;
+        Object& operator=(Object&&) = default;
+
+    protected:
+        pos_t   position_;
+        mesh_t  mesh_;
     };
+
+    inline Object::Object(const pos_t& position, mesh_t mesh) noexcept
+        : position_(position)
+        , mesh_(mesh)
+    {}
 } // namespace scene

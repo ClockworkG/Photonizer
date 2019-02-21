@@ -1,12 +1,10 @@
 add_library(libscene STATIC libscene.cc
-                            camera.cc
                             detail/scene-builder.cc
-                            detail/mesh-storage.cc
-                            detail/object-factory.cc)
+                            detail/mesh-storage.cc)
 add_library(Photonizer::Scene ALIAS libscene)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
-set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O3")
+set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 set_target_properties(libscene PROPERTIES CXX_STANDARD 17)

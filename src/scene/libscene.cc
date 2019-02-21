@@ -5,7 +5,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include "detail/mesh-storage.hh"
+#include "detail/mesh-manager.hh"
 #include "detail/scene-builder.hh"
 
 namespace ptree = boost::property_tree;
@@ -21,7 +21,7 @@ namespace scene
             ptree::read_json(filename, scene_tree);
 
             for (const auto& [key, value] : scene_tree.get_child("meshes"))
-                detail::MeshStorage::get_instance()->load(key, value.data());
+                detail::MeshManager::get_instance()->load(key, value.data());
 
             builder.set_toplevel(scene_tree);
             builder.set_camera(scene_tree.get_child("camera"));

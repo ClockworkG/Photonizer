@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "scene/libscene.hh"
+#include <scene/libscene.hh>
 
 #include <boost/program_options.hpp>
 

@@ -25,6 +25,8 @@ namespace scene
         using objects_t = std::vector<Object>;
 
     public:
+        using const_iterator = objects_t::const_iterator;
+
         Scene() = default;
         ~Scene() = default;
 
@@ -33,6 +35,9 @@ namespace scene
         Scene& operator=(const Scene&) = delete;
         Scene& operator=(Scene&&) = delete;
 
+        const_iterator begin() const;
+        const_iterator end() const;
+
     private:
         width_t     width_ = 0;
         height_t    height_ = 0;
@@ -40,4 +45,14 @@ namespace scene
         objects_t   objects_;
         Camera      cam_;
     };
+
+    inline Scene::const_iterator Scene::begin() const
+    {
+        return std::cbegin(objects_);
+    }
+
+    inline Scene::const_iterator Scene::end() const
+    {
+        return std::cend(objects_);
+    }
 } // namespace scene

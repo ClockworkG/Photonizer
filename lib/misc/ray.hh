@@ -13,3 +13,4 @@ public:
 };
 
 using Rayf = Ray<float>;
+using Rayi = Ray<int>;

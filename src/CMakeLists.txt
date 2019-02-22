@@ -3,20 +3,19 @@ if (NOT CMAKE_BUILD_TYPE)
     message(WARNING "Not build type specified. Falling back to DEBUG.")
 endif()
 
+add_subdirectory(scene)
+
 add_executable(photonizer "photonizer.cc")
 target_link_libraries(photonizer
     PRIVATE Boost::program_options
-            tinyobjloader
-            gsl
-            Photonizer::Misc)
+            Photonizer::Scene)
 
-if (CMAKE_BUILD_TYPE MATCHES "DEBUG")
-    target_compile_options(photonizer PRIVATE -Wall -Wextra -pedantic -Werror -g -Og)
-elseif (CMAKE_BUILD_TYPE MATCHES "RELEASE")
-    target_compile_options(photonizer PRIVATE -Wall -Wextra -pedantic -O3)
-endif()
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
+set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O0")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 message(STATUS "Building in ${CMAKE_BUILD_TYPE} mode.")
 
 target_compile_definitions(photonizer PRIVATE -DPHOTONIZER_VERSION="${RAYTRACER_VERSION}")
+target_include_directories(photonizer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(photonizer PROPERTIES CXX_STANDARD 17)

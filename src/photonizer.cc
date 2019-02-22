@@ -1,7 +1,19 @@
 #include <iostream>
+#include <string>
+
+#include <scene/libscene.hh>
+
 #include <boost/program_options.hpp>
 
-constexpr auto version = (PHOTONIZER_VERSION);
+constexpr const char* version = PHOTONIZER_VERSION;
+constexpr auto error_message = "Error while parsing command line options: ";
+
+#define ARG_ERROR_EXIT(Exception, Description, Exitcode)                \
+    do {                                                                \
+        std::cerr << error_message << (Exception).what() << "\n\n"      \
+                  << (Description);                                     \
+        std::exit(Exitcode);                                            \
+    } while (false)
 
 namespace boostopt = boost::program_options;
 
@@ -10,7 +22,12 @@ int main(int argc, char **argv)
     boostopt::options_description desc{"photonizer [--version]"};
     desc.add_options()
         ("help,h", "Display help message.")
-        ("version,v", "Display version information.\n");
+        ("version,v", "Display version information.")
+        (
+         "scene,s",
+         boostopt::value<std::string>()->required(),
+         "Scene configuration file.\n"
+        );
 
     boostopt::variables_map opts;
     try {
@@ -19,9 +36,11 @@ int main(int argc, char **argv)
     }
     catch (const boostopt::unknown_option& exc)
     {
-        std::cerr << "Error while parsing command line options: "
-                  << exc.what() << "\n\n" << desc << std::endl;
-        return EXIT_FAILURE;
+        ARG_ERROR_EXIT(exc, desc, EXIT_FAILURE);
+    }
+    catch (const boostopt::required_option& exc)
+    {
+        ARG_ERROR_EXIT(exc, desc, EXIT_FAILURE);
     }
 
     if (opts.count("help"))
@@ -37,6 +56,11 @@ int main(int argc, char **argv)
                   << "Version " << version << '\n';
         return EXIT_SUCCESS;
     }
+
+    auto filename = opts["scene"].as<std::string>();
+    auto the_scene = scene::load_scene(filename);
+    if (!the_scene)
+        return EXIT_FAILURE;
 
     return EXIT_SUCCESS;
 }

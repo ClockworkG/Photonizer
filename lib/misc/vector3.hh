@@ -12,7 +12,7 @@ public:
     T y;
     T z;
 
-    Vector3(T x, T y, T z);
+    Vector3(T x = 0, T y = 0, T z = 0);
 
     T& operator[](size_t index);
 

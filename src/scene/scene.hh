@@ -16,6 +16,7 @@ namespace scene
         class SceneBuilder;
     } // namespace detail
 
+    /// Describes a scene to be rendered.
     class Scene
     {
         friend detail::SceneBuilder;
@@ -25,25 +26,40 @@ namespace scene
         using objects_t = std::vector<Object>;
 
     public:
+        /** \name Iterating
+         * \{ */
         using const_iterator = objects_t::const_iterator;
+        /** \} */
 
+        /** \name Ctors and dtors.
+         * \{ */
         Scene() = default;
         ~Scene() = default;
         Scene(const Scene&) = default;
         Scene(Scene&&) = default;
         Scene& operator=(const Scene&) = default;
         Scene& operator=(Scene&&) = default;
+        /** \} */
 
+        /** \name Iterating
+         * \{ */
         const_iterator begin() const;
         const_iterator end() const;
+        /** \} */
 
+        /// Access the camera of the scene.
         const Camera& get_camera() const noexcept;
 
     private:
+        /// Screen width.
         width_t     width_ = 0;
+        /// Screen width.
         height_t    height_ = 0;
+        /// Name of the scene.
         std::string name_;
+        /// All the objects in the scene.
         objects_t   objects_;
+        /// Camera used to render.
         Camera      camera_;
     };
 

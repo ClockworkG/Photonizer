@@ -3,6 +3,7 @@ image: registry.gitlab.com/epita-image/docker/cpp:latest
 stages:
     - build
     - tests
+    - doc
     - check
 
 build:all:
@@ -23,6 +24,17 @@ build:all:
         - ./build/tests/${module_name}/tests
     dependencies:
         - build:all
+
+upload:doc:
+    stage: doc
+    dependencies:
+        - build:all
+    script:
+        - make doc -C build
+        - mv doc/html/ public/
+    artifacts:
+        paths:
+            - public
 
 clang-tidy:all:
     stage: check

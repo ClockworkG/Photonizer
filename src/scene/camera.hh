@@ -8,27 +8,25 @@ namespace scene
     {
     public:
         Camera() = default;
-        Camera(const Vector3f& pos,
-               const Vector3f& fwd,
-               const Vector3f& up) noexcept;
+        Camera(const Vector3f& pos, const Vector3f& fwd,
+               const Vector3f& up, float fov) noexcept;
         ~Camera() = default;
-        Camera(const Camera&) = delete;
-        Camera(Camera&&) = delete;
-        Camera& operator=(const Camera&) = delete;
-        Camera& operator=(Camera&&) = delete;
+        Camera(const Camera&) = default;
+        Camera(Camera&&) = default;
+        Camera& operator=(const Camera&) = default;
+        Camera& operator=(Camera&&) = default;
+
+        Vector3f get_position() const noexcept;
+        Vector3f get_forward() const noexcept;
+        Vector3f get_up() const noexcept;
+        float    get_fov() const noexcept;
 
     private:
-        Vector3f pos_;
-        Vector3f fwd_;
+        Vector3f position_;
+        Vector3f forward_;
         Vector3f up_;
+        float    fov_;
     };
-
-    inline
-    Camera::Camera(const Vector3f& pos,
-                   const Vector3f& fwd,
-                   const Vector3f& up) noexcept
-        : pos_(pos)
-        , fwd_(fwd)
-        , up_(up)
-    {}
 } // namespace scene
+
+#include "camera.hxx"

@@ -14,6 +14,10 @@ namespace scene::detail
 
         SceneBuilder();
         ~SceneBuilder() = default;
+        SceneBuilder(const SceneBuilder&) = delete;
+        SceneBuilder(SceneBuilder&&) = delete;
+        SceneBuilder& operator=(const SceneBuilder&) = delete;
+        SceneBuilder& operator=(SceneBuilder&&) = delete;
 
         void        set_toplevel(const boost::property_tree::ptree& pt);
         void        set_camera(const boost::property_tree::ptree& pt);

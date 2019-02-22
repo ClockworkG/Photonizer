@@ -29,11 +29,10 @@ namespace scene
 
         Scene() = default;
         ~Scene() = default;
-
-        Scene(const Scene&) = delete;
-        Scene(Scene&&) = delete;
-        Scene& operator=(const Scene&) = delete;
-        Scene& operator=(Scene&&) = delete;
+        Scene(const Scene&) = default;
+        Scene(Scene&&) = default;
+        Scene& operator=(const Scene&) = default;
+        Scene& operator=(Scene&&) = default;
 
         const_iterator begin() const;
         const_iterator end() const;
@@ -43,7 +42,7 @@ namespace scene
         height_t    height_ = 0;
         std::string name_;
         objects_t   objects_;
-        Camera      cam_;
+        Camera      camera_;
     };
 
     inline Scene::const_iterator Scene::begin() const

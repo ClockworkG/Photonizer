@@ -35,7 +35,12 @@ namespace scene::detail
 
     void SceneBuilder::set_camera(const ptree::ptree& pt)
     {
-        (void)pt;
+        auto pos = vector_from_ptree(pt.get_child("position"));
+        auto fwd = vector_from_ptree(pt.get_child("forward"));
+        auto up = vector_from_ptree(pt.get_child("up"));
+        auto fov = pt.get<float>("fov");
+
+        product_->camera_ = Camera(pos, fwd, up, fov);
     }
 
     void SceneBuilder::set_objects(const ptree::ptree& pt)

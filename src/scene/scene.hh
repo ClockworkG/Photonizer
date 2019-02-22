@@ -37,6 +37,8 @@ namespace scene
         const_iterator begin() const;
         const_iterator end() const;
 
+        const Camera& get_camera() const noexcept;
+
     private:
         width_t     width_ = 0;
         height_t    height_ = 0;
@@ -53,5 +55,10 @@ namespace scene
     inline Scene::const_iterator Scene::end() const
     {
         return std::cend(objects_);
+    }
+
+    inline const Camera& Scene::get_camera() const noexcept
+    {
+        return camera_;
     }
 } // namespace scene

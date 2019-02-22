@@ -4,6 +4,7 @@
 
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <gsl/gsl-lite.hpp>
 
 #include "detail/mesh-manager.hh"
 #include "detail/scene-builder.hh"
@@ -14,6 +15,7 @@ namespace scene
 {
     std::shared_ptr<const Scene> load_scene(const std::string& filename)
     {
+        Expects(!filename.empty());
         detail::SceneBuilder builder{};
         ptree::ptree scene_tree{};
 
@@ -39,6 +41,7 @@ namespace scene
             return nullptr;
         }
 
+        Ensures(builder.product() != nullptr);
         return builder.product();
     }
 } // namespace scene

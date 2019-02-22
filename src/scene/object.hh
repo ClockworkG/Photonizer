@@ -17,6 +17,9 @@ namespace scene
         Object& operator=(const Object&) = default;
         Object& operator=(Object&&) = default;
 
+        mesh_t  get_mesh() const noexcept;
+        pos_t   get_position() const noexcept;
+
     protected:
         pos_t   position_;
         mesh_t  mesh_;
@@ -26,4 +29,14 @@ namespace scene
         : position_(position)
         , mesh_(mesh)
     {}
+
+    inline mesh_t Object::get_mesh() const noexcept
+    {
+        return mesh_;
+    }
+
+    inline Object::pos_t Object::get_position() const noexcept
+    {
+        return position_;
+    }
 } // namespace scene

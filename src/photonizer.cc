@@ -5,7 +5,7 @@
 
 #include <boost/program_options.hpp>
 
-constexpr auto version = (PHOTONIZER_VERSION);
+constexpr const char* version = PHOTONIZER_VERSION;
 constexpr auto error_message = "Error while parsing command line options: ";
 
 #define ARG_ERROR_EXIT(Exception, Description, Exitcode)                \

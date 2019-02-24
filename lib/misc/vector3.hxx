@@ -1,10 +1,15 @@
 #pragma once
 
+#include <iomanip>
+
 #include "vector3.hh"
 
 template <typename T>
+inline
 Vector3<T>::Vector3(T x, T y, T z)
-    : x(x), y(y), z(z)
+    : x(x)
+    , y(y)
+    , z(z)
 {}
 
 template <typename T>
@@ -98,6 +103,10 @@ inline Vector3<T> operator^(const Vector3<T>& a, const Vector3<T>& b)
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const Vector3<T>& a)
 {
-    out << "x: " << a.x << ", y: " << a.y << ", z: " << a.z << std::endl;
+    out.fill(' ');
+    int width = 8;
+    out << "x: " << std::setw(width) << std::left << a.x
+        << " y: " << std::setw(width) << std::left << a.y
+        << " z: " << std::setw(width) << std::left << a.z;
     return out;
 }

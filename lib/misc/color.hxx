@@ -1,22 +1,13 @@
+#pragma once
+
 #include "color.hh"
 
+inline
 Color::Color(float red, float green, float blue)
     : r(red)
     , g(green)
     , b(blue)
 {}
-
-float& Color::operator[](size_t index)
-{
-    if (index == 0)
-        return r;
-    else if (index == 1)
-        return g;
-    else if (index == 2)
-        return b;
-    else
-        throw std::out_of_range("Index out of bounds");
-}
 
 inline Color& Color::operator+=(const Color& b)
 {
@@ -43,6 +34,7 @@ inline Color& Color::operator*=(const Color& b)
 }
 
 template <typename T>
+inline
 Color& Color::operator*=(const T& b)
 {
     this->r *= b;
@@ -85,12 +77,17 @@ inline Color operator*(const Color& a, const Color& b)
 }
 
 template <typename T>
-Color operator*(const Color& a, const T& b)
+inline Color operator*(const Color& a, const T& b)
 {
     return Color(a.r * b, a.g * b, a.b * b);
 }
 
-std::ostream& operator<<(std::ostream& out, const Color& a)
+inline std::ostream& operator<<(std::ostream& out, const Color& a)
 {
+    out.fill(' ');
+    int width = 8;
+    out << "<Color> r: " << std::setw(width) << std::left << a.r
+        << " g: " << std::setw(width) << std::left << a.g
+        << " b: " << std::setw(width) << std::left << a.b;
     return out;
 }

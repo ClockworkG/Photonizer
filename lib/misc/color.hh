@@ -2,6 +2,7 @@
 
 #include <ostream>
 #include <stdexcept>
+#include <iomanip>
 
 struct Color
 {
@@ -10,8 +11,6 @@ struct Color
     float b;
 
     Color(float red = 0, float green = 0, float blue = 0);
-
-    float& operator[](size_t index);
 
     Color& operator+=(const Color& b);
     Color& operator-=(const Color& b);
@@ -34,3 +33,5 @@ template <typename T>
 Color operator*(const Color& a, const T& b);
 
 std::ostream& operator<<(std::ostream& out, const Color& a);
+
+#include "color.hxx"

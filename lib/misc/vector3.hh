@@ -5,9 +5,8 @@
 #include <cmath>
 
 template <typename T>
-class Vector3
+struct Vector3
 {
-public:
     T x;
     T y;
     T z;
@@ -16,15 +15,16 @@ public:
 
     T& operator[](size_t index);
 
-    Vector3<T>& operator+=(const Vector3<T>& a);
-    Vector3<T>& operator-=(const Vector3<T>& a);
+    Vector3<T>& operator+=(const Vector3<T>& b);
+    Vector3<T>& operator-=(const Vector3<T>& b);
 
     T norm();
     Vector3<T>& normalize();
 };
 
-using Vector3f = Vector3<float>;
 using Vector3i = Vector3<int>;
+using Vector3f = Vector3<float>;
+using Vector3d = Vector3<double>;
 
 template <typename T>
 bool operator==(const Vector3<T>& a, const Vector3<T>& b);

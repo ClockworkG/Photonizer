@@ -15,7 +15,7 @@ namespace scene::detail
         {
             Vector3f result{};
             std::size_t index = 0;
-            for (const auto& [key, value] : pt)
+            for ([[maybe_unused]] const auto& [key, value] : pt)
                 result[index++] = value.get<float>("");
 
             return result;

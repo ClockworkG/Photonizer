@@ -22,4 +22,4 @@ set(OBJLOADER_INCLUDE_DIR ${SOURCE_DIR} CACHE INTERNAL "Include folder for objlo
 
 add_library(tinyobjloader STATIC IMPORTED GLOBAL)
 set_target_properties(tinyobjloader PROPERTIES IMPORTED_LOCATION ${BINARY_DIR}/libtinyobjloader.a)
-target_include_directories(tinyobjloader INTERFACE ${OBJLOADER_INCLUDE_DIR})
+include_directories(${OBJLOADER_INCLUDE_DIR})

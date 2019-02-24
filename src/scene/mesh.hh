@@ -10,7 +10,7 @@ namespace scene
     class Mesh;
 
     /// Type to use when manipulating a \a Mesh.
-    using mesh_t = const Mesh* const;
+    using mesh_t = const Mesh*;
 
     namespace detail
     {

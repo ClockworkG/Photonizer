@@ -91,3 +91,12 @@ inline std::ostream& operator<<(std::ostream& out, const Color& a)
         << " b: " << std::setw(width) << std::left << a.b;
     return out;
 }
+
+inline std::size_t hash_value(const Color& arg)
+{
+    std::size_t seed = 0;
+    boost::hash_combine(seed, arg.r);
+    boost::hash_combine(seed, arg.g);
+    boost::hash_combine(seed, arg.b);
+    return seed;
+}

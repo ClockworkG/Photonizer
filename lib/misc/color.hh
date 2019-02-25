@@ -1,8 +1,9 @@
 #pragma once
 
+#include <functional>
+#include <iomanip>
 #include <ostream>
 #include <stdexcept>
-#include <iomanip>
 
 struct Color
 {

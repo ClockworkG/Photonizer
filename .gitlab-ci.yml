@@ -6,7 +6,7 @@ stages:
     - doc
     - check
 
-build:all:
+build:arch:
     stage: build
     before_script:
         - mkdir build
@@ -18,6 +18,15 @@ build:all:
             - build
         untracked: true
 
+build:ubuntu:
+    stage: build
+    image: registry.gitlab.com/epita-image/docker/cpp-ubuntu/staging:master
+    before_script:
+        - mkdir build
+        - cd build
+    script:
+        - cmake -DCMAKE_BUILD_TYPE=RELEASE .. && make
+
 .unit-tests:
     stage: tests
     script:
@@ -28,7 +37,7 @@ build:all:
 upload:doc:
     stage: doc
     dependencies:
-        - build:all
+        - build:arch
     script:
         - make doc -C build
         - mv doc/html/ public/

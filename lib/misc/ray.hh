@@ -11,8 +11,9 @@ struct Ray
     Ray(const Vector3<T>& o, const Vector3<T>& dir);
 };
 
-using Rayf = Ray<float>;
 using Rayi = Ray<int>;
+using Rayf = Ray<float>;
+using Rayd = Ray<double>;
 
 template <typename T>
 bool operator==(const Ray<T>& a, const Ray<T>& b);

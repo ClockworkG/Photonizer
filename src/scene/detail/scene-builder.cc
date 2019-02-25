@@ -3,8 +3,6 @@
 #include <map>
 #include <string>
 
-#include "mesh-manager.hh"
-
 namespace ptree = boost::property_tree;
 
 namespace scene::detail
@@ -48,9 +46,8 @@ namespace scene::detail
         for (const auto& [key, value] : pt)
         {
             auto position = vector_from_ptree(value.get_child("position"));
-            auto mesh_id = value.get<std::string>("mesh");
-            auto mesh = MeshManager::get_instance()->get(mesh_id);
-            product_->objects_.emplace_back(position, mesh);
+            auto mesh_path = value.get<std::string>("mesh");
+            product_->objects_.emplace_back(position, mesh_path);
         }
     }
 

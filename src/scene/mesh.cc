@@ -1,20 +1,14 @@
-#include "mesh-manager.hh"
+#include "mesh.hh"
 
 #include <iostream>
 
 #include <tiny_obj_loader.h>
 
-namespace scene::detail
+namespace scene
 {
-    void MeshManager::load(const std::string& id, const std::string& filename)
+    Mesh::Mesh(const std::string& filename)
+        : polygons_{}
     {
-        {
-            auto [it, inserted] = loaded_.insert(filename);
-            if (!inserted)
-                return; // Mesh file has already been loaded
-        }
-
-        auto [it, inserted] = meshes_.emplace(std::make_pair(id, Mesh{}));
         tinyobj::attrib_t attrib;
         std::vector<tinyobj::shape_t> shapes;
         std::vector<tinyobj::material_t> materials;
@@ -45,18 +39,9 @@ namespace scene::detail
                                 attrib.normals[3 * idx.normal_index + 2]);
                 polygon.emplace_back(vertex, normal);
             }
-            it->second.add_polygon(polygon);
+            polygons_.push_back(polygon);
 
             offset += fv;
         }
     }
-
-    mesh_t MeshManager::get(const std::string& id)
-    {
-        auto it = meshes_.find(id);
-        if (it == std::cend(meshes_))
-            return nullptr;
-
-        return &(it->second);
-    }
-} // namespace scene::detail
+} // namespace scene

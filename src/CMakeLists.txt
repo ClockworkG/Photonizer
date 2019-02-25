@@ -4,11 +4,13 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 add_subdirectory(scene)
+add_subdirectory(image)
 
 add_executable(photonizer "photonizer.cc")
 target_link_libraries(photonizer
     PRIVATE Boost::program_options
-            Photonizer::Scene)
+            Photonizer::Scene
+            Photonizer::Image)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O0")

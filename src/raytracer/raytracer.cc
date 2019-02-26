@@ -1,24 +1,25 @@
 #include "raytracer.hh"
 
 #include "vector3.hh"
+#include "image-rgb.hh"
 #include "color.hh"
 
 namespace raytracer
 {
-    const std::vector<std::vector<Color>>& render(Scene scene)
+    const ImageRGB& render(Scene scene)
     {
-        // Create image buffer
-        std::vector<std::vector<Color>> buffer(scene.get_height());
-        for (int i = 0; i < scene.get_height(); ++i)
-            buffer[i].resize(scene.get_width());
-
-
         using origin = scene.get_camera().get_position();
         using up = scene.get_camera().get_up();
         using forward = scene.get_camera().get_forward();
 
         using width = scene.get_width();
         using height = scene.get_height();
+
+        // Create image buffer
+        ImageRGB buffer(scene.get_height(height, width));
+
+
+
         // Compute right unit vector
         Vector3f right = up ^ forward;
         // Compute screen center

@@ -4,5 +4,5 @@
 
 namespace raytracer
 {
-    const std::vector<std::vector<Color>>& render(Scene scene);
+    const ImageRGB& render(Scene scene);
 }

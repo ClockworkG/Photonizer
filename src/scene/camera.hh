@@ -8,7 +8,7 @@ namespace scene
     class Camera
     {
     public:
-        /** \name Ctors and dtors.
+        /** \name Ctors & dtors.
          * \{ */
         Camera() = default;
         Camera(const Vector3f& pos, const Vector3f& fwd,

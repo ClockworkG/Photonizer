@@ -10,7 +10,7 @@ int main()
     for (const auto& obj : the_scene)
     {
         // `obj` is a `const scene::Object&`.
-        for (const auto& polygon : obj.get_mesh()->polygons())
+        for (const auto& polygon : obj.get_mesh())
         {
             // `polygon` is a `scene::Mesh::polygon_t`.
             // Each polygon can have three or more vertices.

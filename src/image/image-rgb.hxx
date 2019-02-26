@@ -1,3 +1,7 @@
+/**
+ * \file image/image-rgb.hxx
+ * \brief Inline implementation of ImageRGB class.
+ */
 #pragma once
 
 #include "image-rgb.hh"

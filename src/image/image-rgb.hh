@@ -1,3 +1,7 @@
+/**
+ * \file image/image-rgb.hh
+ * \brief Define a class to work with RGB images.
+ */
 #pragma once
 
 #include <type_traits>
@@ -5,8 +9,10 @@
 
 #include "color.hh"
 
+/// Responsible for handling images.
 namespace image
 {
+    /// Represents an image with a matrix of RGB values.
     class ImageRGB
     {
     public:
@@ -21,12 +27,15 @@ namespace image
         /// Position and value of a pixel.
         using pixel_t = std::pair<point_t, value_t>;
 
+        /// Reference on a pixel's value.
         using reference = value_t&;
+        /// Const-reference on a pixel's value.
         using const_reference = const value_t&;
 
-        /** \name Ctors and dtors.
+        /** \name Ctors & dtor.
          * \{ */
         ImageRGB(height_t height, width_t width);
+        ~ImageRGB() = default;
         ImageRGB(const ImageRGB&) = default;
         ImageRGB(ImageRGB&&) noexcept = default;
         ImageRGB& operator=(const ImageRGB&) = default;

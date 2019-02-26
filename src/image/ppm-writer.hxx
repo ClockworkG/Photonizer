@@ -9,7 +9,8 @@
 namespace image
 {
     template<>
-    void PPMWriter<ImageRGB>::write(std::ostream& os, const image_t& image)
+    void
+    PPMWriter<ImageRGB>::operator()(std::ostream& os, const image_t& image)
     {
         os << "P3\n"
            << image.get_width() << ' ' << image.get_height() << "\n"

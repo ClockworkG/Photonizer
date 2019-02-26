@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10...3.13)
 
-set(PHOTONIZER_VERSION "0.0.1")
+set(PHOTONIZER_VERSION "0.3.1")
 
 project(Photonizer
         VERSION ${PHOTONIZER_VERSION}

@@ -19,37 +19,51 @@ namespace boostopt = boost::program_options;
 
 int main(int argc, char **argv)
 {
-    boostopt::options_description desc{"photonizer [--version]"};
+    boostopt::options_description desc{"General options"};
     desc.add_options()
         ("help,h", "Display help message.")
         ("version,v", "Display version information.")
+    ;
+
+    std::string scene_file{};
+    boostopt::options_description hidden{};
+    hidden.add_options()
         (
-         "scene,s",
-         boostopt::value<std::string>()->required(),
-         "Scene configuration file.\n"
+         "scene-file",
+         boostopt::value<std::string>(&scene_file), "scene"
         );
 
-    boostopt::variables_map opts;
+    boostopt::options_description all_opts{};
+    all_opts.add(desc);
+    all_opts.add(hidden);
+
+    boostopt::positional_options_description positional_desc{};
+    positional_desc.add("scene-file", 1);
+
+    boostopt::variables_map vm;
     try {
-        boostopt::store(parse_command_line(argc, argv, desc), opts);
-        boostopt::notify(opts);
+        boostopt::store(boostopt::command_line_parser(argc, argv)
+                        .options(all_opts)
+                        .positional(positional_desc)
+                        .run(), vm);
+        boostopt::notify(vm);
     }
     catch (const boostopt::unknown_option& exc)
     {
-        ARG_ERROR_EXIT(exc, desc, EXIT_FAILURE);
+        ARG_ERROR_EXIT(exc, all_opts, EXIT_FAILURE);
     }
     catch (const boostopt::required_option& exc)
     {
-        ARG_ERROR_EXIT(exc, desc, EXIT_FAILURE);
+        ARG_ERROR_EXIT(exc, all_opts, EXIT_FAILURE);
     }
 
-    if (opts.count("help"))
+    if (vm.count("help"))
     {
-        std::cout << desc;
+        std::cout << all_opts;
         return EXIT_SUCCESS;
     }
 
-    if (opts.count("version"))
+    if (vm.count("version"))
     {
         std::cout << "Raytracer & Photon Mapping - ISIM Project\n"
                   << "Alexandre Lamure, Robin Le Bihan - EPITA Image 2020\n"
@@ -57,8 +71,13 @@ int main(int argc, char **argv)
         return EXIT_SUCCESS;
     }
 
-    auto filename = opts["scene"].as<std::string>();
-    auto the_scene = scene::load_scene(filename);
+    if (scene_file.empty())
+    {
+        std::cout << "Missing scene file\n" << all_opts;
+        return EXIT_FAILURE;
+    }
+
+    auto the_scene = scene::load_scene(scene_file);
     if (!the_scene)
         return EXIT_FAILURE;
 

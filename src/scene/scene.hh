@@ -81,7 +81,17 @@ namespace scene
         return std::cend(objects_);
     }
 
-    inline auto Scene::lights() const noexcept -> const lights_t&
+    inline const width_t& Scene::get_width() const noexcept
+    {
+        return width_;
+    }
+
+    inline const height_t& Scene::get_height() const noexcept
+    {
+        return height_;
+    }
+
+   inline auto Scene::lights() const noexcept -> const lights_t&
     {
         return lights_;
     }

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "scene.hh"
+#include "image-rgb.hh"
 
 namespace raytracer
 {
-    const ImageRGB& render(Scene scene);
+    const image::ImageRGB& render(scene::Scene scene);
 }

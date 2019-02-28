@@ -2,22 +2,25 @@
 
 #include "object.hh"
 #include "vector3.hh"
-#include "image-rgb.hh"
+#include "ray.hh"
 #include "color.hh"
 
 namespace raytracer
 {
-    bool intersect(Scene scene, Ray ray)
+    bool intersect(scene::Scene scene, Rayf ray)
     {
         for (auto object : scene)
         {
             // FIXME: check box intersection
 
-            for (auto polygon : object.get_mesh())
+            for (auto polygon : *(object.get_mesh()))
             {
                 // triangle intersection
                 if (polygon.size() == 3)
                 {
+                    // avoid warning
+                    if (ray.o == ray.dir)
+                        return false;
                     return true;
                 }
             }
@@ -25,17 +28,18 @@ namespace raytracer
         return false;
     }
 
-    const ImageRGB& render(Scene scene)
+    const image::ImageRGB& render(scene::Scene scene)
     {
-        using origin = scene.get_camera().get_position();
-        using up = scene.get_camera().get_up();
-        using forward = scene.get_camera().get_forward();
+        auto origin = scene.get_camera().get_position();
+        auto up = scene.get_camera().get_up();
+        auto forward = scene.get_camera().get_forward();
+        float z_min = 0; // FIXME: get from scene
 
-        using width = scene.get_width();
-        using height = scene.get_height();
+        float width = scene.get_width();
+        float height = scene.get_height();
 
         // Create image buffer
-        ImageRGB img(scene.get_height(height, width));
+        auto& img = *(new image::ImageRGB(height, width));
 
         // Compute right unit vector
         Vector3f right = up ^ forward;
@@ -56,15 +60,16 @@ namespace raytracer
 
 
                 // Compute ray to cast from camera
-                Ray ray = Ray(origin, (pixel_pos - origin).normalize());
+                Ray ray = Ray(origin, (target_pos - origin).normalize());
 
-                point_t pixel_pos = std::pair<height_t, width_t>(i, j);
+                auto pixel_pos = std::pair(i, j);
                 // Test ray intersection
                 if (intersect(scene, ray))
-                    img[pixel_pos] = new Color(1.0f, 1.0f, 1.0f);
+                    img[pixel_pos] = Color(1.0f, 1.0f, 1.0f);
                 else
-                    img[pixel_pos] = new Color(0.0f, 0.0f, 0.0f);
+                    img[pixel_pos] = Color(0.0f, 0.0f, 0.0f);
             }
         }
+        return img;
     }
 }

@@ -13,7 +13,7 @@ namespace raytracer
         {
             // FIXME: check box intersection
 
-            for (auto polygon : *(object.get_mesh()))
+            for (auto polygon : object.get_mesh())
             {
                 // triangle intersection
                 if (polygon.size() == 3)
@@ -30,10 +30,11 @@ namespace raytracer
 
     const image::ImageRGB& render(scene::Scene scene)
     {
-        auto origin = scene.get_camera().get_position();
-        auto up = scene.get_camera().get_up();
-        auto forward = scene.get_camera().get_forward();
-        float z_min = 0; // FIXME: get from scene
+        auto origin = scene.get_camera().position;
+        auto up_uv = scene.get_camera().up;
+        auto forward_uv = scene.get_camera().forward;
+
+        float z_min = scene.get_camera().z_min;
 
         float width = scene.get_width();
         float height = scene.get_height();
@@ -42,11 +43,11 @@ namespace raytracer
         auto& img = *(new image::ImageRGB(height, width));
 
         // Compute right unit vector
-        Vector3f right = up ^ forward;
+        Vector3f right_uv = up_uv ^ forward_uv;
         // Compute screen center
-        Vector3f screen_center = origin + forward * z_min;
+        Vector3f screen_center = origin + forward_uv * z_min;
         // Compute screen top left corner
-        Vector3f screen_top_left = screen_center + up * (height / 2) - right * (width / 2);
+        Vector3f screen_top_left = screen_center + up_uv * (height / 2) - right_uv * (width / 2);
 
         // Draw Loop
         for (int i = 0; i < height; ++i)

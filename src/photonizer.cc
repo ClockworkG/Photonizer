@@ -2,6 +2,9 @@
 #include <string>
 
 #include <scene/libscene.hh>
+#include <raytracer/raytracer.hh>
+#include <image/image-rgb.hh>
+#include <image/ppm-writer.hh>
 
 #include <boost/program_options.hpp>
 
@@ -81,6 +84,9 @@ int main(int argc, char **argv)
     auto the_scene = scene::load_scene(scene_file);
     if (!the_scene)
         return EXIT_FAILURE;
+    auto image = raytracer::render(*the_scene);
+    image::PPMWriter<image::ImageRGB> ppm_writer;
+    ppm_writer.write(std::cout, image);
 
     return EXIT_SUCCESS;
 }

@@ -6,5 +6,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 set_target_properties(libraytracer PROPERTIES CXX_STANDARD 17)
-target_include_directories(libraytracer PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
-target_link_libraries(libraytracer PUBLIC Photonizer::Scene Photonizer::Image)
+target_include_directories(libraytracer PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(libraytracer PUBLIC Photonizer::Scene
+                                          Photonizer::Image)

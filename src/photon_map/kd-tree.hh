@@ -19,6 +19,7 @@ namespace photon
 
     public:
         using value_type = ValueType;
+        using size_type = std::size_t;
 
         /** \name Ctors & dtor
          * \{ */
@@ -35,6 +36,7 @@ namespace photon
         /** \name Capacity
          * \{ */
         bool empty() const noexcept;
+        size_type size() const noexcept;
         /** \} */
 
         /** \name Casts
@@ -53,6 +55,7 @@ namespace photon
         using node_ptr_t = std::unique_ptr<node_t>;
 
         node_ptr_t root_ = nullptr;
+        std::size_t size_ = 0;
     };
 } // namespace photon
 

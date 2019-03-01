@@ -55,6 +55,8 @@ TEST(KDTree, InsertLeft)
     tree.insert(DummyPhoton{Vector3f{}});
 
     tree.insert(DummyPhoton{Vector3f{-1, 0}});
+
+    EXPECT_EQ(tree.size(), 2);
 }
 
 TEST(KDTree, InsertRight)

@@ -9,14 +9,20 @@ namespace photon
     KDTree<V>::KDTree(Iterator begin, Iterator end)
         : root_{nullptr}
     {
-        (void)begin;
-        (void)end;
+        for (auto it = begin; it != end; it++)
+            insert(*it);
     }
 
     template <typename V>
     bool KDTree<V>::empty() const noexcept
     {
         return root_ == nullptr;
+    }
+
+    template <typename V>
+    auto KDTree<V>::size() const noexcept -> size_type
+    {
+        return size_;
     }
 
     template <typename V>
@@ -32,6 +38,7 @@ namespace photon
             root_ = std::make_unique<node_t>(value);
         else
             root_->insert(value);
+        size_++;
     }
 
     template <typename V>
@@ -41,6 +48,7 @@ namespace photon
             root_ = std::make_unique<node_t>(std::move(value));
         else
             root_->insert(std::move(value));
+        size_++;
     }
 
     template <typename V>

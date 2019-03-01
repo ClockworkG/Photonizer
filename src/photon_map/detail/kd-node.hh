@@ -28,11 +28,11 @@ namespace photon::detail
         KDNode(ValueType&& value, index_t index = index_t{})
             noexcept(std::is_nothrow_move_constructible_v<ValueType>);
         ~KDNode() = default;
-        KDNode(const KDNode&) = default;
         KDNode(KDNode&&) = default;
-        KDNode& operator=(const KDNode&) = default;
         KDNode& operator=(KDNode&&) = default;
         KDNode() = delete;
+        KDNode(const KDNode&) = delete;
+        KDNode& operator=(const KDNode&) = delete;
         /** \} */
 
         /** \name Modifiers

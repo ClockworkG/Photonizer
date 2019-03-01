@@ -25,10 +25,10 @@ namespace photon
          * \{ */
         KDTree() = default;
         ~KDTree() = default;
-        KDTree(const KDTree&) = default;
         KDTree(KDTree&&) = default;
-        KDTree& operator=(const KDTree&) = default;
         KDTree& operator=(KDTree&&) = default;
+        KDTree(const KDTree&) = delete;
+        KDTree& operator=(const KDTree&) = delete;
         /** \} */
 
         /** \name Capacity

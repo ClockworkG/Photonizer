@@ -1,0 +1,37 @@
+#pragma once
+
+#include "vector3.hh"
+
+namespace photon
+{
+    template <typename ValueType>
+    struct point_traits
+    {
+        using point_t = Vector3f;
+        using index_t = std::size_t;
+        static inline constexpr auto dimension = point_t::dimension;
+    };
+
+    template <typename ValueType>
+    struct PointComparePolicy
+    {
+        static bool less(const ValueType& a, const ValueType& b,
+                         typename point_traits<ValueType>::index_t index)
+        {
+            return (
+                static_cast<typename point_traits<ValueType>::point_t>(
+                    a
+                )[index] <
+                static_cast<typename point_traits<ValueType>::point_t>(
+                    b
+                )[index]
+            );
+        }
+
+        static typename point_traits<ValueType>::index_t
+        next(typename point_traits<ValueType>::index_t index)
+        {
+            return (index + 1) % point_traits<ValueType>::dimension;
+        }
+    };
+} // namespace photon

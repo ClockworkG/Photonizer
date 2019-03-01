@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <ostream>
 
 #include "detail/kd-node.hh"
 
@@ -11,7 +12,14 @@ namespace photon
     template <typename ValueType>
     class KDTree
     {
+        using self_t = KDTree<ValueType>;
+
+        template <typename T>
+        friend std::ostream& operator<<(std::ostream&, const KDTree<T>&);
+
     public:
+        using value_type = ValueType;
+
         /** \name Ctors & dtor
          * \{ */
         template <typename Iterator>
@@ -34,8 +42,15 @@ namespace photon
         operator bool() const noexcept;
         /** \} */
 
+        /** \name Modifiers
+         * \{ */
+        void insert(const value_type& value);
+        void insert(value_type&& value);
+        /** \} */
+
     private:
-        using node_ptr_t = std::unique_ptr<detail::KDNode<ValueType>>;
+        using node_t = detail::KDNode<value_type>;
+        using node_ptr_t = std::unique_ptr<node_t>;
 
         node_ptr_t root_ = nullptr;
     };

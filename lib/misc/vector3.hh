@@ -18,6 +18,8 @@ struct Vector3
     Vector3<T>& operator+=(const Vector3<T>& b);
     Vector3<T>& operator-=(const Vector3<T>& b);
 
+    static inline constexpr auto dimension = 3;
+
     T norm();
     Vector3<T>& normalize();
 };

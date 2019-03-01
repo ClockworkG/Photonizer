@@ -109,10 +109,6 @@ Vector3<T> operator*(const Vector3<T>& a, const U& b)
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const Vector3<T>& a)
 {
-    out.fill(' ');
-    int width = 8;
-    out << "x: " << std::setw(width) << std::left << a.x
-        << " y: " << std::setw(width) << std::left << a.y
-        << " z: " << std::setw(width) << std::left << a.z;
+    out << '(' << a.x << ',' << a.y << ',' << a.z << ')';
     return out;
 }

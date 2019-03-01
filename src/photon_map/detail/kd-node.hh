@@ -27,6 +27,12 @@ namespace photon::detail
         KDNode() = delete;
         /** \} */
 
+        /** \name Mutators.
+         * \{ */
+        void set_left(child_t left);
+        void set_right(child_t right);
+        /** \} */
+
     private:
         ValueType value_;
         child_t left_ = nullptr;

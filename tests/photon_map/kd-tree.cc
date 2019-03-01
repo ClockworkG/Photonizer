@@ -13,6 +13,12 @@ struct Dummy
     mutable bool copied = false;
 };
 
+TEST(KDTree, DefaultCtor)
+{
+    KDTree<Dummy> tree{};
+    EXPECT_TRUE(tree.empty());
+}
+
 TEST(KDNode, ValueCopyCtor)
 {
     Dummy d{};

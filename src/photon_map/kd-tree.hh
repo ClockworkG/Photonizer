@@ -8,7 +8,7 @@
 namespace photon
 {
     /// Data structure to partition space and efficiently store photon.
-    template <unsigned K, typename ValueType>
+    template <typename ValueType>
     class KDTree
     {
     public:
@@ -22,6 +22,16 @@ namespace photon
         KDTree(KDTree&&) = default;
         KDTree& operator=(const KDTree&) = default;
         KDTree& operator=(KDTree&&) = default;
+        /** \} */
+
+        /** \name Capacity
+         * \{ */
+        bool empty() const noexcept;
+        /** \} */
+
+        /** \name Casts
+         * \{ */
+        operator bool() const noexcept;
         /** \} */
 
     private:

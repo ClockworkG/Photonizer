@@ -4,9 +4,21 @@
 
 namespace photon
 {
-    template <unsigned K, typename V>
+    template <typename V>
     template <typename Iterator>
-    KDTree<K, V>::KDTree(Iterator begin, Iterator end)
+    KDTree<V>::KDTree(Iterator begin, Iterator end)
         : root_{nullptr}
     {}
+
+    template <typename V>
+    bool KDTree<V>::empty() const noexcept
+    {
+        return root_ == nullptr;
+    }
+
+    template <typename V>
+    KDTree<V>::operator bool() const noexcept
+    {
+        return !empty();
+    }
 } // namespace photon

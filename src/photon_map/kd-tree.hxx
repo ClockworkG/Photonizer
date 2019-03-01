@@ -5,15 +5,6 @@
 namespace photon
 {
     template <typename V>
-    template <typename Iterator>
-    KDTree<V>::KDTree(Iterator begin, Iterator end)
-        : root_{nullptr}
-    {
-        for (auto it = begin; it != end; it++)
-            insert(*it);
-    }
-
-    template <typename V>
     bool KDTree<V>::empty() const noexcept
     {
         return root_ == nullptr;

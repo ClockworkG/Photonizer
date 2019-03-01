@@ -23,8 +23,6 @@ namespace photon
 
         /** \name Ctors & dtor
          * \{ */
-        template <typename Iterator>
-        KDTree(Iterator begin, Iterator end);
         KDTree() = default;
         ~KDTree() = default;
         KDTree(const KDTree&) = default;

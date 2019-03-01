@@ -5,6 +5,7 @@ endif()
 
 add_subdirectory(image)
 add_subdirectory(scene)
+add_subdirectory(photon_map)
 add_subdirectory(raytracer)
 
 add_executable(photonizer "photonizer.cc")

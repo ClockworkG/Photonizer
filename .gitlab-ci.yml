@@ -12,16 +12,16 @@ build:all:
         - mkdir build
         - cd build
     script:
-        - cmake -DCMAKE_BUILD_TYPE=RELEASE .. && make
+        - cmake -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_TESTING=1 .. && make
     artifacts:
         paths:
             - build
         untracked: true
 
-.unit-tests:
+unit-tests:all:
     stage: tests
     script:
-        - ./build/tests/${module_name}/tests
+        - make test -C build
     dependencies:
         - build:all
 

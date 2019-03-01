@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include "vector3.hh"
 
 namespace photon
@@ -8,15 +10,28 @@ namespace photon
     struct point_traits
     {
         using point_t = Vector3f;
-        using index_t = std::size_t;
+        using index_t = uint8_t;
         static inline constexpr auto dimension = point_t::dimension;
     };
 
     template <typename ValueType>
     struct PointComparePolicy
     {
-        static bool less(const ValueType& a, const ValueType& b,
-                         typename point_traits<ValueType>::index_t index)
+        static_assert(
+            point_traits<ValueType>::dimension != 0,
+            "Dimension cannot be 0."
+        );
+        static_assert(
+            std::is_convertible_v<
+                const ValueType,
+                typename point_traits<ValueType>::point_t
+            >,
+            "ValueType must be implicitly convertible to a position."
+        );
+
+        static bool
+        less(const ValueType& a, const ValueType& b,
+             typename point_traits<ValueType>::index_t index) noexcept
         {
             return (
                 static_cast<typename point_traits<ValueType>::point_t>(
@@ -29,7 +44,7 @@ namespace photon
         }
 
         static typename point_traits<ValueType>::index_t
-        next(typename point_traits<ValueType>::index_t index)
+        next(typename point_traits<ValueType>::index_t index) noexcept
         {
             return (index + 1) % point_traits<ValueType>::dimension;
         }

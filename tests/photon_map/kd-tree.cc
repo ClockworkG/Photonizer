@@ -13,7 +13,7 @@ struct Dummy
     mutable bool moved = false;
     mutable bool copied = false;
 
-    explicit operator Vector3f() const noexcept
+    operator Vector3f() const noexcept
     {
         return Vector3f{};
     }
@@ -26,7 +26,7 @@ struct DummyPhoton
     DummyPhoton(const DummyPhoton&) = default;
     DummyPhoton(DummyPhoton&&) = default;
 
-    explicit operator Vector3f() const noexcept
+    operator Vector3f() const noexcept
     {
         return vect;
     }

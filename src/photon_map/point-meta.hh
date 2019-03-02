@@ -28,19 +28,27 @@ namespace photon
             >,
             "ValueType must be implicitly convertible to a position."
         );
+        static_assert(
+            std::is_copy_constructible_v<ValueType>,
+            "ValueType must be copy constructible."
+        );
+        static_assert(
+            std::is_integral_v<typename point_traits<ValueType>::index_t>
+        );
+
+        static typename point_traits<ValueType>::point_t
+        to_point(const ValueType& value) noexcept
+        {
+            return static_cast<typename point_traits<ValueType>::point_t>(
+                    value
+            );
+        }
 
         static bool
         less(const ValueType& a, const ValueType& b,
              typename point_traits<ValueType>::index_t index) noexcept
         {
-            return (
-                static_cast<typename point_traits<ValueType>::point_t>(
-                    a
-                )[index] <
-                static_cast<typename point_traits<ValueType>::point_t>(
-                    b
-                )[index]
-            );
+            return to_point(a)[index] < to_point(b)[index];
         }
 
         static typename point_traits<ValueType>::index_t

@@ -61,28 +61,46 @@ namespace raytracer
 
         float z_min = scene.get_camera().z_min;
 
-        float width = scene.get_width();
-        float height = scene.get_height();
+        float img_width = scene.get_width();
+        float img_height = scene.get_height();
 
         // Create image buffer
-        auto& img = *(new image::ImageRGB(height, width));
+        auto& img = *(new image::ImageRGB(img_height, img_width));
 
+
+
+        float screen_w = 0.35;
+        float screen_h = 0.5;
+        //z_min = 1;
+        float x_step = screen_w / (float)img_width;
+        float y_step = screen_h / (float)img_height;
+        Vector3f right_uv = up_uv ^ forward_uv;
+        Vector3f screen_center = origin + (forward_uv * z_min);
+        Vector3f screen_top_left = screen_center + (up_uv * (screen_h / 2))
+                                                 - (right_uv * (screen_w / 2));
+/*
         // Compute right unit vector
         Vector3f right_uv = up_uv ^ forward_uv;
         // Compute screen center
         Vector3f screen_center = origin + forward_uv * z_min;
         // Compute screen top left corner
-        Vector3f screen_top_left = screen_center + up_uv * (height / 2) - right_uv * (width / 2);
+        Vector3f screen_top_left = screen_center + up_uv * (img_height / 2) - right_uv * (img_width / 2);
+
+*/
 
         // Draw Loop
-        for (int i = 0; i < height; ++i)
+        for (int i = 0; i < img_height; ++i)
         {
-            for (int j = 0; j < width; ++j)
+            for (int j = 0; j < img_width; ++j)
             {
+                /*
                 // Compute pixel position on the view plane
                 Vector3f target_pos = Vector3f(screen_top_left.x + i,
                                               screen_top_left.y + j,
                                               screen_top_left.z);
+                */
+                Vector3f target_pos = screen_top_left + (right_uv * x_step * i)
+                                                      - (up_uv * y_step * j);
 
 
                 // Compute ray to cast from camera

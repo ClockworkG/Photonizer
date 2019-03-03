@@ -56,8 +56,8 @@ namespace raytracer
     const image::ImageRGB& render(scene::Scene scene)
     {
         auto origin = scene.get_camera().position;
-        auto up_uv = scene.get_camera().up;
-        auto forward_uv = scene.get_camera().forward;
+//        auto up_uv = scene.get_camera().up;
+//        auto forward_uv = scene.get_camera().forward;
 
         float z_min = scene.get_camera().z_min;
 
@@ -68,7 +68,7 @@ namespace raytracer
         auto& img = *(new image::ImageRGB(img_height, img_width));
 
 
-
+/*
         float screen_w = scene.get_camera().fov_x;//0.35;
         float screen_h = scene.get_camera().fov_y;//0.5;
         //z_min = 1;
@@ -78,6 +78,15 @@ namespace raytracer
         Vector3f screen_center = origin + (forward_uv * z_min);
         Vector3f screen_top_left = screen_center + (up_uv * (screen_h / 2))
                                                  - (right_uv * (screen_w / 2));
+*/
+
+        float img_ratio = img_width / img_height;
+        z_min = 1; 
+        float coef_x = tanf(scene.get_camera().fov_x / 2.0 * M_PI / 180.0) * img_ratio;
+        float coef_y = tanf(scene.get_camera().fov_y / 2.0 * M_PI / 180.0);
+
+
+
 /*
         // Compute right unit vector
         Vector3f right_uv = up_uv ^ forward_uv;
@@ -85,8 +94,8 @@ namespace raytracer
         Vector3f screen_center = origin + forward_uv * z_min;
         // Compute screen top left corner
         Vector3f screen_top_left = screen_center + up_uv * (img_height / 2) - right_uv * (img_width / 2);
-
 */
+
 
         // Draw Loop
         for (int i = 0; i < img_height; ++i)
@@ -99,13 +108,19 @@ namespace raytracer
                                               screen_top_left.y + j,
                                               screen_top_left.z);
                 */
+
+                /*
                 Vector3f target_pos = screen_top_left + (right_uv * x_step * i)
                                                       - (up_uv * y_step * j);
+                */
+                float screen_x = (2.0 * ((j + 0.5) / img_width) - 1.0) * coef_x;
+                float screen_y = (1.0 - 2.0 * ((i + 0.5) / img_height)) * coef_y;
+                Vector3f target_pos = Vector3f(screen_x, screen_y, 1);
 
 
                 // Compute ray to cast from camera
-                //Ray ray = Ray(origin, (target_pos - origin).normalize());
-                Ray ray = Ray(Vector3f(i, j, -10000), Vector3f(0, 0, 1));
+                Ray ray = Ray(origin, (target_pos - origin).normalize());
+                //Ray ray = Ray(Vector3f(i, j, -10000), Vector3f(0, 0, 1));
 
                 auto pixel_pos = std::pair(i, j);
                 // Test ray intersection

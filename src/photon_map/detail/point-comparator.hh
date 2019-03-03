@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 
 #include "point-meta.hh"
@@ -9,6 +10,9 @@ namespace photon::detail
     template <typename ValueType>
     class PointComparator
     {
+        using self_t = PointComparator<ValueType>;
+        friend std::hash<self_t>;
+
     public:
         template <typename Iterator>
         PointComparator(Iterator begin, Iterator end)
@@ -24,7 +28,7 @@ namespace photon::detail
         PointComparator& operator=(const PointComparator&) = default;
         PointComparator& operator=(PointComparator&&) = default;
 
-        bool operator()(const ValueType& lhs, const ValueType& rhs) noexcept
+        bool operator()(const ValueType& lhs, const ValueType& rhs) const noexcept
         {
             auto lhs_point = PointComparePolicy<ValueType>::to_point(lhs);
             auto rhs_point = PointComparePolicy<ValueType>::to_point(rhs);
@@ -39,6 +43,12 @@ namespace photon::detail
             return false;
         }
 
+        bool operator==(const PointComparator& other) const
+        {
+            return std::equal(indexes_.begin(), indexes_.end(),
+                              other.indexes_.begin());
+        }
+
     private:
         std::array<
             typename point_traits<ValueType>::index_t,
@@ -47,3 +57,18 @@ namespace photon::detail
     };
 
 } // namespace photon::detail
+
+namespace std
+{
+    template <typename ValueType>
+    struct hash<photon::detail::PointComparator<ValueType>>
+    {
+        using type_t = photon::detail::PointComparator<ValueType>;
+        size_t operator()(const type_t& x) const
+        {
+            std::size_t result = 0;
+            hash<typename photon::point_traits<ValueType>::index_t> hfun{};
+            return hfun(x.indexes_[0]);
+        }
+    };
+} // namespace std

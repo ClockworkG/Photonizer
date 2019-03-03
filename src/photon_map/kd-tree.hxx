@@ -45,6 +45,9 @@ namespace photon
     template <typename V>
     std::ostream& operator<<(std::ostream& os, const KDTree<V>& tree)
     {
+        if (tree.root_ == nullptr)
+            return os;
+
         os << "digraph {\n"
            << *tree.root_
            << "}";

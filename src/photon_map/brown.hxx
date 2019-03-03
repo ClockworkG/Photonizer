@@ -2,12 +2,12 @@
 
 #include "brown.hh"
 
-namespace photon::detail
+namespace photon
 {
     template <typename V, typename It>
     KDTree<V> make_balanced_tree(It begin, It end)
     {
-        std::vector<V> tuples{};
-        std::copy(begin, end, std::begin(tuples));
+        detail::BrownAlgorithm<V> brown(begin, end);
+        return brown();
     }
-} // namespace photon::detail
+} // namespace photon

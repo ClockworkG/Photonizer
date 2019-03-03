@@ -19,17 +19,21 @@ namespace photon::detail
         using indexes_t = std::vector<std::size_t>;
 
     public:
+        using tree_t = KDTree<value_t>;
+
         template <typename Iterator>
         BrownAlgorithm(Iterator begin, Iterator end);
 
-        KDTree<ValueType> operator()();
+        tree_t operator()();
 
     private:
         void build_initial_indices();
+        void split_and_build(tree_t& tree);
 
-        std::vector<value_t>                    values_;
-        std::unordered_map<comp_t, indexes_t>   initial_indices_;
-        const index_t                           cardinality_;
+        std::vector<value_t>   values_;
+        std::vector<comp_t>    comparators_;
+        std::vector<indexes_t> initial_indices_;
+        const index_t          cardinality_;
     };
 } // namespace photon::detail
 

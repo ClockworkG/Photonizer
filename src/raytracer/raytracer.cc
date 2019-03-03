@@ -9,7 +9,7 @@
 
 namespace raytracer
 {
-    #define epsilon 0.0001
+    #define epsilon 0.000001
 
     bool moller_trumbore(scene::Mesh::polygon_t polygon, Rayf ray, float &t)
     {
@@ -21,15 +21,15 @@ namespace raytracer
         if (std::abs(det) < epsilon)
             return false;
 
-        float inv_det = 1 / det;
+        float inv_det = 1.0 / det;
         Vector3f t_v = ray.o - polygon[0].first;
         float u_bary = t_v * p_v * inv_det;
-        if (u_bary < 0 || u_bary > 1)
+        if (u_bary < 0.0 || u_bary > 1.0)
             return false;
 
         Vector3f q_v = t_v * ab_v;
         float v_bary = ray.dir * q_v * inv_det;
-        if (v_bary < 0 || u_bary + v_bary > 1)
+        if (v_bary < 0.0 || u_bary + v_bary > 1.0)
             return false;
 
         t = ac_v * q_v * inv_det;
@@ -91,7 +91,7 @@ namespace raytracer
                 auto pixel_pos = std::pair(i, j);
                 // Test ray intersection
                 if (intersect(scene, ray))
-                    img[pixel_pos] = Color(1.0f, 1.0f, 1.0f);
+                    img[pixel_pos] = Color(255*1.0f, 255*1.0f, 255*1.0f); //FIXME
                 else
                     img[pixel_pos] = Color(0.0f, 0.0f, 0.0f);
             }

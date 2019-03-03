@@ -69,8 +69,8 @@ namespace raytracer
 
 
 
-        float screen_w = 0.35;
-        float screen_h = 0.5;
+        float screen_w = scene.get_camera().fov_x;//0.35;
+        float screen_h = scene.get_camera().fov_y;//0.5;
         //z_min = 1;
         float x_step = screen_w / (float)img_width;
         float y_step = screen_h / (float)img_height;
@@ -104,7 +104,8 @@ namespace raytracer
 
 
                 // Compute ray to cast from camera
-                Ray ray = Ray(origin, (target_pos - origin).normalize());
+                //Ray ray = Ray(origin, (target_pos - origin).normalize());
+                Ray ray = Ray(Vector3f(i, j, -10000), Vector3f(0, 0, 1));
 
                 auto pixel_pos = std::pair(i, j);
                 // Test ray intersection

@@ -22,13 +22,40 @@ namespace photon::detail
     {
         build_initial_indices();
         tree_t tree{};
-        split_and_build(tree);
+
+        split_and_build(tree, 0, values_.size());
         return tree;
     }
 
     template <typename V>
-    void BrownAlgorithm<V>::split_and_build(tree_t& tree)
+    void BrownAlgorithm<V>::split_and_build(tree_t& tree, std::size_t begin,
+                                            std::size_t end, std::size_t axis)
     {
+        if (begin >= end)
+            return;
+
+        auto middle = begin + (end - begin) / 2;
+        auto& values = values_;
+        auto& median = values[initial_indices_[axis][middle]];
+        auto& comp = comparators_[axis];
+
+        for (std::size_t i = 0; i < initial_indices_.size(); i++)
+        {
+            if (i == axis)
+                continue;
+
+            std::stable_partition(std::begin(initial_indices_[i]) + begin,
+                                  std::begin(initial_indices_[i]) + end,
+                                  [comp, values, median](auto x)
+                                  {
+                                      return comp(values[x], median);
+                                  });
+        }
+
+        tree.insert(std::move(median));
+
+        split_and_build(tree, begin, middle, (axis + 1) % cardinality_);
+        split_and_build(tree, middle + 1, end, (axis + 1) % cardinality_);
     }
 
     template <typename V>

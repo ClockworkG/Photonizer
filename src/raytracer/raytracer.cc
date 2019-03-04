@@ -27,7 +27,7 @@ namespace raytracer
         if (u_bary < 0.0 || u_bary > 1.0)
             return false;
 
-        Vector3f q_v = t_v * ab_v;
+        Vector3f q_v = t_v ^ ab_v;
         float v_bary = ray.dir * q_v * inv_det;
         if (v_bary < 0.0 || u_bary + v_bary > 1.0)
             return false;
@@ -96,8 +96,8 @@ namespace raytracer
 
             for (auto polygon : object.get_mesh())
             {
-                //if (moller_trumbore(polygon, ray, t))
-                if (triangle_intersect(polygon, ray, t))
+                //if (triangle_intersect(polygon, ray, t))
+                if (moller_trumbore(polygon, ray, t))
                     return true;
             }
         }
@@ -141,11 +141,11 @@ namespace raytracer
                                                  - (right_uv * (screen_w / 2));
 */
 
-/* 3
+/* 3 */
         float img_ratio = img_width / img_height;
         float coef_x = tanf(scene.get_camera().fov_x / 2.0 * M_PI / 180.0) * img_ratio;
         float coef_y = tanf(scene.get_camera().fov_y / 2.0 * M_PI / 180.0);
-*/
+/**/
         // Draw Loop
         for (int y = 0; y < img_height; ++y)
         {
@@ -165,18 +165,21 @@ namespace raytracer
                                                       - (up_uv * y_step * y);
 */
 
-/* 3
-                float screen_x = (2.0 * ((x + 0.5) / img_width) - 1.0) * coef_x;
-                float screen_y = (1.0 - 2.0 * ((y + 0.5) / img_height)) * coef_y;
-                Vector3f target_pos = Vector3f(screen_x, screen_y, 1);
-*/
-/* 4 */
-                // Compute pixel position on the view plane
-                Vector3f target_pos = Vector3f(x, y, 1);
+/* 3 */
+                float screen_x = (2.0 * (x + 0.5) / img_width - 1.0) * coef_x;
+                float screen_y = (1.0 - 2.0 * (y + 0.5) / img_height) * coef_y;
+                // FIXME: why -1 on z ?
+                Vector3f target_pos = Vector3f(screen_x, screen_y, -1);
 /**/
+/* 4
+                // Compute pixel position on the view plane
+                Vector3f target_pos = Vector3f(x, y, 0);
+*/
 
                 // Compute ray to cast from camera
-                Ray ray = Ray(origin, (target_pos - origin).normalize());
+                //Ray ray = Ray(origin, (target_pos - origin).normalize());
+                // FIXME: why not use origin in ray direction ?
+                Ray ray = Ray(origin, target_pos.normalize());
                 //Ray ray = Ray(Vector3f(x, y, -10000), Vector3f(0, 0, 1));
 
                 auto pixel_pos = std::pair(x, y);

@@ -2,8 +2,8 @@
 #include <iostream>
 #include <iomanip>
 #include <vector3.hh>
-#include "brown.hh"
-#include "detail/point-comparator.hh"
+
+#include "kd-tree.hh"
 
 namespace ph = photon;
 
@@ -44,6 +44,30 @@ int main()
        Photon{Vector3f{8, 7, 6}}
     };
 
-    auto tree = ph::make_balanced_tree<Photon>(points.begin(), points.end());
-    std::cout << tree << '\n';
+    [[maybe_unused]]
+    auto tree = ph::KDTree<Photon>(points.begin(), points.end());
+    const auto& data = tree.data();
+    std::cout << "digraph {\n";
+    for (std::size_t i = 0; i < data.size(); i++)
+    {
+        std::size_t next = 2 * i;
+
+        if (next < data.size())
+        {
+            std::cout << '"' << static_cast<Vector3f>(*data[i]) << '"'
+                      << " -> "
+                      << '"' << static_cast<Vector3f>(*data[next]) << '"'
+                      << '\n';
+
+            if (next + 1 < data.size())
+            {
+                std::cout << '"' << static_cast<Vector3f>(*data[i]) << '"'
+                          << " -> "
+                          << '"' << static_cast<Vector3f>(*data[next + 1]) << '"'
+                          << '\n';
+
+            }
+        }
+    }
+    std::cout << "}\n";
 }

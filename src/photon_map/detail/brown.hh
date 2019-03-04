@@ -1,12 +1,17 @@
 #pragma once
 
 #include <algorithm>
-#include <unordered_map>
 #include <numeric>
 #include <vector>
 
-#include "kd-tree.hh"
+#include "point-meta.hh"
 #include "point-comparator.hh"
+
+namespace photon
+{
+    template <typename V>
+    class KDTree;
+}
 
 namespace photon::detail
 {
@@ -19,23 +24,28 @@ namespace photon::detail
         using indexes_t = std::vector<std::size_t>;
 
     public:
-        using tree_t = KDTree<value_t>;
+        using data_t = typename KDTree<ValueType>::data_type;
 
         template <typename Iterator>
         BrownAlgorithm(Iterator begin, Iterator end);
 
-        tree_t operator()();
+        data_t operator()();
 
     private:
         void build_initial_indices();
-        void split_and_build(tree_t& tree, std::size_t begin,
-                             std::size_t end, std::size_t axis = 0);
+        void split_and_build(data_t& tree, std::size_t begin,
+                             std::size_t end, std::size_t pos,
+                             std::size_t axis = 0);
 
         std::vector<value_t>   values_;
         std::vector<comp_t>    comparators_;
         std::vector<indexes_t> initial_indices_;
         const index_t          cardinality_;
     };
-} // namespace photon::detail
 
-#include "brown-algorithm.hxx"
+    template <typename ValueType, typename Iterator>
+    auto make_balanced_tree(Iterator begin, Iterator end)
+        -> typename KDTree<ValueType>::data_type;
+} // namespace photon
+
+#include "brown.hxx"

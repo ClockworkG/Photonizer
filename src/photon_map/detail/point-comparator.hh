@@ -57,18 +57,3 @@ namespace photon::detail
     };
 
 } // namespace photon::detail
-
-namespace std
-{
-    template <typename ValueType>
-    struct hash<photon::detail::PointComparator<ValueType>>
-    {
-        using type_t = photon::detail::PointComparator<ValueType>;
-        size_t operator()(const type_t& x) const
-        {
-            std::size_t result = 0;
-            hash<typename photon::point_traits<ValueType>::index_t> hfun{};
-            return hfun(x.indexes_[0]);
-        }
-    };
-} // namespace std

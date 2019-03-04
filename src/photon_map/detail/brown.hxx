@@ -1,9 +1,17 @@
 #pragma once
 
-#include "brown-algorithm.hh"
+#include "brown.hh"
 
 namespace photon::detail
 {
+    template <typename V, typename It>
+    auto make_balanced_tree(It begin, It end)
+        -> typename KDTree<V>::data_type
+    {
+        detail::BrownAlgorithm<V> brown(begin, end);
+        return brown();
+    }
+
     template <typename V>
     template <typename It>
     BrownAlgorithm<V>::BrownAlgorithm(It begin, It end)
@@ -18,18 +26,18 @@ namespace photon::detail
     }
 
     template <typename V>
-    auto BrownAlgorithm<V>::operator()() -> tree_t
+    auto BrownAlgorithm<V>::operator()() -> data_t
     {
+        data_t tree(values_.size());
         build_initial_indices();
-        tree_t tree{};
-
-        split_and_build(tree, 0, values_.size());
+        split_and_build(tree, 0, values_.size(), 1);
         return tree;
     }
 
     template <typename V>
-    void BrownAlgorithm<V>::split_and_build(tree_t& tree, std::size_t begin,
-                                            std::size_t end, std::size_t axis)
+    void BrownAlgorithm<V>::split_and_build(data_t& tree, std::size_t begin,
+                                            std::size_t end, std::size_t pos,
+                                            std::size_t axis)
     {
         if (begin >= end)
             return;
@@ -52,10 +60,12 @@ namespace photon::detail
                                   });
         }
 
-        tree.insert(std::move(median));
+        tree[pos] = std::move(median);
 
-        split_and_build(tree, begin, middle, (axis + 1) % cardinality_);
-        split_and_build(tree, middle + 1, end, (axis + 1) % cardinality_);
+        split_and_build(tree, begin, middle, 2 * pos,
+                        (axis + 1) % cardinality_);
+        split_and_build(tree, middle + 1, end, 2 * pos + 1,
+                        (axis + 1) % cardinality_);
     }
 
     template <typename V>
@@ -85,4 +95,5 @@ namespace photon::detail
                         std::end(indices));
         }
     }
-} // namespace photon::detail
+
+} // namespace photon

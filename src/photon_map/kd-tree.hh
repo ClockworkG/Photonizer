@@ -1,28 +1,28 @@
 #pragma once
 
-#include <memory>
+#include <optional>
 #include <ostream>
+#include <vector>
 
-#include "detail/kd-node.hh"
+#include "detail/brown.hh"
 
 /// Handles photon tracing and storing.
 namespace photon
 {
-    /// Data structure to partition space and efficiently store photon.
+    /// Data structure to partition space and efficiently store positions.
     template <typename ValueType>
     class KDTree
     {
-        using self_t = KDTree<ValueType>;
-
-        template <typename T>
-        friend std::ostream& operator<<(std::ostream&, const KDTree<T>&);
-
     public:
         using value_type = ValueType;
         using size_type = std::size_t;
+        using node_t = std::optional<value_type>;
+        using data_type = std::vector<node_t>;
 
         /** \name Ctors & dtor
          * \{ */
+        template <typename Iterator>
+        KDTree(Iterator begin, Iterator end);
         KDTree() = default;
         ~KDTree() = default;
         KDTree(KDTree&&) = default;
@@ -31,29 +31,15 @@ namespace photon
         KDTree& operator=(const KDTree&) = delete;
         /** \} */
 
-        /** \name Capacity
+        /** \name Element access
          * \{ */
-        bool empty() const noexcept;
-        size_type size() const noexcept;
-        /** \} */
-
-        /** \name Casts
-         * \{ */
-        operator bool() const noexcept;
-        /** \} */
-
-        /** \name Modifiers
-         * \{ */
-        void insert(const value_type& value);
-        void insert(value_type&& value);
+        /// Return the underlying vector.
+        const data_type& data() const noexcept;
         /** \} */
 
     private:
-        using node_t = detail::KDNode<value_type>;
-        using node_ptr_t = std::unique_ptr<node_t>;
-
-        node_ptr_t root_ = nullptr;
-        std::size_t size_ = 0;
+        /// Nodes.
+        data_type data_;
     };
 } // namespace photon
 

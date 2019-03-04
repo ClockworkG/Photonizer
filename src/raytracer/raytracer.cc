@@ -37,6 +37,56 @@ namespace raytracer
         return true;
     }
 
+    bool triangle_intersect(scene::Mesh::polygon_t polygon, Rayf ray, float &t)
+    {
+        Vector3f ab_v = polygon[1].first - polygon[0].first;
+        Vector3f ac_v = polygon[2].first - polygon[0].first;
+        // compute plane's normal
+        // no need to normalize
+        Vector3f N = ab_v ^ ac_v; // N
+
+        // Step 1: finding P
+
+        // check if ray and plane are parallel ?
+        float NdotRayDirection = N * ray.dir;
+        if (std::abs(NdotRayDirection) < epsilon) // almost 0
+            return false; // they are parallel so they don't intersect !
+
+        // compute d parameter using equation 2
+        float d = N * polygon[0].first;
+
+        // compute t (equation 3)
+        t = (N * ray.o + d) / NdotRayDirection;
+        // check if the triangle is in behind the ray
+        if (t < 0) return false; // the triangle is behind
+
+        // compute the intersection point using equation 1
+        Vector3f P = ray.o + (ray.dir * t);
+
+        // Step 2: inside-outside test
+        Vector3f C; // vector perpendicular to triangle's plane
+
+        // edge 0
+        Vector3f edge0 = polygon[1].first - polygon[0].first;
+        Vector3f vp0 = P - polygon[0].first;
+        C = edge0 * vp0;
+        if (N * C < 0) return false; // P is on the right side
+
+        // edge 1
+        Vector3f edge1 = polygon[2].first - polygon[1].first;
+        Vector3f vp1 = P - polygon[1].first;
+        C = edge1 ^ vp1;
+        if (N * C < 0) return false; // P is on the right side
+
+        // edge 2
+        Vector3f edge2 = polygon[0].first - polygon[2].first;
+        Vector3f vp2 = P - polygon[2].first;
+        C = edge2 ^ vp2;
+        if (N * C < 0) return false; // P is on the right side;
+
+        return true; // this ray hits the triangle 
+    }
+
     bool intersect(scene::Scene scene, Rayf ray)
     {
         float t;
@@ -46,7 +96,8 @@ namespace raytracer
 
             for (auto polygon : object.get_mesh())
             {
-                if (moller_trumbore(polygon, ray, t))
+                //if (moller_trumbore(polygon, ray, t))
+                if (triangle_intersect(polygon, ray, t))
                     return true;
             }
         }
@@ -90,12 +141,11 @@ namespace raytracer
                                                  - (right_uv * (screen_w / 2));
 */
 
-/* 3 */
+/* 3
         float img_ratio = img_width / img_height;
         float coef_x = tanf(scene.get_camera().fov_x / 2.0 * M_PI / 180.0) * img_ratio;
         float coef_y = tanf(scene.get_camera().fov_y / 2.0 * M_PI / 180.0);
-/**/
-
+*/
         // Draw Loop
         for (int y = 0; y < img_height; ++y)
         {
@@ -108,15 +158,21 @@ namespace raytracer
                                               screen_top_left.z);
 */
 
+
+
 /* 2
                 Vector3f target_pos = screen_top_left + (right_uv * x_step * x)
                                                       - (up_uv * y_step * y);
 */
 
-/* 3 */
+/* 3
                 float screen_x = (2.0 * ((x + 0.5) / img_width) - 1.0) * coef_x;
                 float screen_y = (1.0 - 2.0 * ((y + 0.5) / img_height)) * coef_y;
                 Vector3f target_pos = Vector3f(screen_x, screen_y, 1);
+*/
+/* 4 */
+                // Compute pixel position on the view plane
+                Vector3f target_pos = Vector3f(x, y, 1);
 /**/
 
                 // Compute ray to cast from camera

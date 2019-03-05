@@ -40,6 +40,9 @@ namespace scene
                                 attrib.normals[3 * idx.normal_index + 2]);
                 polygon.emplace_back(vertex, normal);
             }
+            const auto& mat = materials[shape.mesh.material_ids[fv]];
+            polygon.set_material(mat);
+
             polygons_.push_back(polygon);
 
             offset += fv;

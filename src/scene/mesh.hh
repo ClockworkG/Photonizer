@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <list>
 #include <vector>
 
@@ -25,7 +26,7 @@ namespace scene
 
         /** \name Ctors & dtors.
          * \{ */
-        Mesh(const std::string& filename);
+        Mesh(const std::filesystem::path& filename);
         ~Mesh() = default;
         Mesh(const Mesh&) = delete;
         Mesh(Mesh&&) noexcept = default;

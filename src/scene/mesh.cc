@@ -6,7 +6,7 @@
 
 namespace scene
 {
-    Mesh::Mesh(const std::string& filename)
+    Mesh::Mesh(const std::filesystem::path& filename)
         : polygons_{}
     {
         tinyobj::attrib_t attrib;
@@ -16,7 +16,8 @@ namespace scene
         std::string warn;
         std::string err;
         bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials,
-                                    &warn, &err, filename.c_str());
+                                    &warn, &err, filename.c_str(),
+                                    filename.parent_path().c_str());
         if (!err.empty())
             std::cerr << err << '\n';
 

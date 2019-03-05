@@ -1,5 +1,7 @@
 #pragma once
 
+#include <filesystem>
+
 #include <boost/flyweight.hpp>
 #include <boost/flyweight/key_value.hpp>
 
@@ -20,7 +22,8 @@ namespace scene
 
         /** \name Ctors and dtors.
          * \{ */
-        Object(const pos_t& position, const std::string& mesh_path) noexcept;
+        Object(const pos_t& position,
+               const std::filesystem::path& mesh_path) noexcept;
         ~Object() = default;
         Object(const Object&) = default;
         Object(Object&&) = default;

@@ -12,7 +12,7 @@
     },
     "objects": [
         {
-            "mesh": "samples/meshes/sphere.obj",
+            "mesh": "sphere.obj",
             "position": [0, 0, 0]
         }
     ],

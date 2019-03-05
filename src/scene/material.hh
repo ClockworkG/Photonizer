@@ -8,9 +8,9 @@ namespace scene
     {
         Material() = default;
         ~Material() = default;
-        Material(const Material&) noexcept = default;
+        Material(const Material&) = delete;
         Material(Material&&) noexcept = default;
-        Material& operator=(const Material&) noexcept = default;
+        Material& operator=(const Material&) = delete;
         Material& operator=(Material&&) noexcept = default;
 
         float transparency;

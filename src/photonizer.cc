@@ -26,6 +26,7 @@ int main(int argc, char **argv)
     ;
 
     std::string scene_file{};
+
     boostopt::options_description hidden{};
     hidden.add_options()
         (

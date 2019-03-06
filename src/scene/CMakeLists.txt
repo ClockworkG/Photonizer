@@ -12,4 +12,5 @@ target_include_directories(libscene PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(libscene PUBLIC Photonizer::Misc
                                       gsl
                                       pthread
+                                      stdc++fs
                                       tinyobjloader)

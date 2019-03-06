@@ -16,5 +16,11 @@
             "position": [0, 0, 0]
         }
     ],
-    "lights": []
+    "lights": [
+        {
+            "kind": "point",
+            "position": [0, 4, 0],
+            "color": [255, 0, 0]
+        }
+    ]
 }

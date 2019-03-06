@@ -5,6 +5,13 @@ int main()
     // `scene` is an `std::shared_ptr<const scene::Scene>`
     auto the_scene = scene::load_scene("my_scene.json");
 
+    // Iterate over light sources. No need to take by reference as lights
+    // are shared pointers.
+    for (auto light_ptr : the_scene->lights())
+    {
+        // ...
+    }
+
     // These loops should be used in the ray casting loop in order to
     // find the intersection with the casted ray.
     for (const auto& obj : *the_scene)

@@ -2,8 +2,11 @@
 
 #include <cstdlib>
 #include <experimental/filesystem>
+#include <iostream>
 #include <map>
 #include <string>
+
+#include "light-factory.hh"
 
 namespace ptree = boost::property_tree;
 
@@ -11,9 +14,10 @@ namespace scene::detail
 {
     namespace
     {
-        Vector3f vector_from_ptree(const boost::property_tree::ptree& pt)
+        template <typename Compound>
+        Compound compound_from_ptree(const boost::property_tree::ptree& pt)
         {
-            Vector3f result{};
+            Compound result{};
             std::size_t index = 0;
             for ([[maybe_unused]] const auto& [key, value] : pt)
                 result[index++] = value.get<float>("");
@@ -36,9 +40,9 @@ namespace scene::detail
     void SceneBuilder::set_camera(const ptree::ptree& pt)
     {
         Camera c{};
-        c.position = vector_from_ptree(pt.get_child("position"));
-        c.forward = vector_from_ptree(pt.get_child("forward"));
-        c.up = vector_from_ptree(pt.get_child("up"));
+        c.position = compound_from_ptree<Vector3f>(pt.get_child("position"));
+        c.forward = compound_from_ptree<Vector3f>(pt.get_child("forward"));
+        c.up = compound_from_ptree<Vector3f>(pt.get_child("up"));
         c.fov_x = pt.get<float>("fov_x");
         c.fov_y = pt.get<float>("fov_y");
         c.z_min = pt.get<float>("z_min");
@@ -71,7 +75,23 @@ namespace scene::detail
 
     void SceneBuilder::set_lights(const ptree::ptree& pt)
     {
-        (void)pt;
+        LightFactory factory{};
+
+        for (const auto& [key, value] : pt)
+        {
+            factory.position = compound_from_ptree<Vector3f>(value.get_child("position"));
+            factory.color = compound_from_ptree<Color>(value.get_child("color"));
+            factory.color.normalize();
+            auto kind = value.get<std::string>("kind");
+
+            if (kind == "point")
+                product_->lights_.push_back(factory());
+            else
+            {
+                std::cerr << "WARNING: unknown kind: " << kind << '\n';
+                continue;
+            }
+        }
     }
 
 } // namespace scene::detail

@@ -6,6 +6,7 @@
 
 #include <gsl/gsl-lite.hpp>
 
+#include "abstract-light.hh"
 #include "camera.hh"
 #include "object.hh"
 
@@ -23,7 +24,9 @@ namespace scene
 
         using width_t = unsigned short;
         using height_t = unsigned short;
-        using objects_t = std::vector<Object>;
+        using objects_t = std::list<Object>;
+        using light_ptr_t = std::shared_ptr<AbstractLight>;
+        using lights_t = std::list<light_ptr_t>;
 
     public:
         /** \name Iterating
@@ -47,6 +50,9 @@ namespace scene
         const_iterator end() const;
         /** \} */
 
+        /// Access lights in the scene.
+        const lights_t& lights() const noexcept;
+
         /// Access the camera of the scene.
         const Camera& get_camera() const noexcept;
 
@@ -59,6 +65,8 @@ namespace scene
         std::string name_;
         /// All the objects in the scene.
         objects_t   objects_;
+        /// All lights in the scene.
+        lights_t    lights_;
         /// Camera used to render.
         Camera      camera_;
     };
@@ -71,6 +79,11 @@ namespace scene
     inline Scene::const_iterator Scene::end() const
     {
         return std::cend(objects_);
+    }
+
+    inline auto Scene::lights() const noexcept -> const lights_t&
+    {
+        return lights_;
     }
 
     inline const Camera& Scene::get_camera() const noexcept

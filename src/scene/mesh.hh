@@ -1,6 +1,6 @@
 #pragma once
 
-#include <filesystem>
+#include <experimental/filesystem>
 #include <list>
 #include <vector>
 
@@ -26,7 +26,7 @@ namespace scene
 
         /** \name Ctors & dtors.
          * \{ */
-        Mesh(const std::filesystem::path& filename);
+        Mesh(const std::experimental::filesystem::path& filename);
         ~Mesh() = default;
         Mesh(const Mesh&) = delete;
         Mesh(Mesh&&) noexcept = default;

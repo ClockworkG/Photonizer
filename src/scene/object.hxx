@@ -6,7 +6,7 @@ namespace scene
 {
     inline
     Object::Object(const pos_t& position,
-                   const std::filesystem::path& mesh_path)
+                   const std::experimental::filesystem::path& mesh_path)
     noexcept
         : position_(position)
         , mesh_{mesh_path}

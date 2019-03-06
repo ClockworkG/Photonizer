@@ -6,7 +6,7 @@
 
 namespace scene
 {
-    Mesh::Mesh(const std::filesystem::path& filename)
+    Mesh::Mesh(const std::experimental::filesystem::path& filename)
         : polygons_{}
     {
         tinyobj::attrib_t attrib;

@@ -1,7 +1,7 @@
 #include "scene-builder.hh"
 
 #include <cstdlib>
-#include <filesystem>
+#include <experimental/filesystem>
 #include <map>
 #include <string>
 
@@ -49,17 +49,17 @@ namespace scene::detail
     void SceneBuilder::set_objects(const ptree::ptree& pt)
     {
         auto raw_meshes_base_path = getenv("PHOTONIZER_RESOURCES");
-        std::filesystem::path meshes_base_path{};
+        std::experimental::filesystem::path meshes_base_path{};
 
         if (raw_meshes_base_path != NULL)
-            meshes_base_path = std::filesystem::path{raw_meshes_base_path};
+            meshes_base_path = std::experimental::filesystem::path{raw_meshes_base_path};
         else
-            meshes_base_path = std::filesystem::current_path();
+            meshes_base_path = std::experimental::filesystem::current_path();
 
         for (const auto& [key, value] : pt)
         {
             auto position = vector_from_ptree(value.get_child("position"));
-            auto mesh_path = std::filesystem::path(
+            auto mesh_path = std::experimental::filesystem::path(
                 value.get<std::string>("mesh")
             );
             if (mesh_path.is_relative())

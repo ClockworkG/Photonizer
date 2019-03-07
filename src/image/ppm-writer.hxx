@@ -18,7 +18,12 @@ namespace image
         auto print_color = [&os, &image](auto x, auto y, char trailing = ' ')
         {
             auto color = image[{x, y}];
-            os << color.r << ' ' << color.g << ' ' << color.b << trailing;
+            os << static_cast<unsigned int>(color.r)
+               << ' '
+               << static_cast<unsigned int>(color.g)
+               << ' '
+               << static_cast<unsigned int>(color.b)
+               << trailing;
         };
         for (image_t::height_t x = 0; x < image.get_height(); x++)
         {

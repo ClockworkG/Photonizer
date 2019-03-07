@@ -5,6 +5,8 @@
 #include <ostream>
 #include <stdexcept>
 
+#include <boost/container_hash/hash.hpp>
+
 struct Color
 {
     float r;
@@ -16,6 +18,8 @@ struct Color
     Color& operator+=(const Color& b);
     Color& operator-=(const Color& b);
     Color& operator*=(const Color& b);
+
+    float& operator[](std::size_t index);
 
     template <typename T>
     Color& operator*=(const T& b);

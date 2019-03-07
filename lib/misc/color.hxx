@@ -9,6 +9,22 @@ Color::Color(float red, float green, float blue)
     , b(blue)
 {}
 
+inline
+float& Color::operator[](std::size_t index)
+{
+    switch (index)
+    {
+    case 0:
+        return r;
+    case 1:
+        return g;
+    case 2:
+        return b;
+    default:
+        throw std::out_of_range("Index out of bounds");
+    }
+}
+
 inline Color& Color::operator+=(const Color& b)
 {
     this->r += b.r;

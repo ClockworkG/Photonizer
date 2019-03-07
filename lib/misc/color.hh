@@ -5,6 +5,8 @@
 #include <ostream>
 #include <stdexcept>
 
+#include <boost/container_hash/hash.hpp>
+
 struct Color
 {
     float r;

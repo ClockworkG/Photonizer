@@ -62,7 +62,7 @@ namespace scene::detail
 
         for (const auto& [key, value] : pt)
         {
-            auto position = vector_from_ptree(value.get_child("position"));
+            auto position = compound_from_ptree<Vector3f>(value.get_child("position"));
             auto mesh_path = std::experimental::filesystem::path(
                 value.get<std::string>("mesh")
             );

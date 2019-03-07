@@ -90,11 +90,11 @@ namespace raytracer
     bool intersect(scene::Scene scene, Rayf ray)
     {
         float t;
-        for (auto object : scene)
+        for (const auto& object : scene)
         {
             // FIXME: check box intersection
 
-            for (auto polygon : object.get_mesh())
+            for (const auto polygon& : object.get_mesh())
             {
                 //if (triangle_intersect(polygon, ray, t))
                 if (moller_trumbore(polygon, ray, t))

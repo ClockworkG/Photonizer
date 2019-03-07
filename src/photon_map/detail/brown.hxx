@@ -1,5 +1,8 @@
 #pragma once
 
+#include <iostream>
+#include <iomanip>
+
 #include "brown.hh"
 
 namespace photon::detail
@@ -15,7 +18,7 @@ namespace photon::detail
     template <typename V>
     template <typename It>
     BrownAlgorithm<V>::BrownAlgorithm(It begin, It end)
-        : values_(std::distance(begin, end))
+        : values_(std::distance(begin, end) + 1)
         , comparators_{}
         , initial_indices_{}
         , cardinality_(point_traits<V>::dimension)
@@ -52,12 +55,40 @@ namespace photon::detail
             if (i == axis)
                 continue;
 
-            std::stable_partition(std::begin(initial_indices_[i]) + begin,
-                                  std::begin(initial_indices_[i]) + end,
-                                  [comp, values, median](auto x)
-                                  {
-                                      return comp(values[x], median);
-                                  });
+            /*
+             * XXX: this all part seems ugly af. It needs a better handling.
+             * A try was given with the algorithm `std::stable_partition`.
+             * However, this does not seem to work at all. The performance
+             * might get heavy here. In case of a slow tree construction,
+             * attention should be given to this small part of code.
+             */
+            std::partition(std::begin(initial_indices_[i]) + begin,
+                           std::begin(initial_indices_[i]) + end,
+                           [comp, values, median](auto x)
+                           {
+                           return comp(values[x], median);
+                           });
+            if (initial_indices_[i][middle] != initial_indices_[axis][middle])
+            {
+                std::iter_swap(std::begin(initial_indices_[i]) + middle,
+                               std::find(initial_indices_[i].begin() + begin,
+                                         initial_indices_[i].begin() + end,
+                                         initial_indices_[axis][middle]));
+            }
+            auto& current_comp = comparators_[i];
+            std::sort(std::begin(initial_indices_[i]) + begin,
+                      std::begin(initial_indices_[i]) + middle,
+                      [current_comp, values](auto a, auto b)
+                      {
+                          return current_comp(values[a], values[b]);
+                      });
+
+            std::sort(std::begin(initial_indices_[i]) + middle + 1,
+                      std::begin(initial_indices_[i]) + end,
+                      [current_comp, values](auto a, auto b)
+                      {
+                          return current_comp(values[a], values[b]);
+                      });
         }
 
         tree[pos] = std::move(median);

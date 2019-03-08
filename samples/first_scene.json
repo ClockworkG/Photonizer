@@ -3,17 +3,17 @@
     "height": 512,
     "width": 512,
     "camera": {
-        "position": [0.0, 0.0, -5.0],
+        "position": [0.0, 0.0, 0.0],
         "forward": [0.0, 0.0, 1.0],
         "up": [0.0, 1.0, 0.0],
         "fov_x": 70,
         "fov_y": 70,
-        "z_min": 0.5
+        "z_min": 1
     },
     "objects": [
         {
             "mesh": "sphere.obj",
-            "position": [0, 0, 0]
+            "position": [0, 0, 5]
         }
     ],
     "lights": [

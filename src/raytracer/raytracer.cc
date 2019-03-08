@@ -85,7 +85,7 @@ namespace raytracer
                 float screen_x = (2.0 * (x + 0.5) / img_width - 1.0) * coef_x;
                 float screen_y = (1.0 - 2.0 * (y + 0.5) / img_height) * coef_y;
                 // FIXME: why -1 on z ?
-                Vector3f target_pos = Vector3f(screen_x, screen_y, z_min);
+                Vector3f target_pos = Vector3f(screen_x, screen_y, -z_min);
 
 
                 // Compute ray to cast from camera

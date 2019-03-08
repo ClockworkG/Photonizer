@@ -9,8 +9,8 @@ namespace scene
         /** \name Ctors & dtor.
          * \{ */
         PointLight() = default;
-        PointLight(const Vector3f& position_init, const Color& color_init)
-            noexcept;
+        PointLight(const Vector3f& position_init,
+                   const image::RGBN& color_init) noexcept;
         virtual ~PointLight() = default;
         PointLight(const PointLight&) = delete;
         PointLight(PointLight&&) = delete;
@@ -20,7 +20,7 @@ namespace scene
     };
 
     inline PointLight::PointLight(const Vector3f& position_init,
-                                  const Color& color_init) noexcept
+                                  const image::RGBN& color_init) noexcept
         : AbstractLight(position_init, color_init)
     {}
 } // namespace scene

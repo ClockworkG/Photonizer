@@ -4,6 +4,8 @@
 
 namespace image
 {
+    constexpr static inline auto epsilon = 0.0000001f;
+
     ///////////////////////////////////////////////////////////////////////////
     // RGB
     ///////////////////////////////////////////////////////////////////////////
@@ -247,7 +249,9 @@ namespace image
     inline
     bool operator==(const RGBN& lhs, const RGBN& rhs) noexcept
     {
-        return lhs.r && rhs.r && lhs.g == rhs.g && lhs.b == rhs.b;
+        return (lhs.r < rhs.r + epsilon && lhs.r > rhs.r - epsilon
+                && lhs.g < rhs.g + epsilon && lhs.g > rhs.g - epsilon
+                && lhs.b < rhs.b + epsilon && lhs.b > rhs.b - epsilon);
     }
 
     inline

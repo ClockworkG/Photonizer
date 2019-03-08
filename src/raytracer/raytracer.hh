@@ -5,5 +5,5 @@
 
 namespace raytracer
 {
-    const image::ImageRGB& render(scene::Scene scene);
+    const image::ImageRGB& render(const scene::Scene& scene);
 }

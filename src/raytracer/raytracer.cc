@@ -6,6 +6,7 @@
 #include "vector3.hh"
 #include "ray.hh"
 #include "color.hh"
+#include "rgb.hh"
 
 namespace raytracer
 {
@@ -94,7 +95,7 @@ namespace raytracer
         {
             // FIXME: check box intersection
 
-            for (const auto polygon& : object.get_mesh())
+            for (const auto& polygon : object.get_mesh())
             {
                 //if (triangle_intersect(polygon, ray, t))
                 if (moller_trumbore(polygon, ray, t))
@@ -185,9 +186,9 @@ namespace raytracer
                 auto pixel_pos = std::pair(x, y);
                 // Test ray intersection
                 if (intersect(scene, ray))
-                    img[pixel_pos] = Color(255*1.0f, 255*1.0f, 255*1.0f); //FIXME
+                    img[pixel_pos] = image::RGBN(1.0f, 1.0f, 1.0f); //FIXME
                 else
-                    img[pixel_pos] = Color(0.0f, 0.0f, 0.0f);
+                    img[pixel_pos] = image::RGBN(0.0f, 0.0f, 0.0f);
             }
         }
         return img;

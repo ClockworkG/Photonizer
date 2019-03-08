@@ -80,8 +80,7 @@ namespace scene::detail
         for (const auto& [key, value] : pt)
         {
             factory.position = compound_from_ptree<Vector3f>(value.get_child("position"));
-            factory.color = compound_from_ptree<Color>(value.get_child("color"));
-            factory.color.normalize();
+            factory.color = compound_from_ptree<image::RGB>(value.get_child("color"));
             auto kind = value.get<std::string>("kind");
 
             if (kind == "point")

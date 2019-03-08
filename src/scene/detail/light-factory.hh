@@ -3,8 +3,8 @@
 #include <memory>
 
 #include "abstract-light.hh"
-#include "color.hh"
 #include "point-light.hh"
+#include "rgb.hh"
 #include "vector3.hh"
 
 namespace scene::detail
@@ -26,8 +26,8 @@ namespace scene::detail
 
         product_t operator()();
 
-        Color color;
-        Vector3f position;
+        image::RGB  color;
+        Vector3f    position;
     };
 } // namespace scene::detail
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "color.hh"
+#include "rgb.hh"
 #include "vector3.hh"
 
 namespace scene
@@ -10,8 +10,8 @@ namespace scene
         /** \name Ctors & dtor.
          * \{ */
         AbstractLight() = default;
-        AbstractLight(const Vector3f& position_init, const Color& color_init)
-            noexcept;
+        AbstractLight(const Vector3f& position_init,
+                      const image::RGBN& color_init) noexcept;
         virtual ~AbstractLight() = default;
         AbstractLight(const AbstractLight&) = delete;
         AbstractLight(AbstractLight&&) = delete;
@@ -22,11 +22,11 @@ namespace scene
         /// Position of the light.
         Vector3f position;
         /// Diffuse color.
-        Color color;
+        image::RGBN color;
     };
 
     inline AbstractLight::AbstractLight(const Vector3f& position_init,
-                                        const Color& color_init) noexcept
+                                        const image::RGBN& color_init) noexcept
         : position(position_init)
         , color(color_init)
     {}

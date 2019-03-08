@@ -1,6 +1,6 @@
 #pragma once
 
-#include "color.hh"
+#include "rgb.hh"
 
 namespace scene
 {
@@ -13,11 +13,11 @@ namespace scene
         Material& operator=(const Material&) = delete;
         Material& operator=(Material&&) noexcept = default;
 
-        float transparency;
-        float specular_exponent;
-        Color ambient;
-        Color diffuse;
-        Color specular;
+        float       transparency;
+        float       specular_exponent;
+        image::RGBN ambient;
+        image::RGBN diffuse;
+        image::RGBN specular;
     };
 
     bool operator==(const Material& lhs, const Material& rhs);

@@ -3,8 +3,8 @@ if (NOT CMAKE_BUILD_TYPE)
     message(WARNING "Not build type specified. Falling back to DEBUG.")
 endif()
 
-add_subdirectory(scene)
 add_subdirectory(image)
+add_subdirectory(scene)
 
 add_executable(photonizer "photonizer.cc")
 target_link_libraries(photonizer

@@ -7,6 +7,7 @@
 #include <tiny_obj_loader.h>
 
 #include "material.hh"
+#include "rgb.hh"
 #include "vector3.hh"
 
 namespace scene
@@ -29,9 +30,9 @@ namespace scene
         {
             mat.dissolve,
             mat.shininess,
-            Color(mat.ambient[0],  mat.ambient[1],  mat.ambient[2]),
-            Color(mat.diffuse[0],  mat.diffuse[1],  mat.diffuse[2]),
-            Color(mat.specular[0], mat.specular[1], mat.specular[2])
+            image::RGBN(mat.ambient[0],  mat.ambient[1],  mat.ambient[2]),
+            image::RGBN(mat.diffuse[0],  mat.diffuse[1],  mat.diffuse[2]),
+            image::RGBN(mat.specular[0], mat.specular[1], mat.specular[2])
         };
     }
 

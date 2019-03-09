@@ -44,7 +44,7 @@ namespace raytracer
         float t;
         for (const auto& object : scene)
         {
-            // FIXME: check box intersection
+            // FIXME: check bounding volume
 
             for (const auto& polygon : object.get_mesh())
             {
@@ -53,7 +53,7 @@ namespace raytracer
                 Vector3f b_v = polygon[1].first + object.get_position();
                 Vector3f c_v = polygon[2].first + object.get_position();
 
-                if (moller_trumbore(a_v, b_v, c_v, ray, t))
+                if (moller_trumbore(a_v, b_v, c_v, ray, t) && t > 0)
                     return true;
             }
         }
@@ -84,8 +84,7 @@ namespace raytracer
                 // Screen space coordinates are in range [-1, 1]
                 float screen_x = (2.0 * (x + 0.5) / img_width - 1.0) * coef_x;
                 float screen_y = (1.0 - 2.0 * (y + 0.5) / img_height) * coef_y;
-                // FIXME: why -1 on z ?
-                Vector3f target_pos = Vector3f(screen_x, screen_y, -z_min);
+                Vector3f target_pos = Vector3f(screen_x, screen_y, z_min);
 
 
                 // Compute ray to cast from camera

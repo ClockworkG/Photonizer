@@ -18,7 +18,7 @@ namespace photon::detail
     template <typename V>
     template <typename It>
     BrownAlgorithm<V>::BrownAlgorithm(It begin, It end)
-        : values_(std::distance(begin, end) + 1)
+        : values_(std::distance(begin, end))
         , comparators_{}
         , initial_indices_{}
         , cardinality_(point_traits<V>::dimension)
@@ -31,7 +31,7 @@ namespace photon::detail
     template <typename V>
     auto BrownAlgorithm<V>::operator()() -> data_t
     {
-        data_t tree(values_.size());
+        data_t tree(values_.size() + 1);
         build_initial_indices();
         split_and_build(tree, 0, values_.size(), 1);
         return tree;
@@ -44,6 +44,24 @@ namespace photon::detail
     {
         if (begin >= end)
             return;
+        else if (end - begin == 1)
+        {
+            tree[pos] = values_[initial_indices_[axis][begin]];
+            return;
+        }
+        else if (end - begin == 2)
+        {
+            tree[pos] = values_[initial_indices_[axis][begin]];
+            tree[2 * pos] = values_[initial_indices_[axis][begin + 1]];
+            return;
+        }
+        else if (end - begin == 3)
+        {
+            tree[pos] = values_[initial_indices_[axis][begin + 1]];
+            tree[2 * pos] = values_[initial_indices_[axis][begin]];
+            tree[2 * pos + 1] = values_[initial_indices_[axis][begin + 2]];
+            return;
+        }
 
         auto middle = begin + (end - begin) / 2;
         auto& values = values_;
@@ -55,43 +73,29 @@ namespace photon::detail
             if (i == axis)
                 continue;
 
-            /*
-             * XXX: this all part seems ugly af. It needs a better handling.
-             * A try was given with the algorithm `std::stable_partition`.
-             * However, this does not seem to work at all. The performance
-             * might get heavy here. In case of a slow tree construction,
-             * attention should be given to this small part of code.
-             */
-            std::partition(std::begin(initial_indices_[i]) + begin,
-                           std::begin(initial_indices_[i]) + end,
-                           [comp, values, median](auto x)
-                           {
-                           return comp(values[x], median);
-                           });
-            if (initial_indices_[i][middle] != initial_indices_[axis][middle])
-            {
-                std::iter_swap(std::begin(initial_indices_[i]) + middle,
-                               std::find(initial_indices_[i].begin() + begin,
-                                         initial_indices_[i].begin() + end,
-                                         initial_indices_[axis][middle]));
-            }
-            auto& current_comp = comparators_[i];
-            std::sort(std::begin(initial_indices_[i]) + begin,
-                      std::begin(initial_indices_[i]) + middle,
-                      [current_comp, values](auto a, auto b)
-                      {
-                          return current_comp(values[a], values[b]);
-                      });
+            indexes_t newer(end - begin);
+            std::size_t lower = 0;
+            std::size_t upper = middle - begin + 1;
 
-            std::sort(std::begin(initial_indices_[i]) + middle + 1,
-                      std::begin(initial_indices_[i]) + end,
-                      [current_comp, values](auto a, auto b)
-                      {
-                          return current_comp(values[a], values[b]);
-                      });
+            newer[middle - begin] = initial_indices_[axis][middle];
+            for (std::size_t j = begin; j < end; j++)
+            {
+                auto val = initial_indices_[i][j];
+                if (val == initial_indices_[axis][middle])
+                    continue;
+
+                if (comp(values[val], median))
+                    newer[lower++] = val;
+                else
+                    newer[upper++] = val;
+            }
+
+            std::copy(newer.begin(), newer.end(),
+                      std::begin(initial_indices_[i]) + begin);
+            newer.clear();
         }
 
-        tree[pos] = std::move(median);
+        tree[pos] = median;
 
         split_and_build(tree, begin, middle, 2 * pos,
                         (axis + 1) % cardinality_);

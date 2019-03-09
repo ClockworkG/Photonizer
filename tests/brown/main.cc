@@ -25,24 +25,13 @@ struct Photon
 
 int main()
 {
-    std::vector points =
+    std::vector<Photon> points{};
+    for (std::size_t i = 0; i < 100; i++)
     {
-        Photon{Vector3f{2, 3, 3}},
-       Photon{Vector3f{5, 4, 2}},
-       Photon{Vector3f{9, 6, 7}},
-       Photon{Vector3f{4, 7, 9}},
-       Photon{Vector3f{8, 1, 5}},
-       Photon{Vector3f{7, 2, 6}},
-       Photon{Vector3f{9, 4, 1}},
-       Photon{Vector3f{8, 4, 2}},
-       Photon{Vector3f{9, 7, 8}},
-       Photon{Vector3f{6, 3, 1}},
-       Photon{Vector3f{3, 4, 5}},
-       Photon{Vector3f{1, 6, 8}},
-       Photon{Vector3f{9, 5, 3}},
-       Photon{Vector3f{2, 1, 3}},
-       Photon{Vector3f{8, 7, 6}}
-    };
+        points.emplace_back(Vector3f{static_cast<float>(std::rand() % 500 - 500),
+                                     static_cast<float>(std::rand() % 500 - 500),
+                                     static_cast<float>(std::rand() % 500 - 500)});
+    }
 
     [[maybe_unused]]
     auto tree = ph::KDTree<Photon>(points.begin(), points.end());
@@ -52,14 +41,14 @@ int main()
     {
         std::size_t next = 2 * i;
 
-        if (next < data.size())
+        if (next < data.size() && data[next])
         {
             std::cout << '"' << static_cast<Vector3f>(*data[i]) << '"'
                       << " -> "
                       << '"' << static_cast<Vector3f>(*data[next]) << '"'
                       << '\n';
 
-            if (next + 1 < data.size())
+            if (next + 1 < data.size() && data[next + 1])
             {
                 std::cout << '"' << static_cast<Vector3f>(*data[i]) << '"'
                           << " -> "

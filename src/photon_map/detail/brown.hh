@@ -41,6 +41,8 @@ namespace photon::detail
         std::vector<comp_t>    comparators_;
         std::vector<indexes_t> initial_indices_;
         const index_t          cardinality_;
+
+        bool thread_ = false;
     };
 
     template <typename ValueType, typename Iterator>

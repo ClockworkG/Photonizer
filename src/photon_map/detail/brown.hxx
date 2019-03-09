@@ -1,7 +1,9 @@
 #pragma once
 
+#include <functional>
 #include <iostream>
 #include <iomanip>
+#include <thread>
 
 #include "brown.hh"
 
@@ -31,7 +33,7 @@ namespace photon::detail
     template <typename V>
     auto BrownAlgorithm<V>::operator()() -> data_t
     {
-        data_t tree(values_.size() + 1);
+        data_t tree(values_.size() * 2);
         build_initial_indices();
         split_and_build(tree, 0, values_.size(), 1);
         return tree;
@@ -92,15 +94,33 @@ namespace photon::detail
 
             std::copy(newer.begin(), newer.end(),
                       std::begin(initial_indices_[i]) + begin);
-            newer.clear();
         }
 
         tree[pos] = median;
 
-        split_and_build(tree, begin, middle, 2 * pos,
-                        (axis + 1) % cardinality_);
+        auto left_recursion = std::bind(&BrownAlgorithm<V>::split_and_build,
+                                        this,
+                                        std::placeholders::_1,
+                                        begin, middle, 2 * pos,
+                                        (axis + 1) % cardinality_);
+
+        std::thread* thr = nullptr;
+        if (thread_)
+        {
+            thread_ = false;
+            thr = new std::thread(left_recursion, std::ref(tree));
+        }
+        else
+            left_recursion(std::ref(tree));
+
         split_and_build(tree, middle + 1, end, 2 * pos + 1,
                         (axis + 1) % cardinality_);
+
+        if (thr != nullptr)
+        {
+            thr->join();
+            delete thr;
+        }
     }
 
     template <typename V>

@@ -1,6 +1,7 @@
 #include "raytracer.hh"
 
 #include <cmath>
+#include <optional>
 
 #include "object.hh"
 #include "vector3.hh"
@@ -12,15 +13,17 @@ namespace raytracer
 {
     #define epsilon 0.000001
 
-    bool moller_trumbore(const Vector3f& a_v, const Vector3f& b_v, const Vector3f& c_v,
-                         const Rayf& ray, float& t)
+    bool moller_trumbore(const Vector3f& a_v,
+                               const Vector3f& b_v,
+                               const Vector3f& c_v,
+                               const Rayf& ray, float& t)
     {
         Vector3f ab_v = b_v - a_v;
         Vector3f ac_v = c_v - a_v;
         Vector3f p_v = ray.dir ^ ac_v;
         float det = ab_v * p_v;
 
-        if (std::abs(det) < epsilon)
+        if (std::abs(det) < epsilon) // if ray and surface are parallel
             return false;
 
         float inv_det = 1.0 / det;
@@ -39,9 +42,11 @@ namespace raytracer
         return true;
     }
 
-    bool intersect(const scene::Scene& scene, const Rayf& ray)
+    bool intersect(const scene::Scene& scene, const Rayf& ray,
+                         scene::Polygon& intersect_polygon)
     {
         float t;
+        float t_min = -1;
         for (const auto& object : scene)
         {
             // FIXME: check bounding volume
@@ -53,11 +58,27 @@ namespace raytracer
                 Vector3f b_v = polygon[1].first + object.get_position();
                 Vector3f c_v = polygon[2].first + object.get_position();
 
-                if (moller_trumbore(a_v, b_v, c_v, ray, t) && t > 0)
-                    return true;
+                if (moller_trumbore(a_v, b_v, c_v, ray, t)
+                    && t >= 0 && (t < t_min || t_min == -1))
+                {
+                    t_min = t;
+                    intersect_polygon = polygon;
+                }
             }
         }
-        return false;
+        return t_min != -1;
+    }
+
+
+    image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray)
+    {
+        scene::Polygon intersect_polygon;
+
+        // Test ray intersection
+        if (intersect(scene, ray, intersect_polygon))
+            return image::RGBN(1.0f, 1.0f, 1.0f);
+        else
+            return image::RGBN(0.0f, 0.0f, 0.0f);
     }
 
     const image::ImageRGB& render(const scene::Scene& scene)
@@ -93,11 +114,7 @@ namespace raytracer
                 Ray ray = Ray(origin, target_pos.normalize());
 
                 auto pixel_pos = std::pair(x, y);
-                // Test ray intersection
-                if (intersect(scene, ray))
-                    img[pixel_pos] = image::RGBN(1.0f, 1.0f, 1.0f); //FIXME
-                else
-                    img[pixel_pos] = image::RGBN(0.0f, 0.0f, 0.0f);
+                img[pixel_pos] = ray_cast(scene, ray);
             }
         }
         return img;

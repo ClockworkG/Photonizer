@@ -6,7 +6,6 @@
 #include "object.hh"
 #include "vector3.hh"
 #include "ray.hh"
-#include "color.hh"
 #include "rgb.hh"
 
 namespace raytracer
@@ -116,10 +115,9 @@ namespace raytracer
                 coef = 0;
             if (coef > 1)
                 coef = 1;
-            Color color = scene.lights().front()->color * coef;
+            image::RGBN color = scene.lights().front()->color * coef;
             std::cerr << "color = " << color << std::endl;
-            image::RGBN rgbn(color.r, color.g, color.b);
-            return rgbn;
+            return color;
         }
         else
             return image::RGBN(0.0f, 0.0f, 0.0f);

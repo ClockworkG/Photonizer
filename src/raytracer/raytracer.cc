@@ -12,11 +12,18 @@ namespace raytracer
 {
     #define epsilon 0.000001
 
-    bool moller_trumbore(const Vector3f& a_v,
-                               const Vector3f& b_v,
-                               const Vector3f& c_v,
-                               const Rayf& ray,
-                               float& t, float& u_bary_res, float& v_bary_res)
+
+    struct Intersection
+    {
+        bool intersected = false;
+        float t;
+        float u_bary;
+        float v_bary;
+        scene::Polygon polygon;
+    };
+
+    void moller_trumbore(const Vector3f& a_v, const Vector3f& b_v, const Vector3f& c_v,
+                         const Rayf& ray, Intersection& isec)
     {
         Vector3f ab_v = b_v - a_v;
         Vector3f ac_v = c_v - a_v;
@@ -24,31 +31,29 @@ namespace raytracer
         float det = ab_v * p_v;
 
         if (std::abs(det) < epsilon) // if ray and surface are parallel
-            return false;
+            return;
 
         float inv_det = 1.0 / det;
         Vector3f t_v = ray.o - a_v;
-        float u_bary = t_v * p_v * inv_det;
-        if (u_bary < 0.0 || u_bary > 1.0)
-            return false;
+        isec.u_bary = t_v * p_v * inv_det;
+        if (isec.u_bary < 0.0 || isec.u_bary > 1.0)
+            return;
 
         Vector3f q_v = t_v ^ ab_v;
-        float v_bary = ray.dir * q_v * inv_det;
-        if (v_bary < 0.0 || u_bary + v_bary > 1.0)
-            return false;
+        isec.v_bary = ray.dir * q_v * inv_det;
+        if (isec.v_bary < 0.0 || isec.u_bary + isec.v_bary > 1.0)
+            return;
 
-        t = ac_v * q_v * inv_det;
-        u_bary_res = u_bary;
-        v_bary_res = v_bary;
-
-        return true;
+        isec.t = ac_v * q_v * inv_det;
+        isec.intersected = true;
     }
 
-    bool intersect(const scene::Scene& scene, const Rayf& ray,
-                         scene::Polygon& intersect_polygon, float& u_bary, float& v_bary)
+    void intersect(const scene::Scene& scene, const Rayf& ray,
+                   Intersection& nearest_isec)
     {
-        float t;
-        float t_min = -1;
+        // FIXME: isec.polygon could be a pointer or iterator to avoid initialization
+        Intersection isec;
+
         for (const auto& object : scene)
         {
             // FIXME: check bounding volume
@@ -60,34 +65,38 @@ namespace raytracer
                 Vector3f b_v = polygon[1].first + object.get_position();
                 Vector3f c_v = polygon[2].first + object.get_position();
 
-                if (moller_trumbore(a_v, b_v, c_v, ray, t, u_bary, v_bary)
-                    && t >= 0 && (t < t_min || t_min == -1))
+                moller_trumbore(a_v, b_v, c_v, ray, isec);
+                if (isec.intersected && isec.t >= 0
+                    && (!nearest_isec.intersected || isec.t < nearest_isec.t))
                 {
-
-                    t_min = t;
-                    intersect_polygon = polygon;
+                    nearest_isec = isec;
+                    nearest_isec.polygon = polygon;
                 }
             }
         }
-        return t_min != -1;
     }
 
 
     image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray)
     {
-        scene::Polygon intersect_polygon;
-        float u_bary;
-        float v_bary;
+        Intersection nearest_isec;
 
         // Test ray intersection
-        if (intersect(scene, ray, intersect_polygon, u_bary, v_bary))
+        intersect(scene, ray, nearest_isec);
+        if (nearest_isec.intersected)
         {
             //const auto& material = intersect_polygon.get_material();
-            const auto& n0 = intersect_polygon[0].second;
-            const auto& n1 = intersect_polygon[1].second;
-            const auto& n2 = intersect_polygon[2].second;
+            const auto& n0 = nearest_isec.polygon[0].second;
+            const auto& n1 = nearest_isec.polygon[1].second;
+            const auto& n2 = nearest_isec.polygon[2].second;
 
-            auto normal = n0 * (1.0f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
+            auto normal = n0 * (1.0f - nearest_isec.u_bary - nearest_isec.v_bary)
+                          + n1 * nearest_isec.u_bary
+                          + n2 * nearest_isec.v_bary;
+
+            // FIXME: should come from material
+            //float albedo = 0.18;
+            //Vector3f L = 
             float color = normal * Vector3f(-ray.dir.x, -ray.dir.y, -ray.dir.z);
             if (color < 0)
                 color = 0;

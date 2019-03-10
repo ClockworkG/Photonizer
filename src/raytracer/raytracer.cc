@@ -1,7 +1,6 @@
 #include "raytracer.hh"
 
 #include <cmath>
-#include <iostream>
 
 #include "object.hh"
 #include "vector3.hh"
@@ -16,7 +15,8 @@ namespace raytracer
     bool moller_trumbore(const Vector3f& a_v,
                                const Vector3f& b_v,
                                const Vector3f& c_v,
-                               const Rayf& ray, float& t)
+                               const Rayf& ray,
+                               float& t, float& u_bary_res, float& v_bary_res)
     {
         Vector3f ab_v = b_v - a_v;
         Vector3f ac_v = c_v - a_v;
@@ -38,12 +38,14 @@ namespace raytracer
             return false;
 
         t = ac_v * q_v * inv_det;
+        u_bary_res = u_bary;
+        v_bary_res = v_bary;
 
         return true;
     }
 
     bool intersect(const scene::Scene& scene, const Rayf& ray,
-                         scene::Polygon& intersect_polygon)
+                         scene::Polygon& intersect_polygon, float& u_bary, float& v_bary)
     {
         float t;
         float t_min = -1;
@@ -58,9 +60,10 @@ namespace raytracer
                 Vector3f b_v = polygon[1].first + object.get_position();
                 Vector3f c_v = polygon[2].first + object.get_position();
 
-                if (moller_trumbore(a_v, b_v, c_v, ray, t)
+                if (moller_trumbore(a_v, b_v, c_v, ray, t, u_bary, v_bary)
                     && t >= 0 && (t < t_min || t_min == -1))
                 {
+
                     t_min = t;
                     intersect_polygon = polygon;
                 }
@@ -73,22 +76,23 @@ namespace raytracer
     image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray)
     {
         scene::Polygon intersect_polygon;
+        float u_bary;
+        float v_bary;
 
         // Test ray intersection
-        if (intersect(scene, ray, intersect_polygon))
+        if (intersect(scene, ray, intersect_polygon, u_bary, v_bary))
         {
             //const auto& material = intersect_polygon.get_material();
-            auto normal = (intersect_polygon[1].first - intersect_polygon[0].first)
-                          ^ (intersect_polygon[2].first - intersect_polygon[0].first);
-            normal.normalize();
-            //normal = intersect_polygon[0].second;
+            const auto& n0 = intersect_polygon[0].second;
+            const auto& n1 = intersect_polygon[1].second;
+            const auto& n2 = intersect_polygon[2].second;
+
+            auto normal = n0 * (1.0f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
             float color = normal * Vector3f(-ray.dir.x, -ray.dir.y, -ray.dir.z);
             if (color < 0)
                 color = 0;
-            //color *= 10.0;
             if (color > 1)
                 color = 1;
-            std::cerr << "color = " << color << std::endl;
             image::RGBN rgbn(color, color, color);
             return rgbn;
         }

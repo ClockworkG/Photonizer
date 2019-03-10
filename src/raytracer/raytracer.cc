@@ -1,7 +1,7 @@
 #include "raytracer.hh"
 
 #include <cmath>
-#include <optional>
+#include <iostream>
 
 #include "object.hh"
 #include "vector3.hh"
@@ -76,7 +76,22 @@ namespace raytracer
 
         // Test ray intersection
         if (intersect(scene, ray, intersect_polygon))
-            return image::RGBN(1.0f, 1.0f, 1.0f);
+        {
+            //const auto& material = intersect_polygon.get_material();
+            auto normal = (intersect_polygon[1].first - intersect_polygon[0].first)
+                          ^ (intersect_polygon[2].first - intersect_polygon[0].first);
+            normal.normalize();
+            //normal = intersect_polygon[0].second;
+            float color = normal * Vector3f(-ray.dir.x, -ray.dir.y, -ray.dir.z);
+            if (color < 0)
+                color = 0;
+            //color *= 10.0;
+            if (color > 1)
+                color = 1;
+            std::cerr << "color = " << color << std::endl;
+            image::RGBN rgbn(color, color, color);
+            return rgbn;
+        }
         else
             return image::RGBN(0.0f, 0.0f, 0.0f);
     }

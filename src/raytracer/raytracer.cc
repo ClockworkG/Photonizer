@@ -1,8 +1,8 @@
 #include "raytracer.hh"
 
 #include <cmath>
-#include <iostream>
 
+#include "math.hh"
 #include "object.hh"
 #include "vector3.hh"
 #include "ray.hh"
@@ -89,7 +89,7 @@ namespace raytracer
         intersect(scene, ray, isec);
         if (isec.intersected)
         {
-            //const auto& material = intersect_polygon.get_material();
+            const auto& material = isec.nearest_polygon.get_material();
             const auto& n0 = isec.nearest_polygon[0].second;
             const auto& n1 = isec.nearest_polygon[1].second;
             const auto& n2 = isec.nearest_polygon[2].second;
@@ -107,14 +107,20 @@ namespace raytracer
             Vector3f L = scene.lights().front()->position - P; // direction of light, but reversed
             L.normalize();
 
-            float cos_theta = normal * L;
-            float coef =  intensity * cos_theta * (albedo / M_PI);
-            if (coef < 0)
-                coef = 0;
-            if (coef > 1)
-                coef = 1;
-            image::RGBN color = scene.lights().front()->color * coef;
-            return color;
+            // shadow test
+            Intersection shadow_isec;
+            Ray light_ray = Ray(P + normal * 0.0001f, L);
+            intersect(scene, light_ray, shadow_isec);
+            // FIXME: could be optimized to not test all the objects after the first intersection
+            if (!shadow_isec.intersected)
+            {
+                float cos_theta = normal * L;
+                float coef = intensity * cos_theta * (albedo / M_PI);
+                coef = clamp(coef, 0.0f, 1.0f);
+                return material.ambient + scene.lights().front()->color * coef;
+            }
+            else
+                return material.ambient;
         }
         else
             return image::RGBN(0.0f, 0.0f, 0.0f);

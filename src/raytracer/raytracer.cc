@@ -1,6 +1,7 @@
 #include "raytracer.hh"
 
 #include <cmath>
+#include <iostream>
 
 #include "object.hh"
 #include "vector3.hh"
@@ -95,14 +96,29 @@ namespace raytracer
                           + n2 * nearest_isec.v_bary;
 
             // FIXME: should come from material
-            //float albedo = 0.18;
-            //Vector3f L = 
-            float color = normal * Vector3f(-ray.dir.x, -ray.dir.y, -ray.dir.z);
-            if (color < 0)
-                color = 0;
-            if (color > 1)
-                color = 1;
-            image::RGBN rgbn(color, color, color);
+            float albedo = 0.18f;
+            // FIXME: should come from light
+            float intensity = 15;
+
+            Vector3f P = ray.o + (ray.dir * nearest_isec.t);
+            std::cerr << "P = " << P << std::endl;
+            Vector3f L = P - scene.lights().front()->position;
+            //Vector3f L = Vector3f(0, 0, 0) - scene.lights().front()->position;
+            std::cerr << "L = " << L << std::endl;
+            L.normalize();
+            std::cerr << "Ln = " << L << std::endl;
+
+            float cos_theta = normal * L;
+            std::cerr << "cos theta = " << cos_theta << std::endl;
+            float coef =  intensity * cos_theta * (albedo / M_PI);
+            std::cerr << "coef = " << coef << std::endl;
+            if (coef < 0)
+                coef = 0;
+            if (coef > 1)
+                coef = 1;
+            Color color = scene.lights().front()->color * coef;
+            std::cerr << "color = " << color << std::endl;
+            image::RGBN rgbn(color.r, color.g, color.b);
             return rgbn;
         }
         else

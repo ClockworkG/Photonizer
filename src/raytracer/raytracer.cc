@@ -16,13 +16,16 @@ namespace raytracer
     struct Intersection
     {
         bool intersected = false;
+        float nearest_t;
+        float nearest_u_bary;
+        float nearest_v_bary;
+        scene::Polygon nearest_polygon;
         float t;
         float u_bary;
         float v_bary;
-        scene::Polygon polygon;
     };
 
-    void moller_trumbore(const Vector3f& a_v, const Vector3f& b_v, const Vector3f& c_v,
+    bool moller_trumbore(const Vector3f& a_v, const Vector3f& b_v, const Vector3f& c_v,
                          const Rayf& ray, Intersection& isec)
     {
         Vector3f ab_v = b_v - a_v;
@@ -31,29 +34,26 @@ namespace raytracer
         float det = ab_v * p_v;
 
         if (std::abs(det) < epsilon) // if ray and surface are parallel
-            return;
+            return false;
 
         float inv_det = 1.0 / det;
         Vector3f t_v = ray.o - a_v;
         isec.u_bary = t_v * p_v * inv_det;
         if (isec.u_bary < 0.0 || isec.u_bary > 1.0)
-            return;
+            return false;
 
         Vector3f q_v = t_v ^ ab_v;
         isec.v_bary = ray.dir * q_v * inv_det;
         if (isec.v_bary < 0.0 || isec.u_bary + isec.v_bary > 1.0)
-            return;
+            return false;
 
         isec.t = ac_v * q_v * inv_det;
-        isec.intersected = true;
+        return true;
     }
 
     void intersect(const scene::Scene& scene, const Rayf& ray,
-                   Intersection& nearest_isec)
+                   Intersection& isec)
     {
-        // FIXME: isec.polygon could be a pointer or iterator to avoid initialization
-        Intersection isec;
-
         for (const auto& object : scene)
         {
             // FIXME: check bounding volume
@@ -65,12 +65,16 @@ namespace raytracer
                 Vector3f b_v = polygon[1].first + object.get_position();
                 Vector3f c_v = polygon[2].first + object.get_position();
 
-                moller_trumbore(a_v, b_v, c_v, ray, isec);
-                if (isec.intersected && isec.t >= 0
-                    && (!nearest_isec.intersected || isec.t < nearest_isec.t))
+                if (moller_trumbore(a_v, b_v, c_v, ray, isec)
+                    && isec.t >= 0
+                    && (!isec.intersected || isec.t < isec.nearest_t))
                 {
-                    nearest_isec = isec;
-                    nearest_isec.polygon = polygon;
+                    // save values of intersection as the nearest
+                    isec.intersected = true;
+                    isec.nearest_t = isec.t;
+                    isec.nearest_u_bary = isec.u_bary;
+                    isec.nearest_v_bary = isec.v_bary;
+                    isec.nearest_polygon = polygon;
                 }
             }
         }
@@ -79,27 +83,27 @@ namespace raytracer
 
     image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray)
     {
-        Intersection nearest_isec;
+        Intersection isec;
 
         // Test ray intersection
-        intersect(scene, ray, nearest_isec);
-        if (nearest_isec.intersected)
+        intersect(scene, ray, isec);
+        if (isec.intersected)
         {
             //const auto& material = intersect_polygon.get_material();
-            const auto& n0 = nearest_isec.polygon[0].second;
-            const auto& n1 = nearest_isec.polygon[1].second;
-            const auto& n2 = nearest_isec.polygon[2].second;
+            const auto& n0 = isec.nearest_polygon[0].second;
+            const auto& n1 = isec.nearest_polygon[1].second;
+            const auto& n2 = isec.nearest_polygon[2].second;
 
-            auto normal = n0 * (1.0f - nearest_isec.u_bary - nearest_isec.v_bary)
-                          + n1 * nearest_isec.u_bary
-                          + n2 * nearest_isec.v_bary;
+            auto normal = n0 * (1.0f - isec.nearest_u_bary - isec.nearest_v_bary)
+                          + n1 * isec.nearest_u_bary
+                          + n2 * isec.nearest_v_bary;
 
             // FIXME: should come from material
             float albedo = 0.18f;
             // FIXME: should come from light
             float intensity = 15;
 
-            Vector3f P = ray.o + (ray.dir * nearest_isec.t);
+            Vector3f P = ray.o + (ray.dir * isec.nearest_t);
             Vector3f L = scene.lights().front()->position - P; // direction of light, but reversed
             L.normalize();
 

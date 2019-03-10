@@ -6,14 +6,26 @@
         "position": [0.0, 0.0, 0.0],
         "forward": [0.0, 0.0, 1.0],
         "up": [0.0, 1.0, 0.0],
-        "fov_x": 70,
-        "fov_y": 70,
+        "fov_x": 100,
+        "fov_y": 100,
         "z_min": 1
     },
     "objects": [
         {
             "mesh": "sphere.obj",
             "position": [0, 0, 5]
+        },
+        {
+            "mesh": "sphere.obj",
+            "position": [0, -1, 5]
+        },
+        {
+            "mesh": "sphere.obj",
+            "position": [0, -3, 5]
+        },
+        {
+            "mesh": "sphere.obj",
+            "position": [5, 0, 7]
         }
     ],
     "lights": [

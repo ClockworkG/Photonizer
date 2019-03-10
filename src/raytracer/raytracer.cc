@@ -100,23 +100,16 @@ namespace raytracer
             float intensity = 15;
 
             Vector3f P = ray.o + (ray.dir * nearest_isec.t);
-            std::cerr << "P = " << P << std::endl;
-            Vector3f L = P - scene.lights().front()->position;
-            //Vector3f L = Vector3f(0, 0, 0) - scene.lights().front()->position;
-            std::cerr << "L = " << L << std::endl;
+            Vector3f L = scene.lights().front()->position - P; // direction of light, but reversed
             L.normalize();
-            std::cerr << "Ln = " << L << std::endl;
 
             float cos_theta = normal * L;
-            std::cerr << "cos theta = " << cos_theta << std::endl;
             float coef =  intensity * cos_theta * (albedo / M_PI);
-            std::cerr << "coef = " << coef << std::endl;
             if (coef < 0)
                 coef = 0;
             if (coef > 1)
                 coef = 1;
             image::RGBN color = scene.lights().front()->color * coef;
-            std::cerr << "color = " << color << std::endl;
             return color;
         }
         else
@@ -149,13 +142,10 @@ namespace raytracer
                 float screen_y = (1.0 - 2.0 * (y + 0.5) / img_height) * coef_y;
                 Vector3f target_pos = Vector3f(screen_x, screen_y, z_min);
 
-
                 // Compute ray to cast from camera
-                //Ray ray = Ray(origin, (target_pos - origin).normalize());
-                // FIXME: why not use origin in ray direction ?
-                Ray ray = Ray(origin, target_pos.normalize());
+                Ray ray = Ray(origin, (target_pos - origin).normalize());
 
-                auto pixel_pos = std::pair(x, y);
+                auto pixel_pos = std::pair(y, x);
                 img[pixel_pos] = ray_cast(scene, ray);
             }
         }

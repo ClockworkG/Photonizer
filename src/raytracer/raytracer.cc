@@ -80,22 +80,14 @@ namespace raytracer
         }
     }
 
-    image::RGBN compute_directional_light(scene::DirectionalLight light)
+    Vector3f& interpolate_normals(const Polygon& polygon,
+                                  const Vector3f& u_bary, const Vector3f& v_bary)
     {
-        Vector3f L = Vector3f(-light.dir.x, -light.dir.y, -light.dir.z);
-        // FIXME: should come from light
-        float intensity = 15;
-    }
+        const auto& n0 = polygon[0].second;
+        const auto& n1 = polygon[1].second;
+        const auto& n2 = polygon[2].second;
 
-    image::RGBN compute_point_light(scene::PointLight light, Vector3f P,
-                                    Intersection& shadow_isec)
-    {
-        Vector3f L = light.position - P; // direction of light, but reversed
-        float r2 = L.norm();
-        shadow_isec.nearest_t = std::sqrt(r2);
-        L.normalize();
-        // square falloff
-        image::RGBN color = light.diffuse * (intensity / (4 * M_PI * r2));
+        return n0 * (1.0f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
     }
 
     image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray)
@@ -106,38 +98,53 @@ namespace raytracer
         intersect(scene, ray, isec);
         if (isec.intersected)
         {
-            const auto& n0 = isec.nearest_polygon[0].second;
-            const auto& n1 = isec.nearest_polygon[1].second;
-            const auto& n2 = isec.nearest_polygon[2].second;
+            auto normal = interpolate_normals(isec.nearest_polygon,
+                                              isec.nearest_u_bary,
+                                              isec.nearest_v_bary);
 
-            auto normal = n0 * (1.0f - isec.nearest_u_bary - isec.nearest_v_bary)
-                          + n1 * isec.nearest_u_bary
-                          + n2 * isec.nearest_v_bary;
-
-            // FIXME: should come from material
             const auto& material = isec.nearest_polygon.get_material();
-            float albedo = 1.0f;//0.18f;
+            image::RGBN color = material.ambient;
+            // FIXME: should come from material
+            float albedo = 0.18f / M_PI;
 
-            Vector3f P = ray.o + (ray.dir * isec.nearest_t);
+            Vector3f P_v = ray.o + (ray.dir * isec.nearest_t);
+
+            Vector3f L_v;
+            float intensity;
+            Intersection shadow_isec;
 
             // foreach light
-            // switch case
-
-            // shadow test
-            float bias = 0.0001f;
-            Ray light_ray = Ray(P + normal * bias, L);
-            Intersection shadow_isec;
-            intersect(scene, light_ray, shadow_isec);
-            // FIXME: could be optimized to not test all the objects after the first intersection
-            if (!shadow_isec.intersected)
+            for (auto it = scene.lights().begin(); it != scene.lights().end(); ++it)
             {
-                float cos_theta = normal * L;
-                float coef = intensity * cos_theta * (albedo / M_PI);
-                coef = clamp(coef, 0.0f, 1.0f);
-                return material.ambient + scene.lights().front()->color * coef;
+                const auto light = *it;
+                if (dynamic_cast<*DirectionalLight>(light))
+                {
+                    L_v = Vector3f(-light->dir.x, -light->dir.y, -light->dir.z);
+                    intensity = light->intensity;
+                }
+                else if (dynamic_cast<*PointLight>(light))
+                {
+                    L_v = light->position - P_v; // direction of light, but reversed
+                    float r2 = L_v.norm();
+                    shadow_isec.nearest_t = std::sqrt(r2); // we search obstacles between P and light
+                    L_v.normalize();
+                    // square falloff
+                    intensity = light->intensity / (4 * M_PI * r2);
+                }
+
+                // shadow test
+                float bias = 0.0001f; // to avoid self intersection
+                Ray light_ray = Ray(P_v + normal * bias, L_v);
+                intersect(scene, light_ray, shadow_isec);
+                // FIXME: could be optimized to not test all the objects after the first intersection
+                if (!shadow_isec.intersected)
+                {
+                    float cos_theta = normal * L_v;
+                    float coef = intensity * cos_theta * albedo;
+                    coef = clamp(coef, 0.0f, 1.0f);
+                    color += light->color * coef;
+                }
             }
-            else
-                return material.ambient;
         }
         else
             return image::RGBN(0.0f, 0.0f, 0.0f);

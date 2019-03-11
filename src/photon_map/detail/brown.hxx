@@ -35,14 +35,14 @@ namespace photon::detail
     {
         data_t tree(values_.size() * 2);
         build_initial_indices();
-        split_and_build(tree, 0, values_.size(), 1);
+        split_and_build(tree, 0, values_.size(), 1, 0, true);
         return tree;
     }
 
     template <typename V>
     void BrownAlgorithm<V>::split_and_build(data_t& tree, std::size_t begin,
                                             std::size_t end, std::size_t pos,
-                                            std::size_t axis)
+                                            std::size_t axis, bool threaded)
     {
         if (begin >= end)
             return;
@@ -102,25 +102,25 @@ namespace photon::detail
                                         this,
                                         std::placeholders::_1,
                                         begin, middle, 2 * pos,
-                                        (axis + 1) % cardinality_);
+                                        (axis + 1) % cardinality_,
+                                        std::placeholders::_2);
 
-        std::thread* thr = nullptr;
-        if (thread_)
+        std::unique_ptr<std::thread> thr = nullptr;
+        if (threaded)
         {
-            thread_ = false;
-            thr = new std::thread(left_recursion, std::ref(tree));
+            bool threaded_rec = (2 * pos < 512);
+            thr = std::make_unique<std::thread>(left_recursion,
+                                                std::ref(tree),
+                                                threaded_rec);
         }
         else
-            left_recursion(std::ref(tree));
+            left_recursion(std::ref(tree), false);
 
         split_and_build(tree, middle + 1, end, 2 * pos + 1,
                         (axis + 1) % cardinality_);
 
         if (thr != nullptr)
-        {
             thr->join();
-            delete thr;
-        }
     }
 
     template <typename V>

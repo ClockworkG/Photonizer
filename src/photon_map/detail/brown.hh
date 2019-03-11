@@ -35,14 +35,12 @@ namespace photon::detail
         void build_initial_indices();
         void split_and_build(data_t& tree, std::size_t begin,
                              std::size_t end, std::size_t pos,
-                             std::size_t axis = 0);
+                             std::size_t axis, bool threaded = false);
 
         std::vector<value_t>   values_;
         std::vector<comp_t>    comparators_;
         std::vector<indexes_t> initial_indices_;
         const index_t          cardinality_;
-
-        bool thread_ = false;
     };
 
     template <typename ValueType, typename Iterator>

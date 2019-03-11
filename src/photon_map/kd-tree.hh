@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "detail/brown.hh"
+#include "heap.hh"
 
 /// Handles photon tracing and storing.
 namespace photon
@@ -17,6 +18,7 @@ namespace photon
         using value_type = ValueType;
         using size_type = std::size_t;
         using node_t = std::optional<value_type>;
+        using point_t = typename point_traits<value_type>::point_t;
         using data_type = std::vector<node_t>;
 
         /** \name Ctors & dtor
@@ -35,6 +37,11 @@ namespace photon
          * \{ */
         /// Return the underlying vector.
         const data_type& data() const noexcept;
+        /** \} */
+
+        /** \name Algorithm
+         * \{ */
+        Heap nearest(const point_& point) const;
         /** \} */
 
     private:

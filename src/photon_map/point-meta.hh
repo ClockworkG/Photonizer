@@ -33,7 +33,8 @@ namespace photon
             "ValueType must be copy constructible."
         );
         static_assert(
-            std::is_integral_v<typename point_traits<ValueType>::index_t>
+            std::is_integral_v<typename point_traits<ValueType>::index_t>,
+            "Index type must be integral."
         );
 
         static typename point_traits<ValueType>::point_t

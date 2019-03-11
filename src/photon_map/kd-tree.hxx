@@ -15,4 +15,10 @@ namespace photon
     {
         return data_;
     }
+
+    template <typename V>
+    Heap KDTree<V>::nearest(const point_t& point) const
+    {
+        return Heap{};
+    }
 } // namespace photon

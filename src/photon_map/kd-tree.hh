@@ -17,7 +17,7 @@ namespace photon
     public:
         using value_type = ValueType;
         using size_type = std::size_t;
-        using node_t = std::optional<value_type>;
+        using node_t = value_type;
         using point_t = typename point_traits<value_type>::point_t;
         using data_type = std::vector<node_t>;
 
@@ -41,13 +41,17 @@ namespace photon
 
         /** \name Algorithm
          * \{ */
-        Heap nearest(const point_& point) const;
+        Heap<value_type> nearest(const point_t& point) const;
         /** \} */
 
     private:
         /// Nodes.
         data_type data_;
     };
+
+    template <typename ValueType>
+    std::ostream& operator<<(std::ostream&, const KDTree<ValueType>&);
+
 } // namespace photon
 
 #include "kd-tree.hxx"

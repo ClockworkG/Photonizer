@@ -26,7 +26,7 @@ struct Photon
 int main()
 {
     std::vector<Photon> points{};
-    for (std::size_t i = 0; i < 10000; i++)
+    for (std::size_t i = 0; i < 100; i++)
     {
         points.emplace_back(Vector3f{static_cast<float>(std::rand() % 500 - 500),
                                      static_cast<float>(std::rand() % 500 - 500),
@@ -35,28 +35,5 @@ int main()
 
     [[maybe_unused]]
     auto tree = ph::KDTree<Photon>(points.begin(), points.end());
-    const auto& data = tree.data();
-    std::cout << "digraph {\n";
-    for (std::size_t i = 0; i < data.size(); i++)
-    {
-        std::size_t next = 2 * i;
-
-        if (next < data.size() && data[next])
-        {
-            std::cout << '"' << static_cast<Vector3f>(*data[i]) << '"'
-                      << " -> "
-                      << '"' << static_cast<Vector3f>(*data[next]) << '"'
-                      << '\n';
-
-            if (next + 1 < data.size() && data[next + 1])
-            {
-                std::cout << '"' << static_cast<Vector3f>(*data[i]) << '"'
-                          << " -> "
-                          << '"' << static_cast<Vector3f>(*data[next + 1]) << '"'
-                          << '\n';
-
-            }
-        }
-    }
-    std::cout << "}\n";
+    std::cout << tree;
 }

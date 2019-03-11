@@ -15,6 +15,12 @@ Vector3<T>::Vector3(T x, T y, T z)
 {}
 
 template <typename T>
+Vector3<T>::operator bool() const noexcept
+{
+    return *this != Vector3<T>{};
+}
+
+template <typename T>
 T& Vector3<T>::operator[](size_t index)
 {
     if (index == 0)

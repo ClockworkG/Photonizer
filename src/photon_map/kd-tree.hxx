@@ -17,8 +17,39 @@ namespace photon
     }
 
     template <typename V>
-    Heap KDTree<V>::nearest(const point_t& point) const
+    auto KDTree<V>::nearest(const point_t&) const -> Heap<value_type>
     {
-        return Heap{};
+        // FIXME...
+        return Heap<value_type>{};
+    }
+
+    template <typename V>
+    std::ostream& operator<<(std::ostream& os, const KDTree<V>& tree)
+    {
+        const auto& data = tree.data();
+
+        os << "digraph {\n";
+        for (std::size_t i = 1; i < data.size(); i++)
+        {
+            std::size_t next = 2 * i;
+            if (next < data.size()
+                && PointComparePolicy<V>::is_not_null(data[next]))
+            {
+                os << '"' << PointComparePolicy<V>::to_point(data[i])
+                   << "\" -> \""
+                   << PointComparePolicy<V>::to_point(data[next]) << "\"\n";
+            }
+
+            if (next + 1 < data.size()
+                && PointComparePolicy<V>::is_not_null(data[next + 1]))
+            {
+                os << '"' << PointComparePolicy<V>::to_point(data[i])
+                   << "\" -> \""
+                   << PointComparePolicy<V>::to_point(data[next + 1]) << "\"\n";
+            }
+        }
+        os << "}\n";
+
+        return os;
     }
 } // namespace photon

@@ -12,7 +12,6 @@ namespace photon
         using point_t = Vector3f;
         using index_t = uint8_t;
         constexpr static inline auto dimension = point_t::dimension;
-        constexpr static inline auto null = Vector3f{0, 0, 0};
     };
 
     template <typename ValueType>
@@ -37,6 +36,13 @@ namespace photon
             std::is_integral_v<typename point_traits<ValueType>::index_t>,
             "Index type must be integral."
         );
+        static_assert(
+            std::is_convertible_v<
+                typename point_traits<ValueType>::point_t,
+                bool
+            >,
+            "Point type must have a null value."
+        );
 
         static typename point_traits<ValueType>::point_t
         to_point(const ValueType& value) noexcept
@@ -44,6 +50,12 @@ namespace photon
             return static_cast<typename point_traits<ValueType>::point_t>(
                     value
             );
+        }
+
+        static bool
+        is_not_null(const ValueType& a) noexcept
+        {
+            return static_cast<bool>(to_point(a));
         }
 
         static bool

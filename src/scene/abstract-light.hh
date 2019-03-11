@@ -9,9 +9,8 @@ namespace scene
     {
         /** \name Ctors & dtor.
          * \{ */
-        AbstractLight() = default;
-        AbstractLight(const Vector3f& position_init,
-                      const image::RGBN& color_init) noexcept;
+        AbstractLight(const image::RGBN& color_init,
+                      float intensity_init);
         virtual ~AbstractLight() = default;
         AbstractLight(const AbstractLight&) = delete;
         AbstractLight(AbstractLight&&) = delete;
@@ -19,15 +18,16 @@ namespace scene
         AbstractLight& operator=(AbstractLight&&) = delete;
         /** \} */
 
-        /// Position of the light.
-        Vector3f position;
         /// Diffuse color.
-        image::RGBN color;
+        const image::RGBN color;
+        /// Intensity.
+        const float intensity;
     };
 
-    inline AbstractLight::AbstractLight(const Vector3f& position_init,
-                                        const image::RGBN& color_init) noexcept
-        : position(position_init)
-        , color(color_init)
+    inline
+    AbstractLight::AbstractLight(const image::RGBN& color_init,
+                  float intensity_init)
+        : color(color_init)
+        , intensity(intensity_init)
     {}
 } // namespace scene

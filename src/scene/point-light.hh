@@ -8,19 +8,22 @@ namespace scene
     {
         /** \name Ctors & dtor.
          * \{ */
-        PointLight() = default;
-        PointLight(const Vector3f& position_init,
-                   const image::RGBN& color_init) noexcept;
+        PointLight(const image::RGBN& color_init, float intensity_init,
+                   const Vector3f& position_init);
         virtual ~PointLight() = default;
         PointLight(const PointLight&) = delete;
         PointLight(PointLight&&) = delete;
         PointLight& operator=(const PointLight&) = delete;
         PointLight& operator=(PointLight&&) = delete;
         /** \} */
+
+        const Vector3f position;
     };
 
-    inline PointLight::PointLight(const Vector3f& position_init,
-                                  const image::RGBN& color_init) noexcept
-        : AbstractLight(position_init, color_init)
+    inline
+    PointLight::PointLight(const image::RGBN& color_init, float intensity_init,
+                           const Vector3f& position_init)
+        : AbstractLight(color_init, intensity_init)
+        , position(position_init)
     {}
 } // namespace scene

@@ -79,12 +79,20 @@ namespace scene::detail
 
         for (const auto& [key, value] : pt)
         {
-            factory.position = compound_from_ptree<Vector3f>(value.get_child("position"));
+            factory.intensity = value.get<float>("intensity");
             factory.color = compound_from_ptree<image::RGB>(value.get_child("color"));
             auto kind = value.get<std::string>("kind");
 
             if (kind == "point")
-                product_->lights_.push_back(factory());
+            {
+                auto position = compound_from_ptree<Vector3f>(value.get_child("position"));
+                product_->lights_.push_back(factory.make<PointLight>(position));
+            }
+            else if (kind == "directional")
+            {
+                auto direction = compound_from_ptree<Vector3f>(value.get_child("direction"));
+                product_->lights_.push_back(factory.make<DirectionalLight>(direction));
+            }
             else
             {
                 std::cerr << "WARNING: unknown kind: " << kind << '\n';

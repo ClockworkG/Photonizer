@@ -4,6 +4,7 @@
 
 #include "abstract-light.hh"
 #include "point-light.hh"
+#include "directional-light.hh"
 #include "rgb.hh"
 #include "vector3.hh"
 
@@ -24,10 +25,11 @@ namespace scene::detail
         LightFactory& operator=(LightFactory&&) = delete;
         /** \} */
 
-        product_t operator()();
+        template <typename LightKind, typename ... Args>
+        product_t make(Args&&... args);
 
         image::RGB  color;
-        Vector3f    position;
+        float       intensity;
     };
 } // namespace scene::detail
 

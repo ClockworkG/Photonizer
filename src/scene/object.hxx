@@ -9,7 +9,7 @@ namespace scene
                    const std::experimental::filesystem::path& mesh_path)
     noexcept
         : position_(position)
-        , mesh_{mesh_path}
+        , mesh_(mesh_path)
     {}
 
     inline const Mesh& Object::get_mesh() const noexcept

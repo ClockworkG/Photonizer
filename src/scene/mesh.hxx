@@ -14,4 +14,9 @@ namespace scene
         return std::cend(polygons_);
     }
 
+    inline const std::string& Mesh::get_path() const noexcept
+    {
+        return path_;
+    }
+
 } // namespace scene

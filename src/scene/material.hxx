@@ -16,6 +16,7 @@ namespace scene
     inline std::size_t hash_value(const Material& arg)
     {
         std::size_t hash_v = 0;
+        boost::hash_combine(hash_v, arg.name);
         boost::hash_combine(hash_v, arg.transparency);
         boost::hash_combine(hash_v, arg.specular_exponent);
         boost::hash_combine(hash_v, arg.ambient);

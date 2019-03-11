@@ -20,7 +20,14 @@
         {
             "kind": "point",
             "position": [0, 4, 0],
-            "color": [255, 0, 0]
+            "color": [255, 0, 0],
+            "intensity": 1
+        },
+        {
+            "kind": "directional",
+            "direction": [0, -0.5, -0.5],
+            "color": [1, 1, 1],
+            "intensity": 0.3
         }
     ]
 }

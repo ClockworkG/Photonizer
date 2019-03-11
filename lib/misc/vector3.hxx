@@ -7,7 +7,7 @@
 constexpr static inline auto epsilon = 0.0000001f;
 
 template <typename T>
-inline
+constexpr inline
 Vector3<T>::Vector3(T x, T y, T z)
     : x(x)
     , y(y)

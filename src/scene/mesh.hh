@@ -29,9 +29,9 @@ namespace scene
         Mesh(const std::experimental::filesystem::path& filename);
         ~Mesh() = default;
         Mesh(const Mesh&) = delete;
-        Mesh(Mesh&&) noexcept = default;
+        Mesh(Mesh&&) = default;
         Mesh& operator=(const Mesh&) = delete;
-        Mesh& operator=(Mesh&&) noexcept = default;
+        Mesh& operator=(Mesh&&) = default;
         /** \} */
 
         /** \name Iterating
@@ -40,9 +40,14 @@ namespace scene
         const_iterator end() const;
         /** \} */
 
+        const std::string& get_path() const noexcept;
+
     private:
         /// List of polygons.
         polygons_t polygons_;
+
+        /// Filename associated to the polygon.
+        const std::string path_;
     };
 } // namespace scene
 

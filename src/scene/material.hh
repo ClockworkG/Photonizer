@@ -9,15 +9,16 @@ namespace scene
         Material() = default;
         ~Material() = default;
         Material(const Material&) = delete;
-        Material(Material&&) noexcept = default;
+        Material(Material&&) = default;
         Material& operator=(const Material&) = delete;
-        Material& operator=(Material&&) noexcept = default;
+        Material& operator=(Material&&) = default;
 
-        float       transparency;
-        float       specular_exponent;
-        image::RGBN ambient;
-        image::RGBN diffuse;
-        image::RGBN specular;
+        const std::string name = "default";
+        const float       transparency = 0.f;
+        const float       specular_exponent = 0.f;
+        const image::RGBN ambient = image::RGBN(1.f, 0.f, 1.f);
+        const image::RGBN diffuse = image::RGBN(1.f, 0.f, 1.f);
+        const image::RGBN specular = image::RGBN(1.f, 0.f, 1.f);
     };
 
     bool operator==(const Material& lhs, const Material& rhs);

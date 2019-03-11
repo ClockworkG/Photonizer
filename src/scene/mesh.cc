@@ -8,6 +8,7 @@ namespace scene
 {
     Mesh::Mesh(const std::experimental::filesystem::path& filename)
         : polygons_{}
+        , path_{filename.string()}
     {
         tinyobj::attrib_t attrib;
         std::vector<tinyobj::shape_t> shapes;
@@ -28,7 +29,25 @@ namespace scene
         std::size_t offset = 0;
         for (std::size_t fv : shape.mesh.num_face_vertices)
         {
-            Mesh::polygon_t polygon{};
+            const auto material_id = shape.mesh.material_ids[fv];
+            const auto* mat = (material_id == -1) ?
+                                nullptr :
+                                &materials[material_id];
+
+            Mesh::polygon_t polygon(
+                    (material_id == -1) ?
+                    Material() :
+                    Material
+                    {
+                        mat->name,
+                        mat->dissolve,
+                        mat->shininess,
+                        image::RGBN(mat->ambient[0], mat->ambient[1], mat->ambient[2]),
+                        image::RGBN(mat->diffuse[0], mat->diffuse[1], mat->diffuse[2]),
+                        image::RGBN(mat->specular[0], mat->specular[1], mat->specular[2])
+                    }
+            );
+
             for (std::size_t v = 0; v < fv; v++)
             {
                 auto idx = shape.mesh.indices[offset + v];
@@ -40,8 +59,6 @@ namespace scene
                                 attrib.normals[3 * idx.normal_index + 2]);
                 polygon.emplace_back(vertex, normal);
             }
-            const auto& mat = materials[shape.mesh.material_ids[fv]];
-            polygon.set_material(mat);
 
             polygons_.push_back(polygon);
 

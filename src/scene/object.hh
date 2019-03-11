@@ -13,9 +13,6 @@ namespace scene
     /// Object to be rendered.
     class Object
     {
-        using mesh_unique_t =
-            boost::flyweight<boost::flyweights::key_value<std::string, Mesh>>;
-
     public:
         /// Position type.
         using pos_t = Vector3f;
@@ -38,6 +35,22 @@ namespace scene
         /** \} */
 
     protected:
+        struct mesh_name_extractor
+        {
+            const std::string& operator()(const Mesh& mesh)
+            {
+                return mesh.get_path();
+            }
+        };
+
+        using mesh_unique_t =
+            boost::flyweight<
+                boost::flyweights::key_value<
+                    std::string,
+                    Mesh>
+            >;
+
+
         /// Position of the object in the scene.
         pos_t           position_;
         /// Mesh of the object.

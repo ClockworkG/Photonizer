@@ -19,7 +19,11 @@ include(lib/objloader/CMakeLists.txt)
 
 add_subdirectory(src)
 add_subdirectory(tests)
-add_subdirectory(bench)
+
+if (ENABLE_BENCH)
+    include(bench/gbench/CMakeLists.txt)
+    add_subdirectory(bench)
+endif()
 
 add_custom_target(doc
                   COMMAND doxygen "${CMAKE_SOURCE_DIR}/doc/Doxyfile"

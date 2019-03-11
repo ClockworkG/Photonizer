@@ -18,12 +18,12 @@ ExternalProject_Add(
 
 ExternalProject_Get_Property(gbench-extern SOURCE_DIR)
 ExternalProject_Get_Property(gbench-extern BINARY_DIR)
-set(gbench_INCLUDE_DIR ${SOURCE_DIR} CACHE INTERNAL "Include folder for gbench")
+set(GBENCH_INCLUDE_DIR "${SOURCE_DIR}/include" CACHE INTERNAL "Include folder for gbench")
 
 add_library(benchmark STATIC IMPORTED GLOBAL)
-set_target_properties(benchmark PROPERTIES IMPORTED_LOCATION ${BINARY_DIR}/libbenchmark.a)
+set_target_properties(benchmark PROPERTIES IMPORTED_LOCATION ${BINARY_DIR}/src/libbenchmark.a)
 include_directories(${GBENCH_INCLUDE_DIR})
 
 add_library(benchmark_main STATIC IMPORTED GLOBAL)
-set_target_properties(benchmark_main PROPERTIES IMPORTED_LOCATION ${BINARY_DIR}/libbenchmark_main.a)
+set_target_properties(benchmark_main PROPERTIES IMPORTED_LOCATION ${BINARY_DIR}/src/libbenchmark_main.a)
 include_directories(${GBENCH_INCLUDE_DIR})

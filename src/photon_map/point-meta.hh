@@ -11,7 +11,8 @@ namespace photon
     {
         using point_t = Vector3f;
         using index_t = uint8_t;
-        static inline constexpr auto dimension = point_t::dimension;
+        constexpr static inline auto dimension = point_t::dimension;
+        constexpr static inline auto null = Vector3f{0, 0, 0};
     };
 
     template <typename ValueType>

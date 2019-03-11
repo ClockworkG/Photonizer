@@ -19,6 +19,7 @@ include(lib/objloader/CMakeLists.txt)
 
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(bench)
 
 add_custom_target(doc
                   COMMAND doxygen "${CMAKE_SOURCE_DIR}/doc/Doxyfile"

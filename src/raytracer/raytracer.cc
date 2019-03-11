@@ -67,7 +67,7 @@ namespace raytracer
 
                 if (moller_trumbore(a_v, b_v, c_v, ray, isec)
                     && isec.t >= 0
-                    && (!isec.intersected || isec.t < isec.nearest_t))
+                    && (isec.nearest_t == -1 || isec.t < isec.nearest_t))
                 {
                     // save values of intersection as the nearest
                     isec.intersected = true;
@@ -80,6 +80,23 @@ namespace raytracer
         }
     }
 
+    image::RGBN compute_directional_light(scene::DirectionalLight light)
+    {
+        Vector3f L = Vector3f(-light.dir.x, -light.dir.y, -light.dir.z);
+        // FIXME: should come from light
+        float intensity = 15;
+    }
+
+    image::RGBN compute_point_light(scene::PointLight light, Vector3f P,
+                                    Intersection& shadow_isec)
+    {
+        Vector3f L = light.position - P; // direction of light, but reversed
+        float r2 = L.norm();
+        shadow_isec.nearest_t = std::sqrt(r2);
+        L.normalize();
+        // square falloff
+        image::RGBN color = light.diffuse * (intensity / (4 * M_PI * r2));
+    }
 
     image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray)
     {
@@ -89,7 +106,6 @@ namespace raytracer
         intersect(scene, ray, isec);
         if (isec.intersected)
         {
-            const auto& material = isec.nearest_polygon.get_material();
             const auto& n0 = isec.nearest_polygon[0].second;
             const auto& n1 = isec.nearest_polygon[1].second;
             const auto& n2 = isec.nearest_polygon[2].second;
@@ -99,17 +115,18 @@ namespace raytracer
                           + n2 * isec.nearest_v_bary;
 
             // FIXME: should come from material
-            float albedo = 0.18f;
-            // FIXME: should come from light
-            float intensity = 15;
+            const auto& material = isec.nearest_polygon.get_material();
+            float albedo = 1.0f;//0.18f;
 
             Vector3f P = ray.o + (ray.dir * isec.nearest_t);
-            Vector3f L = scene.lights().front()->position - P; // direction of light, but reversed
-            L.normalize();
+
+            // foreach light
+            // switch case
 
             // shadow test
+            float bias = 0.0001f;
+            Ray light_ray = Ray(P + normal * bias, L);
             Intersection shadow_isec;
-            Ray light_ray = Ray(P + normal * 0.0001f, L);
             intersect(scene, light_ray, shadow_isec);
             // FIXME: could be optimized to not test all the objects after the first intersection
             if (!shadow_isec.intersected)

@@ -11,6 +11,7 @@ namespace photon
     {
         using point_t = Vector3f;
         using index_t = uint8_t;
+        using atom_t = float;
         constexpr static inline auto dimension = point_t::dimension;
     };
 
@@ -37,12 +38,32 @@ namespace photon
             "Index type must be integral."
         );
         static_assert(
+            std::is_integral_v<typename point_traits<ValueType>::atom_t>
+            || std::is_floating_point_v<typename point_traits<ValueType>::atom_t>,
+            "Atom type must be a number."
+        );
+        static_assert(
             std::is_convertible_v<
                 typename point_traits<ValueType>::point_t,
                 bool
             >,
             "Point type must have a null value."
         );
+
+        static typename point_traits<ValueType>::atom_t
+        squared_distance(const ValueType& lhs, const ValueType& rhs) noexcept
+        {
+            typename point_traits<ValueType>::atom_t square{};
+            for (typename point_traits<ValueType>::index_t i = 0;
+                 i < point_traits<ValueType>::dimension;
+                 i++)
+            {
+                square += ((to_point(lhs)[i] - to_point(rhs)[i])
+                           * (to_point(lhs)[i] - to_point(rhs)[i]));
+            }
+
+            return square < 0 ? -square : square;
+        }
 
         static typename point_traits<ValueType>::point_t
         to_point(const ValueType& value) noexcept

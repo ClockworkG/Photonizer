@@ -14,6 +14,8 @@ namespace photon
     template <typename ValueType>
     class KDTree
     {
+        using atom_t = typename point_traits<ValueType>::atom_t;
+
     public:
         using value_type = ValueType;
         using size_type = std::size_t;
@@ -41,10 +43,20 @@ namespace photon
 
         /** \name Algorithm
          * \{ */
-        Heap<value_type> nearest(const point_t& point) const;
+        DistanceHeap<value_type> nearest(const point_t& query,
+                                         std::size_t max_count,
+                                         atom_t max_dist) const;
         /** \} */
 
     private:
+        typename point_traits<value_type>::index_t
+        get_splitting_dimension(std::size_t index) const noexcept;
+
+        void nearest_(const point_t& point,
+                      DistanceHeap<value_type>& heap,
+                      atom_t max_dist,
+                      std::size_t index = 1) const;
+
         /// Nodes.
         data_type data_;
     };

@@ -17,10 +17,44 @@ namespace photon
     }
 
     template <typename V>
-    auto KDTree<V>::nearest(const point_t&) const -> Heap<value_type>
+    void KDTree<V>::nearest_(const point_t& query,
+                             DistanceHeap<value_type>& heap,
+                             atom_t max_dist,
+                             std::size_t index) const
     {
-        // FIXME...
-        return Heap<value_type>{};
+        const auto& point = data_[index];
+        if (index >= data_.size() || !PointComparePolicy<V>::is_not_null(point))
+            return;
+
+        if (PointComparePolicy<V>::less(query,
+                                        point, get_splitting_dimension(index)))
+            nearest_(query, heap, max_dist, 2 * index);
+        else
+            nearest_(query, heap, max_dist, 2 * index + 1);
+
+        auto dist = PointComparePolicy<V>::squared_distance(query, point);
+        if (dist < max_dist)
+            heap.insert(std::make_pair(point, dist));
+    }
+
+    template <typename V>
+    auto KDTree<V>::nearest(const point_t& query,
+                            std::size_t max_count,
+                            atom_t max_dist) const
+        -> DistanceHeap<value_type>
+    {
+        (void)max_dist;
+        DistanceHeap<value_type> heap(max_count);
+        nearest_(query, heap, max_dist * max_dist);
+        return heap;
+    }
+
+    template <typename V>
+    auto KDTree<V>::get_splitting_dimension(std::size_t index) const noexcept
+        -> typename point_traits<value_type>::index_t
+    {
+        typename point_traits<value_type>::index_t power_of_two = std::log2(index);
+        return index % point_traits<value_type>::dimension;
     }
 
     template <typename V>

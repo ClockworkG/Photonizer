@@ -60,6 +60,9 @@ Vector3<T> operator*(const Vector3<T>& a, const U& b);
 
 
 template <typename T>
+T distance(const Vector3<T>& a, const Vector3<T>& b);
+
+template <typename T>
 std::ostream& operator<<(std::ostream& out, const Vector3<T>& a);
 
 #include "vector3.hxx"

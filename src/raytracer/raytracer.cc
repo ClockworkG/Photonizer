@@ -7,19 +7,22 @@
 #include "vector3.hh"
 #include "ray.hh"
 #include "rgb.hh"
+#include "point-light.hh"
+#include "directional-light.hh"
+#include "polygon.hh"
 
 namespace raytracer
 {
-    #define epsilon 0.000001
+    #define epsilon 0.0000001
 
 
     struct Intersection
     {
         bool intersected = false;
-        float nearest_t;
+        float nearest_t = -1;
         float nearest_u_bary;
         float nearest_v_bary;
-        scene::Polygon nearest_polygon;
+        const scene::Polygon *nearest_polygon;
         float t;
         float u_bary;
         float v_bary;
@@ -74,14 +77,14 @@ namespace raytracer
                     isec.nearest_t = isec.t;
                     isec.nearest_u_bary = isec.u_bary;
                     isec.nearest_v_bary = isec.v_bary;
-                    isec.nearest_polygon = polygon;
+                    isec.nearest_polygon = &polygon;
                 }
             }
         }
     }
 
-    Vector3f& interpolate_normals(const Polygon& polygon,
-                                  const Vector3f& u_bary, const Vector3f& v_bary)
+    Vector3f interpolate_normals(const scene::Polygon& polygon,
+                                  const float& u_bary, const float& v_bary)
     {
         const auto& n0 = polygon[0].second;
         const auto& n1 = polygon[1].second;
@@ -98,12 +101,12 @@ namespace raytracer
         intersect(scene, ray, isec);
         if (isec.intersected)
         {
-            auto normal = interpolate_normals(isec.nearest_polygon,
+            auto normal = interpolate_normals(*isec.nearest_polygon,
                                               isec.nearest_u_bary,
                                               isec.nearest_v_bary);
 
-            const auto& material = isec.nearest_polygon.get_material();
-            image::RGBN color = material.ambient;
+            const auto& material = isec.nearest_polygon->get_material();
+            image::RGBN color = image::RGBN(0, 0, 0); // ambient_light * material.ambient;
             // FIXME: should come from material
             float albedo = 0.18f / M_PI;
 
@@ -111,25 +114,28 @@ namespace raytracer
 
             Vector3f L_v;
             float intensity;
-            Intersection shadow_isec;
 
             // foreach light
             for (auto it = scene.lights().begin(); it != scene.lights().end(); ++it)
             {
-                const auto light = *it;
-                if (dynamic_cast<*DirectionalLight>(light))
+                Intersection shadow_isec;
+                auto& light = *(*it);
+                if (const auto *dir_light = dynamic_cast<scene::DirectionalLight*>(&light))
                 {
-                    L_v = Vector3f(-light->dir.x, -light->dir.y, -light->dir.z);
-                    intensity = light->intensity;
+                    L_v = Vector3f(-dir_light->direction.x,
+                                   -dir_light->direction.y,
+                                   -dir_light->direction.z);
+                    L_v.normalize();
+                    intensity = dir_light->intensity;
                 }
-                else if (dynamic_cast<*PointLight>(light))
+                else if (const auto *point_light = dynamic_cast<scene::PointLight*>(&light))
                 {
-                    L_v = light->position - P_v; // direction of light, but reversed
+                    L_v = point_light->position - P_v; // direction of light, but reversed
                     float r2 = L_v.norm();
                     shadow_isec.nearest_t = std::sqrt(r2); // we search obstacles between P and light
                     L_v.normalize();
                     // square falloff
-                    intensity = light->intensity / (4 * M_PI * r2);
+                    intensity = point_light->intensity / (4 * M_PI * r2);
                 }
 
                 // shadow test
@@ -142,9 +148,10 @@ namespace raytracer
                     float cos_theta = normal * L_v;
                     float coef = intensity * cos_theta * albedo;
                     coef = clamp(coef, 0.0f, 1.0f);
-                    color += light->color * coef;
+                    color += material.diffuse * light.color * coef;
                 }
             }
+            return color;
         }
         else
             return image::RGBN(0.0f, 0.0f, 0.0f);

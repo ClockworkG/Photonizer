@@ -1,0 +1,39 @@
+{
+    "name": "First Scene",
+    "height": 712,
+    "width": 712,
+    "camera": {
+        "position": [0.0, 0.0, 0.0],
+        "forward": [0.0, 0.0, 1.0],
+        "up": [0.0, 1.0, 0.0],
+        "fov_x": 90,
+        "fov_y": 90,
+        "z_min": 2
+    },
+    "objects": [
+        {
+            "mesh": "teapot-simplified.obj",
+            "position": [0, 0, 10]
+        }
+    ],
+    "lights": [
+        {
+            "kind": "point",
+            "position": [0, -1, 14],
+            "color": [255, 0, 0],
+            "intensity": 78
+        },
+        {
+            "kind": "directional",
+            "direction": [1, -1, 0],
+            "color": [255, 255, 255],
+            "intensity": 19
+        },
+        {
+            "kind": "directional",
+            "direction": [-1, 1, 0],
+            "color": [0, 255, 255],
+            "intensity": 10
+        }
+    ]
+}

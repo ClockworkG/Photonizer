@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "abstract-light.hh"
+#include "ambient-light.hh"
 #include "point-light.hh"
 #include "directional-light.hh"
 #include "rgb.hh"

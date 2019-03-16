@@ -34,6 +34,19 @@ T& Vector3<T>::operator[](size_t index)
 }
 
 template <typename T>
+const T& Vector3<T>::operator[](size_t index) const
+{
+    if (index == 0)
+        return x;
+    else if (index == 1)
+        return y;
+    else if (index == 2)
+        return z;
+    else
+        throw std::out_of_range("Index out of bounds");
+}
+
+template <typename T>
 inline Vector3<T>& Vector3<T>::operator+=(const Vector3<T>& b)
 {
     this->x += b.x;

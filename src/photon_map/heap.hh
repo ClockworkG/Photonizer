@@ -26,8 +26,8 @@ namespace photon
         DistanceHeap& operator=(const DistanceHeap&) = default;
         DistanceHeap& operator=(DistanceHeap&&) = default;
 
-        void insert(const elt_t& elt);
-        void insert(elt_t&& elt);
+        bool insert(const elt_t& elt);
+        bool insert(elt_t&& elt);
 
         const elt_t& top() const;
 
@@ -39,7 +39,7 @@ namespace photon
     private:
         constexpr static inline auto compare = [](const auto& a, const auto& b)
                                                {
-                                                   return a.second > b.second;
+                                                   return a.second < b.second;
                                                };
         size_type max_size_;
         data_t data_;

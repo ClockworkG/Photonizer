@@ -14,6 +14,7 @@ struct Vector3
     constexpr Vector3(T x = 0, T y = 0, T z = 0);
 
     T& operator[](size_t index);
+    const T& operator[](size_t index) const;
 
     Vector3<T>& operator+=(const Vector3<T>& b);
     Vector3<T>& operator-=(const Vector3<T>& b);

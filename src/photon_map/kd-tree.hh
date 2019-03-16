@@ -49,12 +49,11 @@ namespace photon
         /** \} */
 
     private:
-        typename point_traits<value_type>::index_t
-        get_splitting_dimension(std::size_t index) const noexcept;
-
+        bool is_in_tree(std::size_t index) const noexcept;
         void nearest_(const point_t& point,
                       DistanceHeap<value_type>& heap,
-                      atom_t max_dist,
+                      atom_t& max_dist,
+                      std::size_t splitting,
                       std::size_t index = 1) const;
 
         /// Nodes.

@@ -13,23 +13,35 @@ namespace photon
     }
 
     template <typename V>
-    void DistanceHeap<V>::insert(const elt_t& elt)
+    bool DistanceHeap<V>::insert(const elt_t& elt)
     {
         if (data_.size() >= max_size_)
-            data_.pop_back();
+        {
+            std::pop_heap(std::begin(data_), std::end(data_), compare);
+            data_.back() = elt;
+            std::push_heap(std::begin(data_), std::end(data_), compare);
+            return false;
+        }
 
         data_.push_back(elt);
         std::push_heap(std::begin(data_), std::end(data_), compare);
+        return true;
     }
 
     template <typename V>
-    void DistanceHeap<V>::insert(elt_t&& elt)
+    bool DistanceHeap<V>::insert(elt_t&& elt)
     {
         if (data_.size() >= max_size_)
-            data_.pop_back();
+        {
+            std::pop_heap(std::begin(data_), std::end(data_), compare);
+            data_.back() = std::move(elt);
+            std::push_heap(std::begin(data_), std::end(data_), compare);
+            return false;
+        }
 
         data_.push_back(std::move(elt));
         std::push_heap(std::begin(data_), std::end(data_), compare);
+        return true;
     }
 
     template <typename V>

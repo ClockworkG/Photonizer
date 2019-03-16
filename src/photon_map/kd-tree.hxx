@@ -11,30 +11,47 @@ namespace photon
     {}
 
     template <typename V>
+    inline
     auto KDTree<V>::data() const noexcept -> const data_type&
     {
         return data_;
     }
 
     template <typename V>
+    inline
     void KDTree<V>::nearest_(const point_t& query,
                              DistanceHeap<value_type>& heap,
-                             atom_t max_dist,
+                             atom_t& max_dist,
+                             std::size_t splitting,
                              std::size_t index) const
     {
-        const auto& point = data_[index];
-        if (index >= data_.size() || !PointComparePolicy<V>::is_not_null(point))
-            return;
+        if (is_in_tree(2 * index + 1))
+        {
+            std::size_t next = PointComparePolicy<V>::next(splitting);
+            float dist1 = query[splitting]
+                          - PointComparePolicy<V>::to_point(data_[index])[splitting];
 
-        if (PointComparePolicy<V>::less(query,
-                                        point, get_splitting_dimension(index)))
-            nearest_(query, heap, max_dist, 2 * index);
-        else
-            nearest_(query, heap, max_dist, 2 * index + 1);
+            if (dist1 > 0.f)
+            {
+                nearest_(query, heap, max_dist, next, 2 * index + 1);
+                if (dist1 * dist1 < max_dist)
+                    nearest_(query, heap, max_dist, next, 2 * index);
+            }
+            else
+            {
+                nearest_(query, heap, max_dist, next, 2 * index);
+                if (dist1 * dist1 < max_dist)
+                    nearest_(query, heap, max_dist, next, 2 * index + 1);
+            }
+        }
 
-        auto dist = PointComparePolicy<V>::squared_distance(query, point);
-        if (dist < max_dist)
-            heap.insert(std::make_pair(point, dist));
+        auto squared = PointComparePolicy<V>::squared_distance(query,
+                                                               data_[index]);
+        if (squared < max_dist)
+        {
+            if (!heap.insert(std::make_pair(data_[index], squared)))
+                max_dist = heap.top().second;
+        }
     }
 
     template <typename V>
@@ -43,18 +60,20 @@ namespace photon
                             atom_t max_dist) const
         -> DistanceHeap<value_type>
     {
-        (void)max_dist;
         DistanceHeap<value_type> heap(max_count);
-        nearest_(query, heap, max_dist * max_dist);
+        max_dist *= max_dist;
+        nearest_(query, heap, max_dist, 0);
         return heap;
     }
 
     template <typename V>
-    auto KDTree<V>::get_splitting_dimension(std::size_t index) const noexcept
-        -> typename point_traits<value_type>::index_t
+    inline
+    bool KDTree<V>::is_in_tree(std::size_t index) const noexcept
     {
-        typename point_traits<value_type>::index_t power_of_two = std::log2(index);
-        return index % point_traits<value_type>::dimension;
+        if (index >= data_.size())
+            return false;
+
+        return PointComparePolicy<V>::is_not_null(data_[index]);
     }
 
     template <typename V>

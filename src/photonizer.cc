@@ -6,8 +6,6 @@
 #include <image/image-rgb.hh>
 #include <image/ppm-writer.hh>
 
-#include <kd-tree.hh>
-
 #include <boost/program_options.hpp>
 
 constexpr const char* version = PHOTONIZER_VERSION;
@@ -21,23 +19,6 @@ constexpr auto error_message = "Error while parsing command line options: ";
     } while (false)
 
 namespace boostopt = boost::program_options;
-
-struct DummyPhoton
-{
-    DummyPhoton(const Vector3f& v) : vect{v} {}
-    DummyPhoton() = default;
-    DummyPhoton(const DummyPhoton&) = default;
-    DummyPhoton(DummyPhoton&&) = default;
-
-    operator Vector3f() const noexcept
-    {
-        return vect;
-    }
-
-    Vector3f vect;
-};
-
-
 
 int main(int argc, char **argv)
 {

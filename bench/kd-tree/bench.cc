@@ -34,6 +34,22 @@ static void BM_BrownAlgorithm(benchmark::State& state)
     }
 }
 
+template <typename ValueType>
+static void BM_NearestPoints(benchmark::State& state)
+{
+    std::srand(std::time(0));
+
+    std::vector<ValueType> values(state.range(0));
+    for (auto& val : values)
+        val = generate<ValueType>();
+
+    auto tree = photon::KDTree<ValueType>(std::begin(values),
+                                          std::end(values));
+
+    for (auto _ : state)
+        tree.nearest(Vector3f(0, 0, 0), 300, 500);
+}
+
 BENCHMARK_TEMPLATE(BM_BrownAlgorithm, Vector3f)->Arg(1)
                                                ->Arg(5)
                                                ->Arg(10)
@@ -45,5 +61,17 @@ BENCHMARK_TEMPLATE(BM_BrownAlgorithm, Vector3f)->Arg(1)
                                                ->Arg(10000)
                                                ->Arg(15000)
                                                ->Unit(benchmark::kMillisecond);
+
+BENCHMARK_TEMPLATE(BM_NearestPoints, Vector3f)->Arg(1)
+                                              ->Arg(5)
+                                              ->Arg(10)
+                                              ->Arg(50)
+                                              ->Arg(100)
+                                              ->Arg(500)
+                                              ->Arg(1000)
+                                              ->Arg(5000)
+                                              ->Arg(10000)
+                                              ->Arg(15000)
+                                              ->Unit(benchmark::kMillisecond);
 
 BENCHMARK_MAIN();

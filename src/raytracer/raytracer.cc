@@ -7,15 +7,15 @@
 #include "vector3.hh"
 #include "ray.hh"
 #include "rgb.hh"
-#include "point-light.hh"
+#include "ambient-light.hh"
 #include "directional-light.hh"
+#include "point-light.hh"
 #include "polygon.hh"
 
 namespace raytracer
 {
     #define epsilon 0.0000001
     #define MAX_DEPTH 4
-
 
     // FIXME
     image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray, const uint8_t& depth);
@@ -59,8 +59,7 @@ namespace raytracer
         return true;
     }
 
-    void intersect(const scene::Scene& scene, const Rayf& ray,
-                   Intersection& isec)
+    void intersect(const scene::Scene& scene, const Rayf& ray, Intersection& isec)
     {
         for (const auto& object : scene)
         {
@@ -115,8 +114,11 @@ namespace raytracer
         {
             Intersection shadow_isec;
             auto& light = *(*it);
-            //if (const auto *ambient_light = dynamic_cast<scene::AmbientLight*>(&light))
-                // ambient_light * material.ambient;
+            if (const auto *ambient_light = dynamic_cast<scene::AmbientLight*>(&light))
+            {
+                color += ambient_light->color * material.ambient * ambient_light->intensity;
+                continue;
+            }
             if (const auto *dir_light = dynamic_cast<scene::DirectionalLight*>(&light))
             {
                 L_v = Vector3f(-dir_light->direction.x,

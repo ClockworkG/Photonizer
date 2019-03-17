@@ -1,5 +1,5 @@
 {
-    "name": "First Scene",
+    "name": "Advanced Scene",
     "height": 512,
     "width": 512,
     "camera": {
@@ -12,28 +12,33 @@
     },
     "objects": [
         {
-            "mesh": "sphere.obj",
-            "position": [0, 0, 15]
+            "mesh": "plane.obj",
+            "position": [0, -5, 10]
+        },
+        {
+            "mesh": "sphere-normal-edit.obj",
+            "position": [-2, -2, 10]
         },
         {
             "mesh": "sphere.obj",
-            "position": [1, 0, 15]
+            "position": [3, -3, 12]
         },
         {
-            "mesh": "sphere.obj",
-            "position": [0, -3, 15]
-        },
-        {
-            "mesh": "sphere.obj",
-            "position": [5, 0, 17]
+            "mesh": "cube.obj",
+            "position": [2, -1, 9]
         }
     ],
     "lights": [
         {
+            "kind": "ambient",
+            "color": [255, 255, 255],
+            "intensity": 0.15
+        },
+        {
             "kind": "point",
-            "position": [0, -1, 14],
+            "position": [-1, -4, 9],
             "color": [255, 0, 0],
-            "intensity": 78
+            "intensity": 85
         },
         {
             "kind": "directional",

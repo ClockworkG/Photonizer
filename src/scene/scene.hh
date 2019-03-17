@@ -50,9 +50,12 @@ namespace scene
         const_iterator end() const;
         /** \} */
 
+        /// Access the width of the scene.
+        const width_t& get_width() const noexcept;
+        /// Access the height of the scene.
+        const height_t& get_height() const noexcept;
         /// Access lights in the scene.
         const lights_t& lights() const noexcept;
-
         /// Access the camera of the scene.
         const Camera& get_camera() const noexcept;
 
@@ -81,7 +84,17 @@ namespace scene
         return std::cend(objects_);
     }
 
-    inline auto Scene::lights() const noexcept -> const lights_t&
+    inline const Scene::width_t& Scene::get_width() const noexcept
+    {
+        return width_;
+    }
+
+    inline const Scene::height_t& Scene::get_height() const noexcept
+    {
+        return height_;
+    }
+
+   inline auto Scene::lights() const noexcept -> const lights_t&
     {
         return lights_;
     }

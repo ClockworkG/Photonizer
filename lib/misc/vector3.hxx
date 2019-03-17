@@ -100,6 +100,12 @@ inline Vector3<T> operator^(const Vector3<T>& a, const Vector3<T>& b)
                    a.x * b.y - a.y * b.x);
 }
 
+template <typename T, typename U>
+Vector3<T> operator*(const Vector3<T>& a, const U& b)
+{
+    return Vector3(a.x * b, a.y * b, a.z * b);
+}
+
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const Vector3<T>& a)
 {

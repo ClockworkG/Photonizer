@@ -93,6 +93,10 @@ namespace scene::detail
                 auto direction = compound_from_ptree<Vector3f>(value.get_child("direction"));
                 product_->lights_.push_back(factory.make<DirectionalLight>(direction));
             }
+            else if (kind == "ambient")
+            {
+                product_->lights_.push_back(factory.make<AmbientLight>());
+            }
             else
             {
                 std::cerr << "WARNING: unknown kind: " << kind << '\n';

@@ -1,25 +1,23 @@
-#include "raytracer.hh"
-
 #include <cmath>
 
-#include "math.hh"
-#include "object.hh"
-#include "vector3.hh"
-#include "ray.hh"
-#include "rgb.hh"
+#include "raytracer.hh"
+
 #include "ambient-light.hh"
 #include "directional-light.hh"
+#include "math.hh"
+#include "object.hh"
 #include "point-light.hh"
 #include "polygon.hh"
+#include "ray.hh"
+#include "rgb.hh"
+#include "vector3.hh"
 
 namespace raytracer
 {
     #define epsilon 0.0000001
     #define MAX_DEPTH 4
 
-    // FIXME
     image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray, const uint8_t& depth);
-
 
     struct Intersection
     {
@@ -39,7 +37,7 @@ namespace raytracer
         Vector3f ab_v = b_v - a_v;
         Vector3f ac_v = c_v - a_v;
         Vector3f p_v = ray.dir ^ ac_v;
-        float det = ab_v * p_v;
+        const float det = ab_v * p_v;
 
         if (std::abs(det) < epsilon) // if ray and surface are parallel
             return false;
@@ -68,9 +66,9 @@ namespace raytracer
             for (const auto& polygon : object.get_mesh())
             {
                 // Compute triangle vertexes position in scene
-                Vector3f a_v = polygon[0].first + object.get_position();
-                Vector3f b_v = polygon[1].first + object.get_position();
-                Vector3f c_v = polygon[2].first + object.get_position();
+                const Vector3f a_v = polygon[0].first + object.get_position();
+                const Vector3f b_v = polygon[1].first + object.get_position();
+                const Vector3f c_v = polygon[2].first + object.get_position();
 
                 if (moller_trumbore(a_v, b_v, c_v, ray, isec)
                     && isec.t >= 0
@@ -138,8 +136,8 @@ namespace raytracer
             }
 
             // shadow test
-            float bias = 0.0001f; // to avoid self intersection
-            Ray light_ray = Ray(P_v + normal * bias, L_v);
+            const float bias = 0.0001f; // to avoid self intersection
+            const Ray light_ray = Ray(P_v + normal * bias, L_v);
             intersect(scene, light_ray, shadow_isec);
             // FIXME: could be optimized to not test all the objects after the first intersection
             if (!shadow_isec.intersected)

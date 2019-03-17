@@ -1,7 +1,7 @@
 {
-    "name": "Teapot Simplified",
-    "height": 712,
-    "width": 712,
+    "name": "Sphere Normal Edit",
+    "height": 512,
+    "width": 512,
     "camera": {
         "position": [0.0, 0.0, 0.0],
         "forward": [0.0, 0.0, 1.0],
@@ -12,21 +12,38 @@
     },
     "objects": [
         {
-            "mesh": "teapot-simplified.obj",
+            "mesh": "sphere-normal-edit.obj",
             "position": [0, 0, 10]
+        },
+        {
+            "mesh": "sphere-normal-edit.obj",
+            "position": [1, 0, 10]
+        },
+        {
+            "mesh": "sphere-normal-edit.obj",
+            "position": [0, -3, 10]
+        },
+        {
+            "mesh": "sphere-normal-edit.obj",
+            "position": [5, 0, 12]
         }
     ],
     "lights": [
         {
+            "kind": "ambient",
+            "color": [255, 255, 255],
+            "intensity": 0.15
+        },
+        {
             "kind": "point",
-            "position": [0, -1, 14],
+            "position": [0, -1, 9],
             "color": [255, 0, 0],
             "intensity": 78
         },
         {
             "kind": "directional",
             "direction": [1, -1, 0],
-            "color": [255, 255, 255],
+            "color": [130, 130, 255],
             "intensity": 19
         },
         {

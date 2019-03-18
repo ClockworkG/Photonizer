@@ -8,11 +8,22 @@ project(Photonizer
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+include(CTest)
+if (ENABLE_TESTING)
+    enable_testing()
+endif()
+
 add_subdirectory(lib)
 include(lib/boost/CMakeLists.txt)
 include(lib/objloader/CMakeLists.txt)
 
 add_subdirectory(src)
+add_subdirectory(tests)
+
+if (ENABLE_BENCH)
+    include(bench/gbench/CMakeLists.txt)
+    add_subdirectory(bench)
+endif()
 
 add_custom_target(doc
                   COMMAND doxygen "${CMAKE_SOURCE_DIR}/doc/Doxyfile"

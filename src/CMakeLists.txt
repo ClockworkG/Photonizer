@@ -5,6 +5,7 @@ endif()
 
 add_subdirectory(image)
 add_subdirectory(scene)
+add_subdirectory(photon_map)
 add_subdirectory(raytracer)
 
 add_executable(photonizer "photonizer.cc")
@@ -12,7 +13,8 @@ target_link_libraries(photonizer
     PRIVATE Boost::program_options
             Photonizer::Scene
             Photonizer::Image
-            Photonizer::Raytracer)
+            Photonizer::Raytracer
+            Photonizer::Photon)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O0")

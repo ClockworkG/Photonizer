@@ -4,8 +4,10 @@
 
 #include "vector3.hh"
 
+constexpr static inline auto epsilon = 0.0000001f;
+
 template <typename T>
-inline
+constexpr inline
 Vector3<T>::Vector3(T x, T y, T z)
     : x(x)
     , y(y)
@@ -13,7 +15,26 @@ Vector3<T>::Vector3(T x, T y, T z)
 {}
 
 template <typename T>
+Vector3<T>::operator bool() const noexcept
+{
+    return *this != Vector3<T>{};
+}
+
+template <typename T>
 T& Vector3<T>::operator[](size_t index)
+{
+    if (index == 0)
+        return x;
+    else if (index == 1)
+        return y;
+    else if (index == 2)
+        return z;
+    else
+        throw std::out_of_range("Index out of bounds");
+}
+
+template <typename T>
+const T& Vector3<T>::operator[](size_t index) const
 {
     if (index == 0)
         return x;
@@ -68,6 +89,14 @@ inline bool operator==(const Vector3<T>& a, const Vector3<T>& b)
     return a.x == b.x && a.y == b.y && a.z == b.z;
 }
 
+template<>
+inline bool operator==(const Vector3<float>& a, const Vector3<float>& b)
+{
+    return (a.x < b.x + epsilon && a.x > b.x - epsilon
+            && a.y < b.y + epsilon && a.y > b.y - epsilon
+            && a.z < b.z + epsilon && a.z > b.z - epsilon);
+}
+
 template <typename T>
 inline bool operator!=(const Vector3<T>& a, const Vector3<T>& b)
 {
@@ -109,10 +138,6 @@ Vector3<T> operator*(const Vector3<T>& a, const U& b)
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const Vector3<T>& a)
 {
-    out.fill(' ');
-    int width = 8;
-    out << "x: " << std::setw(width) << std::left << a.x
-        << " y: " << std::setw(width) << std::left << a.y
-        << " z: " << std::setw(width) << std::left << a.z;
+    out << '(' << a.x << ',' << a.y << ',' << a.z << ')';
     return out;
 }

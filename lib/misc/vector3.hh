@@ -11,12 +11,17 @@ struct Vector3
     T y;
     T z;
 
-    Vector3(T x = 0, T y = 0, T z = 0);
+    constexpr Vector3(T x = 0, T y = 0, T z = 0);
 
     T& operator[](size_t index);
+    const T& operator[](size_t index) const;
 
     Vector3<T>& operator+=(const Vector3<T>& b);
     Vector3<T>& operator-=(const Vector3<T>& b);
+
+    operator bool() const noexcept;
+
+    static inline constexpr auto dimension = 3;
 
     T norm();
     Vector3<T>& normalize();
@@ -54,6 +59,9 @@ template <typename T, typename U>
 Vector3<T> operator*(const Vector3<T>& a, const U& b);
 
 
+
+template <typename T>
+T distance(const Vector3<T>& a, const Vector3<T>& b);
 
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const Vector3<T>& a);

@@ -11,7 +11,7 @@ T clamp(T value, T upper)
 }
 
 template <typename T>
-T clamp(T value, T lower, T upper)
+std::enable_if_t<!std::is_unsigned_v<T>, T> clamp(T value, T lower, T upper)
 {
     if (value < lower)
         return lower;

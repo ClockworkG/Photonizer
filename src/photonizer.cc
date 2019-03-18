@@ -3,6 +3,7 @@
 
 #include <scene/libscene.hh>
 #include <raytracer/libraytracer.hh>
+#include <photon_map/libphoton.hh>
 #include <image/image-rgb.hh>
 #include <image/ppm-writer.hh>
 

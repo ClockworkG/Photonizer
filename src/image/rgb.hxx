@@ -5,6 +5,8 @@
 namespace image
 {
     constexpr static inline auto epsilon = 0.0000001f;
+    constexpr static inline uint16_t max_rgb = 255;
+    constexpr static inline uint16_t min_rgb = 0;
 
     ///////////////////////////////////////////////////////////////////////////
     // RGB
@@ -16,11 +18,11 @@ namespace image
         , g{g_init}
         , b{b_init}
     {
-        if (r > 255)
+        if (r > max_rgb)
             throw std::domain_error{"Red component is greater than 255."};
-        else if (g > 255)
+        else if (g > max_rgb)
             throw std::domain_error{"Green component is greater than 255."};
-        else if (b > 255)
+        else if (b > max_rgb)
             throw std::domain_error{"Blue component is greater than 255."};
     }
 
@@ -38,37 +40,37 @@ namespace image
     inline
     RGB& RGB::operator+=(const RGB& other) noexcept
     {
-        r = clamp(r + other.r, 255);
-        g = clamp(g + other.g, 255);
-        b = clamp(b + other.b, 255);
+        r = clamp(static_cast<uint16_t>(r + other.r), max_rgb);
+        g = clamp(static_cast<uint16_t>(g + other.g), max_rgb);
+        b = clamp(static_cast<uint16_t>(b + other.b), max_rgb);
         return *this;
     }
 
     inline
     RGB& RGB::operator-=(const RGB& other) noexcept
     {
-        r = clamp(r - other.r, 0, 255);
-        g = clamp(g - other.g, 0, 255);
-        b = clamp(b - other.b, 0, 255);
+        r = clamp(static_cast<uint16_t>(r - other.r), min_rgb, max_rgb);
+        g = clamp(static_cast<uint16_t>(g - other.g), min_rgb, max_rgb);
+        b = clamp(static_cast<uint16_t>(b - other.b), min_rgb, max_rgb);
         return *this;
     }
 
     inline
     RGB& RGB::operator*=(const RGB& other) noexcept
     {
-        r = clamp(r * other.r, 255);
-        g = clamp(g * other.g, 255);
-        b = clamp(b * other.b, 255);
+        r = clamp(static_cast<uint16_t>(r * other.r), max_rgb);
+        g = clamp(static_cast<uint16_t>(g * other.g), max_rgb);
+        b = clamp(static_cast<uint16_t>(b * other.b), max_rgb);
         return *this;
     }
 
     template <typename T>
     RGB& RGB::operator*=(T other) noexcept
     {
-        static_assert(std::is_integral_v<T>);
-        r = clamp(r * other, 255);
-        g = clamp(g * other, 255);
-        b = clamp(b * other, 255);
+        static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+        r = clamp(static_cast<uint16_t>(r * other), max_rgb);
+        g = clamp(static_cast<uint16_t>(g * other), max_rgb);
+        b = clamp(static_cast<uint16_t>(b * other), max_rgb);
         return *this;
     }
 
@@ -135,7 +137,7 @@ namespace image
     template <typename T>
     RGB operator*(const RGB& lhs, T factor) noexcept
     {
-        static_assert(std::is_integral_v<T>);
+        static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
         RGB result{lhs};
         result *= factor;
         return result;
@@ -144,7 +146,7 @@ namespace image
     template <typename T>
     RGB operator*(T factor, const RGB& rhs) noexcept
     {
-        static_assert(std::is_integral_v<T>);
+        static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
         RGB result{rhs};
         result *= factor;
         return result;

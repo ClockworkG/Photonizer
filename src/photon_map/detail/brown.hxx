@@ -25,9 +25,15 @@ namespace photon::detail
         , initial_indices_{}
         , cardinality_(point_traits<V>::dimension)
     {
+        std::copy(begin, end, std::begin(values_));
+        auto last = std::unique(std::begin(values_), std::end(values_),
+                      [](const auto& a, const auto& b)
+                      {
+                          return PointComparePolicy<V>::equal(a, b);
+                      });
+        values_.erase(last, std::end(values_));
         comparators_.reserve(cardinality_);
         initial_indices_.reserve(cardinality_);
-        std::copy(begin, end, std::begin(values_));
     }
 
     template <typename V>
@@ -35,14 +41,14 @@ namespace photon::detail
     {
         data_t tree(values_.size() * 2);
         build_initial_indices();
-        split_and_build(tree, 0, values_.size(), 1, 0, true);
+        split_and_build(tree, 0, values_.size(), 1, 0, false);
         return tree;
     }
 
     template <typename V>
     void BrownAlgorithm<V>::split_and_build(data_t& tree, std::size_t begin,
                                             std::size_t end, std::size_t pos,
-                                            std::size_t axis, bool threaded)
+                                            std::size_t axis, bool)
     {
         if (begin >= end)
             return;
@@ -75,7 +81,7 @@ namespace photon::detail
             if (i == axis)
                 continue;
 
-            indexes_t newer(end - begin);
+            indexes_t newer(end - begin + 1);
             std::size_t lower = 0;
             std::size_t upper = middle - begin + 1;
 
@@ -98,29 +104,10 @@ namespace photon::detail
 
         tree[pos] = median;
 
-        auto left_recursion = std::bind(&BrownAlgorithm<V>::split_and_build,
-                                        this,
-                                        std::placeholders::_1,
-                                        begin, middle, 2 * pos,
-                                        (axis + 1) % cardinality_,
-                                        std::placeholders::_2);
-
-        std::unique_ptr<std::thread> thr = nullptr;
-        if (threaded)
-        {
-            bool threaded_rec = (2 * pos < 512);
-            thr = std::make_unique<std::thread>(left_recursion,
-                                                std::ref(tree),
-                                                threaded_rec);
-        }
-        else
-            left_recursion(std::ref(tree), false);
-
+        split_and_build(tree, begin, middle, 2 * pos,
+                        (axis + 1) % cardinality_);
         split_and_build(tree, middle + 1, end, 2 * pos + 1,
                         (axis + 1) % cardinality_);
-
-        if (thr != nullptr)
-            thr->join();
     }
 
     template <typename V>

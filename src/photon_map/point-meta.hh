@@ -86,6 +86,12 @@ namespace photon
             return to_point(a)[index] < to_point(b)[index];
         }
 
+        static bool
+        equal(const ValueType& a, const ValueType& b) noexcept
+        {
+            return to_point(a) == to_point(b);
+        }
+
         static typename point_traits<ValueType>::index_t
         next(typename point_traits<ValueType>::index_t index) noexcept
         {

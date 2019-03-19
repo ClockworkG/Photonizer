@@ -47,6 +47,11 @@ namespace image
                 auto ratio = (value - minimum) / (maximum - minimum);
 
                 color.set_h((1 - ratio) * 0.7);
+                if (ratio < 0.04)
+                {
+                    color.set_s(0);
+                    color.set_v(0);
+                }
                 result[{i, j}] = static_cast<RGB>(color);
             }
         }

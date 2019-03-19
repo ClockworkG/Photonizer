@@ -1,6 +1,11 @@
 #include "libphoton.hh"
 
+#include <random>
+
 #include "point-light.hh"
+#include "ray.hh"
+
+#include "helpers.hh" // XXX: to remove
 
 namespace photon
 {
@@ -8,17 +13,47 @@ namespace photon
 
     namespace
     {
-        inline void emit_photons(const scene::Scene&,
-                                 const scene::PointLight&,
+        inline Vector3f
+        randomize_direction(std::mt19937& engine,
+                            std::uniform_real_distribution<>& dist)
+        {
+            float x = 0;
+            float y = 0;
+            float z = 0;
+
+            do {
+                x = 2 * dist(engine) - 1;
+                y = 2 * dist(engine) - 1;
+                z = 2 * dist(engine) - 1;
+            } while (x * x + y * y + z * z > 1);
+
+            return Vector3f(x, y, z).normalize();
+        }
+
+        inline void emit_photons(const scene::Scene& scene,
+                                 const scene::PointLight& light,
                                  const PhotonTracerConfig& config,
                                  photons_t& photons)
         {
             auto begin = photons.size();
             std::size_t emitted = 0;
+            std::random_device rd{};
+            std::mt19937 engine(rd());
+            std::uniform_real_distribution<> dist(0.0f, 1.0f);
 
             while (emitted < config.max_photons)
             {
-                photons.emplace_back();
+                auto direction = randomize_direction(engine, dist);
+                Ray ray(light.position, direction);
+                Intersection isec;
+
+                intersect(scene, ray, isec);
+
+                [[maybe_unused]]
+                auto hit_point = light.position + direction * isec.t;
+                auto ph = Photon(hit_point);
+
+                photons.push_back(std::move(ph));
                 emitted++;
             }
 

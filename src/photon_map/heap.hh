@@ -32,6 +32,7 @@ namespace photon
         const elt_t& top() const;
 
         operator bool() const noexcept;
+        size_type size() const noexcept;
 
         const_iterator begin() const;
         const_iterator end() const;

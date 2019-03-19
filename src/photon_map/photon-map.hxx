@@ -14,4 +14,11 @@ namespace photon
     PhotonMap::PhotonMap(It begin, It end)
         : tree_(begin, end)
     {}
+
+    inline
+    std::ostream& operator<<(std::ostream& os, const PhotonMap& ph)
+    {
+        os << ph.tree_;
+        return os;
+    }
 } // namespace photon

@@ -60,6 +60,12 @@ namespace photon
     }
 
     template <typename V>
+    auto DistanceHeap<V>::size() const noexcept -> size_type
+    {
+        return data_.size();
+    }
+
+    template <typename V>
     auto DistanceHeap<V>::begin() const -> const_iterator
     {
         return std::cbegin(data_);

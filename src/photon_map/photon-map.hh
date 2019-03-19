@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ostream>
+
 #include "kd-tree.hh"
 #include "rgb.hh"
 #include "vector3.hh"
@@ -8,6 +10,8 @@ namespace photon
 {
     struct Photon
     {
+        Photon() = default;
+        Photon(const Vector3f& pos) : position(pos) {}
         operator Vector3f() const noexcept;
 
         Vector3f    position;
@@ -18,6 +22,8 @@ namespace photon
 
     class PhotonMap
     {
+        friend std::ostream& operator<<(std::ostream&, const PhotonMap&);
+
     public:
         template <typename Iterator>
         PhotonMap(Iterator begin, Iterator end);
@@ -26,6 +32,11 @@ namespace photon
         PhotonMap(PhotonMap&&) = delete;
         PhotonMap& operator=(const PhotonMap&) = delete;
         PhotonMap& operator=(PhotonMap&&) = delete;
+
+        const KDTree<Photon>& get_tree() const noexcept
+        {
+            return tree_;
+        }
 
     private:
         KDTree<Photon> tree_;

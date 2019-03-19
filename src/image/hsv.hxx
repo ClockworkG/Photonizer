@@ -12,6 +12,7 @@ namespace image
         , v_{v}
     {}
 
+    inline
     HSV::operator RGB() const noexcept
     {
         auto var_h = h_ * 6;
@@ -66,6 +67,7 @@ namespace image
         return v_;
     }
 
+    inline
     void HSV::set_h(hue_t h)
     {
         if (h < 0 || h > 1)
@@ -73,6 +75,7 @@ namespace image
         h_ = h;
     }
 
+    inline
     void HSV::set_s(float s)
     {
         if (s < 0 || s > 1)
@@ -80,6 +83,7 @@ namespace image
         s_ = s;
     }
 
+    inline
     void HSV::set_v(float v)
     {
         if (v < 0 || v > 1)

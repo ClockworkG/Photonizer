@@ -30,12 +30,12 @@ namespace scene
         for (std::size_t fv : shape.mesh.num_face_vertices)
         {
             const auto material_id = shape.mesh.material_ids[fv];
-            const auto* mat = (material_id == -1) ?
-                                nullptr :
-                                &materials[material_id];
+            const auto* mat = (material_id != -1 && material_id < static_cast<int>(materials.size())) ?
+                                &materials[material_id] :
+                                nullptr;
 
             Mesh::polygon_t polygon(
-                    (material_id == -1) ?
+                    (mat == nullptr) ?
                     Material() :
                     Material
                     {

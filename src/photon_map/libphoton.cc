@@ -1,6 +1,7 @@
 #include "libphoton.hh"
 
 #include <random>
+#include <tuple>
 
 #include "point-light.hh"
 #include "ray.hh"
@@ -49,9 +50,9 @@ namespace photon
 
                 intersect(scene, ray, isec);
 
-                [[maybe_unused]]
-                auto hit_point = light.position + direction * isec.t;
+                auto hit_point = light.position + direction * isec.nearest_t;
                 auto ph = Photon(hit_point);
+                std::tie(ph.phi, ph.theta) = polar_convert(direction);
 
                 photons.push_back(std::move(ph));
                 emitted++;

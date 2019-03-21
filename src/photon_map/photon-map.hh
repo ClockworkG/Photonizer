@@ -15,7 +15,7 @@ namespace photon
         operator Vector3f() const noexcept;
 
         Vector3f    position;
-        image::RGB  color;
+        image::RGBN color;
         uint8_t     phi;
         uint8_t     theta;
     };
@@ -32,6 +32,11 @@ namespace photon
         PhotonMap(PhotonMap&&) = delete;
         PhotonMap& operator=(const PhotonMap&) = delete;
         PhotonMap& operator=(PhotonMap&&) = delete;
+
+        image::RGBN irradiance_estimate(const Vector3f& position,
+                                        const Vector3f& normal,
+                                        float max_dist,
+                                        std::size_t max_count) const;
 
         const KDTree<Photon>& get_tree() const noexcept
         {

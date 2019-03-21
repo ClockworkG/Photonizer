@@ -18,6 +18,10 @@
         {
             "mesh": "sphere.obj",
             "position": [-1, 0, -20]
+        },
+        {
+            "mesh": "cube.obj",
+            "position": [1.2, -2, -21]
         }
     ],
     "lights": [

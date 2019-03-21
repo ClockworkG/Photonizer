@@ -6,6 +6,7 @@
 
 #include "detail/brown.hh"
 #include "heap.hh"
+#include "math.hh"
 
 /// Handles photon tracing and storing.
 namespace photon

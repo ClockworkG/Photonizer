@@ -14,6 +14,8 @@ namespace photon
 
     namespace
     {
+        constexpr static inline auto max_bounces = 5;
+
         inline Vector3f
         randomize_direction(std::mt19937& engine,
                             std::uniform_real_distribution<>& dist)
@@ -31,6 +33,17 @@ namespace photon
             return Vector3f(x, y, z).normalize();
         }
 
+        [[maybe_unused]]
+        inline std::pair<float, float>
+        next_direction(std::mt19937& engine,
+                       std::uniform_real_distribution<>& dist)
+        {
+            return std::make_pair(
+                    2 * M_PI * dist(engine) * 256,
+                    acos(std::sqrt(dist(engine))) * 256
+            );
+        }
+
         inline void emit_photons(const scene::Scene& scene,
                                  const scene::PointLight& light,
                                  const PhotonTracerConfig& config,
@@ -45,16 +58,40 @@ namespace photon
             while (emitted < config.max_photons)
             {
                 auto direction = randomize_direction(engine, dist);
-                Ray ray(light.position, direction);
-                Intersection isec;
+                auto [phi, theta] = polar_convert(direction);
+                auto origin = light.position;
+                std::size_t bounces = 0;
 
-                intersect(scene, ray, isec);
+                while (bounces < max_bounces)
+                {
+                    Ray ray(origin, direction);
+                    Intersection isec;
 
-                auto hit_point = light.position + direction * isec.nearest_t;
-                auto ph = Photon(hit_point);
-                std::tie(ph.phi, ph.theta) = polar_convert(direction);
+                    intersect(scene, ray, isec);
+                    if (!isec.intersected)
+                        break;
 
-                photons.push_back(std::move(ph));
+                    auto hit_point = origin + direction * isec.nearest_t;
+                    auto ph = Photon(hit_point);
+                    ph.color = light.color * isec.nearest_polygon->get_material().diffuse;
+                    ph.phi = phi;
+                    ph.theta = theta;
+
+                    photons.push_back(std::move(ph));
+
+                    if (true)
+                    {
+                        origin = hit_point;
+                        // FIXME: Not the correct way to bounce a photon
+                        // The direction should be restricted to the
+                        // upper hemisphere.
+                        direction = randomize_direction(engine, dist);
+                        std::tie(phi, theta) = polar_convert(direction);
+
+                        bounces++;
+                    }
+                }
+
                 emitted++;
             }
 

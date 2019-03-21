@@ -3,29 +3,25 @@
     "height": 512,
     "width": 512,
     "camera": {
-        "position": [0.0, -0.6, 10.0],
-        "forward": [0.0, -0.5, -0.9],
+        "position": [0.0, 0.0, 0.0],
+        "forward": [0.0, 0.0, 1.0],
         "up": [0.0, 1.0, 0.0],
-        "fov_x": 110,
-        "fov_y": 110,
+        "fov_x": 90,
+        "fov_y": 90,
         "z_min": 2
     },
     "objects": [
         {
             "mesh": "room.obj",
-            "position": [0, -3, -20]
-        },
-        {
-            "mesh": "sphere.obj",
-            "position": [-1, 0, -20]
+            "position": [0, 0, 10]
         }
     ],
     "lights": [
         {
             "kind": "point",
-            "position": [0, 3, -20],
+            "position": [0, 2, 10],
             "color": [255, 255, 255],
-            "intensity": 500
+            "intensity": 200
         }
     ]
 }

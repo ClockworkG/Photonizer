@@ -11,8 +11,20 @@ namespace photon
     {}
 
     template <typename V>
+    KDTree<V>::KDTree(size_type size)
+        : data_(size)
+    {}
+
+    template <typename V>
     inline
     auto KDTree<V>::data() const noexcept -> const data_type&
+    {
+        return data_;
+    }
+
+    template <typename V>
+    inline
+    auto KDTree<V>::data() noexcept -> data_type&
     {
         return data_;
     }

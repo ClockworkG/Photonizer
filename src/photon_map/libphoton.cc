@@ -3,6 +3,9 @@
 #include <random>
 #include <tuple>
 
+#include <spdlog/spdlog.h>
+
+#include "chrono.hh"
 #include "point-light.hh"
 #include "ray.hh"
 
@@ -101,18 +104,28 @@ namespace photon
     PhotonMap build_photon_map(const scene::Scene& scene,
                                const PhotonTracerConfig& config)
     {
+        spdlog::info("Building photon map");
         photons_t photons{};
 
-        for (const auto& light : scene.lights())
+        double elapsed = 0;
         {
-            if (auto point_light =
-                    std::dynamic_pointer_cast<const scene::PointLight>(light);
-                point_light != nullptr)
+            spdlog::info("Tracing photons");
+            spdlog::debug("Emitting {0} photons", config.max_photons);
+            spdlog::debug("Maximum bounces: {0}", config.max_bounces);
+
+            Chrono chrono(elapsed);
+            for (const auto& light : scene.lights())
             {
-                emit_photons(scene, *point_light, config, photons);
+                if (auto point_light =
+                        std::dynamic_pointer_cast<const scene::PointLight>(light);
+                        point_light != nullptr)
+                {
+                    emit_photons(scene, *point_light, config, photons);
+                }
             }
         }
 
+        spdlog::info("Photon tracing finished in {0} ms", elapsed);
         return PhotonMap(std::cbegin(photons), std::cend(photons));
     }
 } // namespace photon

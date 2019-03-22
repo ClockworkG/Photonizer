@@ -9,8 +9,10 @@ namespace photon
 {
     struct PhotonTracerConfig
     {
-        std::size_t max_photons;
-        std::size_t max_bounces;
+        PhotonTracerConfig() = default;
+
+        std::size_t max_photons = 10000;
+        std::size_t max_bounces = 3;
     };
 
     [[nodiscard]]

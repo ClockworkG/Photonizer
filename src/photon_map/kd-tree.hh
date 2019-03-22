@@ -26,6 +26,7 @@ namespace photon
 
         /** \name Ctors & dtor
          * \{ */
+        KDTree(size_type size);
         template <typename Iterator>
         KDTree(Iterator begin, Iterator end);
         KDTree() = default;
@@ -40,6 +41,7 @@ namespace photon
          * \{ */
         /// Return the underlying vector.
         const data_type& data() const noexcept;
+        data_type& data() noexcept;
         /** \} */
 
         /** \name Algorithm

@@ -1,7 +1,10 @@
 #pragma once
 
+#include <experimental/filesystem>
 #include <ostream>
+#include <memory>
 
+#include "chrono.hh"
 #include "kd-tree.hh"
 #include "rgb.hh"
 #include "vector3.hh"
@@ -27,24 +30,21 @@ namespace photon
     public:
         template <typename Iterator>
         PhotonMap(Iterator begin, Iterator end);
-        PhotonMap() = delete;
+        PhotonMap(const std::experimental::filesystem::path& file);
+        PhotonMap() = default;
         PhotonMap(const PhotonMap&) = delete;
         PhotonMap(PhotonMap&&) = delete;
         PhotonMap& operator=(const PhotonMap&) = delete;
         PhotonMap& operator=(PhotonMap&&) = delete;
 
+        void serialize(const std::experimental::filesystem::path& file) const;
         image::RGBN irradiance_estimate(const Vector3f& position,
                                         const Vector3f& normal,
                                         float max_dist,
                                         std::size_t max_count) const;
 
-        const KDTree<Photon>& get_tree() const noexcept
-        {
-            return tree_;
-        }
-
     private:
-        KDTree<Photon> tree_;
+        std::unique_ptr<KDTree<Photon>> tree_ = nullptr;
     };
 } // namespace photon
 

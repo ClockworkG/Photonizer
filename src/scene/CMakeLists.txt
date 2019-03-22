@@ -14,4 +14,5 @@ target_link_libraries(libscene PUBLIC Photonizer::Misc
                                       gsl
                                       pthread
                                       stdc++fs
+                                      Spdlog
                                       tinyobjloader)

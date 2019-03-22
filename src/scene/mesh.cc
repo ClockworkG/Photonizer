@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include <tiny_obj_loader.h>
+#include <spdlog/spdlog.h>
 
 namespace scene
 {
@@ -20,7 +21,7 @@ namespace scene
                                     &warn, &err, filename.c_str(),
                                     filename.parent_path().c_str());
         if (!err.empty())
-            std::cerr << err << '\n';
+            spdlog::warn("objloader: {0}", err);
 
         if (!ret)
             return;

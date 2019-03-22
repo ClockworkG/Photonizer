@@ -14,8 +14,6 @@ namespace photon
 
     namespace
     {
-        constexpr static inline auto max_bounces = 5;
-
         inline Vector3f
         randomize_direction(std::mt19937& engine,
                             std::uniform_real_distribution<>& dist)
@@ -62,7 +60,7 @@ namespace photon
                 auto origin = light.position;
                 std::size_t bounces = 0;
 
-                while (bounces < max_bounces)
+                while (bounces < config.max_bounces)
                 {
                     Ray ray(origin, direction);
                     Intersection isec;

@@ -10,8 +10,7 @@ namespace photon
     struct PhotonTracerConfig
     {
         std::size_t max_photons;
-        std::size_t query_size;
-        float       query_radius;
+        std::size_t max_bounces;
     };
 
     [[nodiscard]]

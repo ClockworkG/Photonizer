@@ -49,6 +49,16 @@ namespace photon
         return true;
     }
 
+    Vector3f interpolate_normals(const scene::Polygon& polygon,
+                                  const float& u_bary, const float& v_bary)
+    {
+        const auto& n0 = polygon[0].second;
+        const auto& n1 = polygon[1].second;
+        const auto& n2 = polygon[2].second;
+
+        return n0 * (1.0f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
+    }
+
     void intersect(const scene::Scene& scene, const Rayf& ray, Intersection& isec)
     {
         for (const auto& object : scene)

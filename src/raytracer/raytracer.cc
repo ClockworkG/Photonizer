@@ -16,12 +16,18 @@
 #include "vector3.hh"
 #include "photon-map.hh"
 
+#define NORM
+
 namespace raytracer
 {
     #define epsilon 0.0000001
     #define MAX_DEPTH 4
 
-    image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray, const uint8_t& depth);
+#ifdef NORM
+    image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray, const uint8_t& depth, const photon::PhotonMap& ph_map);
+#else
+    float ray_cast(const scene::Scene& scene, const Rayf& ray, const uint8_t& depth, const photon::PhotonMap& ph_map);
+#endif
 
     struct Intersection
     {
@@ -89,7 +95,7 @@ namespace raytracer
         }
     }
 
-#if 0
+#ifdef NORM
 
     Vector3f interpolate_normals(const scene::Polygon& polygon,
                                   const float& u_bary, const float& v_bary)
@@ -160,7 +166,8 @@ namespace raytracer
 
     image::RGBN compute_specular(const scene::Scene& scene, const Rayf& ray,
                                  const Intersection& isec, const Vector3f& P_v,
-                                 const Vector3f& normal, const uint8_t& depth)
+                                 const Vector3f& normal, const uint8_t& depth,
+                                 const photon::PhotonMap& ph_map)
     {
         image::RGBN color = image::RGBN(0, 0, 0);
 
@@ -169,18 +176,28 @@ namespace raytracer
         const Vector3f R_v = ray.dir - (normal * (ray.dir * normal)) * 2;
         float bias = 0.0001f; // to avoid self intersection
         Ray specular_ray = Ray(P_v + normal * bias, R_v);
-        color += material.specular * ray_cast(scene, specular_ray, depth + 1);
+        color += material.specular * ray_cast(scene, specular_ray, depth + 1, ph_map);
 
         return color;
     }
+
 #endif
 
 
+#ifdef NORM
+    image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray, const uint8_t& depth,
+                   const photon::PhotonMap& ph_map)
+#else
     float ray_cast(const scene::Scene& scene, const Rayf& ray, const uint8_t& depth,
                    const photon::PhotonMap& ph_map)
+#endif
     {
         if (depth > MAX_DEPTH)
-            return 0.f;
+#ifdef NORM
+            return image::RGBN(1.f, 1.f, 1.f);
+#else
+            return 0.0f;
+#endif
 
         Intersection isec;
 
@@ -188,29 +205,45 @@ namespace raytracer
         intersect(scene, ray, isec);
         if (isec.intersected)
         {
-#if 0
-            image::RGBN color = image::RGBN(0, 0, 0);
+#ifdef NORM
             const auto normal = interpolate_normals(*isec.nearest_polygon,
                                                     isec.nearest_u_bary,
                                                     isec.nearest_v_bary);
 
             Vector3f P_v = ray.o + (ray.dir * isec.nearest_t);
-
+#if 0
+            image::RGBN color(0.f, 0.f, 0.f);
             color += compute_lights(scene, isec, P_v, normal);
-            color += compute_specular(scene, ray, isec, P_v, normal, depth);
+            return color;
+#else
+            image::RGBN color(0.f, 0.f, 0.f);
+            color += compute_lights(scene, isec, P_v, normal);
+            color += ph_map.irradiance_estimate(P_v, normal, 2.f, 1000) * 11.f;
+            return color;
 #endif
-            auto hit = ray.o + ray.dir * isec.t;
-            auto heap = ph_map.get_tree().nearest(
-                    photon::Photon{hit},
-                    1000, 0.1);
-            return heap.size();
+//            color += compute_specular(scene, ray, isec, P_v, normal, depth, ph_map);
+
+            //return color;
+#else
+            auto hit = ray.o + (ray.dir * isec.nearest_t);
+            auto nearest = ph_map.get_tree().nearest(
+                    photon::Photon(hit), 1000, 1.f
+            );
+            return nearest.size();
+#endif
         }
         else
-            return 0;
+        {
+#ifdef NORM
+            return image::RGBN(1, 1, 1);
+#else
+            return 0.f;
+#endif
+        }
     }
 
-    const image::Heatmap<float>& render(const scene::Scene& scene,
-                                  const photon::PhotonMap& ph_map)
+    image::ImageRGB render(const scene::Scene& scene,
+                           const photon::PhotonMap& ph_map)
     {
         spdlog::info("Starting raytracing process");
         double elapsed = 0;
@@ -219,7 +252,11 @@ namespace raytracer
         const float img_height = scene.get_height();
 
         // Create image buffer
-        auto& img = *(new image::Heatmap<float>(img_height, img_width));
+#ifdef NORM
+        auto img = image::ImageRGB(img_height, img_width);
+#else
+        auto img = image::Heatmap<float>(img_height, img_width);
+#endif
 
         const auto origin = scene.get_camera().position;
         const float z_min = scene.get_camera().z_min;

@@ -13,6 +13,7 @@ constexpr static inline auto version = (PHOTONIZER_VERSION);
 
 int main(int argc, char **argv)
 {
+    spdlog::info("Running photonizer v{0}", version);
     CLI::App app{"Photonizer - raytracer extended with photon mapping"};
 
     std::string scene_file{};
@@ -23,6 +24,7 @@ int main(int argc, char **argv)
         ->required()
         ->check(CLI::ExistingFile);
 
+    [[maybe_unused]]
     auto photon_cmd = app.add_subcommand("map", "Photon mapping commands");
     auto ray_cmd = app.add_subcommand("trace", "Raytracer commands");
 

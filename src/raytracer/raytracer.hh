@@ -7,6 +7,6 @@
 
 namespace raytracer
 {
-    const image::Heatmap<float>& render(const scene::Scene& scene,
-                                  const photon::PhotonMap& ph_map);
+    image::ImageRGB render(const scene::Scene& scene,
+                           const photon::PhotonMap& ph_map);
 }

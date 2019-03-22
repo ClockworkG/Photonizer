@@ -6,6 +6,8 @@
 #include <map>
 #include <string>
 
+#include <spdlog/spdlog.h>
+
 #include "light-factory.hh"
 
 namespace ptree = boost::property_tree;
@@ -99,7 +101,7 @@ namespace scene::detail
             }
             else
             {
-                std::cerr << "WARNING: unknown kind: " << kind << '\n';
+                spdlog::warn("Unknown light kind: {0}", kind);
                 continue;
             }
         }

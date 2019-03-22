@@ -11,6 +11,8 @@ add_subdirectory(raytracer)
 add_executable(photonizer "photonizer.cc")
 target_link_libraries(photonizer
     PRIVATE Boost::program_options
+            CLI11
+            Spdlog
             Photonizer::Scene
             Photonizer::Image
             Photonizer::Raytracer

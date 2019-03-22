@@ -6,87 +6,49 @@
 #include <image/image-rgb.hh>
 #include <image/ppm-writer.hh>
 
-#include <boost/program_options.hpp>
+#include <CLI11.hpp>
+#include <spdlog/spdlog.h>
 
-constexpr const char* version = PHOTONIZER_VERSION;
-constexpr auto error_message = "Error while parsing command line options: ";
-
-#define ARG_ERROR_EXIT(Exception, Description, Exitcode)                \
-    do {                                                                \
-        std::cerr << error_message << (Exception).what() << "\n\n"      \
-                  << (Description);                                     \
-        std::exit(Exitcode);                                            \
-    } while (false)
-
-namespace boostopt = boost::program_options;
+constexpr static inline auto version = (PHOTONIZER_VERSION);
 
 int main(int argc, char **argv)
 {
-    boostopt::options_description desc{"General options"};
-    desc.add_options()
-        ("help,h", "Display help message.")
-        ("version,v", "Display version information.")
-    ;
+    spdlog::info("Running photonizer v{0}", version);
+    CLI::App app{"Photonizer - raytracer extended with photon mapping"};
 
     std::string scene_file{};
+    std::string output_file{"output.ppm"};
 
-    boostopt::options_description hidden{};
-    hidden.add_options()
-        (
-         "scene-file",
-         boostopt::value<std::string>(&scene_file), "scene"
-        );
+    app.require_subcommand();
+    app.add_option("scene-file", scene_file, "JSON containing the scene")
+        ->required()
+        ->check(CLI::ExistingFile);
 
-    boostopt::options_description all_opts{};
-    all_opts.add(desc);
-    all_opts.add(hidden);
+    [[maybe_unused]]
+    auto photon_cmd = app.add_subcommand("map", "Photon mapping commands");
+    auto ray_cmd = app.add_subcommand("trace", "Raytracer commands");
 
-    boostopt::positional_options_description positional_desc{};
-    positional_desc.add("scene-file", 1);
+    ray_cmd->add_option("output-file", output_file, "PPM output");
 
-    boostopt::variables_map vm;
     try {
-        boostopt::store(boostopt::command_line_parser(argc, argv)
-                        .options(all_opts)
-                        .positional(positional_desc)
-                        .run(), vm);
-        boostopt::notify(vm);
-    }
-    catch (const boostopt::unknown_option& exc)
-    {
-        ARG_ERROR_EXIT(exc, all_opts, EXIT_FAILURE);
-    }
-    catch (const boostopt::required_option& exc)
-    {
-        ARG_ERROR_EXIT(exc, all_opts, EXIT_FAILURE);
-    }
-
-    if (vm.count("help"))
-    {
-        std::cout << all_opts;
-        return EXIT_SUCCESS;
-    }
-
-    if (vm.count("version"))
-    {
-        std::cout << "Raytracer & Photon Mapping - ISIM Project\n"
-                  << "Alexandre Lamure, Robin Le Bihan - EPITA Image 2020\n"
-                  << "Version " << version << '\n';
-        return EXIT_SUCCESS;
-    }
-
-    if (scene_file.empty())
-    {
-        std::cout << "Missing scene file\n" << all_opts;
-        return EXIT_FAILURE;
+        app.parse(argc, argv);
+    } catch (const CLI::Error& e) {
+        return app.exit(e);
     }
 
     auto the_scene = scene::load_scene(scene_file);
-    if (!the_scene)
+    if (the_scene == nullptr)
         return EXIT_FAILURE;
-    auto image = raytracer::render(*the_scene);
-    image::PPMWriter<image::ImageRGB> ppm_writer;
-    ppm_writer.write(std::cout, image);
+
+    if (ray_cmd->parsed())
+    {
+        auto image_output = raytracer::render(*the_scene);
+        image::PPMWriter<image::ImageRGB> ppm_writer{};
+        std::ofstream output_stream{output_file};
+
+        spdlog::info("Writing output to {0}", output_file);
+        ppm_writer.write(output_stream, image_output);
+    }
 
     return EXIT_SUCCESS;
 }

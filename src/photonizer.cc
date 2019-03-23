@@ -2,7 +2,7 @@
 #include <string>
 
 #include <scene/libscene.hh>
-#include <raytracer/raytracer.hh>
+#include <raytracer/libraytracer.hh>
 #include <image/image-rgb.hh>
 #include <image/ppm-writer.hh>
 
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 
     if (ray_cmd->parsed())
     {
-        auto image_output = raytracer::render(*the_scene);
+        auto image_output = raytracer::render<image::ImageRGB>(the_scene);
         image::PPMWriter<image::ImageRGB> ppm_writer{};
         std::ofstream output_stream{output_file};
 

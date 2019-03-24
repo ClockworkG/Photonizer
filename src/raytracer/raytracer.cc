@@ -198,13 +198,38 @@ namespace raytracer
         return (Rs * Rs + Rp * Rp) / 2;
     }
 
+    image::RGBN compute_refract(const scene::Scene& scene, const Rayf& ray,
+                                const Intersection& isec, const Vector3f& P_v,
+                                const Vector3f& normal, const uint8_t& depth)
+    {
         const auto& material = isec.nearest_polygon->get_material();
+        float ior = 1.3; //FIXME: should come from MTL
+        image::RGBN refract_color = image::RGBN(0, 0, 0);
+        float reflect_coef = fresnel(ray, normal, ior);
+        bool to_outside = (ray.dir * normal) < 0;
+        Vector3f biased_normal = normal * BIAS;
 
-        const Vector3f R_v = ray.dir - (normal * (ray.dir * normal)) * 2;
-        float bias = 0.0001f; // to avoid self intersection
-        Ray specular_ray = Ray(P_v + normal * bias, R_v);
-        color += material.specular * ray_cast(scene, specular_ray, depth + 1);
+        if (reflect_coef < 1)
+        {
+            Rayf refract_ray;
 
+            // compute the refraction direction
+            // compute the refraction origin
+            if (to_outside)
+                refract_ray.origin = P_v - biased_normal;
+            else
+                refract_ray.origin = P_v + biased_normal;
+
+            // cast the refraction ray
+            refract_color = ray_cast(scene, refract_ray, depth + 1);
+
+        }
+
+
+        Ray reflect_ray = Ray(P_v + normal * BIAS, R_v);
+        color += reflect_coef * ray_cast(scene, reflect_ray, depth + 1);
+
+        image::RGBN reflect_color = compute_reflect(scene, ray, isec, P_v, normal, depth);
         return color;
     }
 
@@ -225,10 +250,16 @@ namespace raytracer
                                                     isec.nearest_u_bary,
                                                     isec.nearest_v_bary);
 
+            // intersection point
             Vector3f P_v = ray.o + (ray.dir * isec.nearest_t);
 
-            color += compute_lights(scene, isec, P_v, normal);
-            color += compute_specular(scene, ray, isec, P_v, normal, depth);
+            // FIXME: use the illum parameter from MTL file
+            if (material.transparency != 0)
+                color += compute_lights(scene, isec, P_v, normal) * material.transparency;
+            if (material.transparency != 1)
+                color += compute_refract(scene, isec, P_v, normal, depth) * (1 - material.transparency);
+            // FIXME: allow reflection without transparency
+
             return color;
         }
         else

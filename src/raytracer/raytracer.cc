@@ -1,4 +1,5 @@
 #include <cmath>
+#include <algorithm>
 
 #include <spdlog/spdlog.h>
 
@@ -19,6 +20,7 @@ namespace raytracer
 {
     #define epsilon 0.0000001
     #define MAX_DEPTH 4
+    #define BIAS = 0.0001f; // to avoid self intersection
 
     image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray, const uint8_t& depth);
 
@@ -104,8 +106,6 @@ namespace raytracer
         image::RGBN color = image::RGBN(0, 0, 0);
 
         const auto& material = isec.nearest_polygon->get_material();
-        // FIXME: should come from material
-        float albedo = 0.18f / M_PI;
 
         Vector3f L_v;
         float intensity;
@@ -139,14 +139,13 @@ namespace raytracer
             }
 
             // shadow test
-            const float bias = 0.0001f; // to avoid self intersection
-            const Ray light_ray = Ray(P_v + normal * bias, L_v);
+            const Ray light_ray = Ray(P_v + normal * BIAS, L_v);
             intersect(scene, light_ray, shadow_isec);
             // FIXME: could be optimized to not test all the objects after the first intersection
             if (!shadow_isec.intersected)
             {
                 float cos_theta = normal * L_v;
-                float coef = intensity * cos_theta * albedo;
+                float coef = intensity * cos_theta;
                 coef = clamp(coef, 0.0f, 1.0f);
                 color += material.diffuse * light.color * coef;
             }

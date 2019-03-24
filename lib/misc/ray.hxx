@@ -4,6 +4,14 @@
 
 template <typename T>
 inline
+Ray<T>::Ray()
+{
+    o = Vector3<T>();
+    dir = Vector3<T>();
+}
+
+template <typename T>
+inline
 Ray<T>::Ray(const Vector3<T>& o, const Vector3<T>& dir)
     : o(o)
     , dir(dir)

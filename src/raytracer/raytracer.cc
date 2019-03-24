@@ -20,7 +20,7 @@ namespace raytracer
 {
     #define epsilon 0.0000001
     #define MAX_DEPTH 4
-    #define BIAS = 0.0001f; // to avoid self intersection
+    #define BIAS 0.0001f // to avoid self intersection
 
     image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray, const uint8_t& depth);
 
@@ -161,9 +161,10 @@ namespace raytracer
 
     Vector3f refract_dir(const Rayf& ray, const Vector3f& normal, float ior)
     {
-        float cos_incident = clamp(ray.dir *  normal, -1, 1);
+        float cos_incident = clamp(ray.dir * normal, -1.0f, 1.0f);
         float eta1 = 1; // FIXME
         float eta2 = ior;
+        Vector3f normal_copy = normal;
         if (cos_incident > 0) // if we're leaving the material (from inside to outside)
         {
             std::swap(eta1, eta2);
@@ -176,22 +177,22 @@ namespace raytracer
         if (k < 0)
             return Vector3f(0, 0, 0);
         else
-            return eta * ray.dir + (eta * cos_incident - std::sqrtf(k)) * normal_copy;
+            return eta * ray.dir + (eta * cos_incident - std::sqrt(k)) * normal_copy;
 
     }
 
     float fresnel(const Rayf& ray, const Vector3f& normal, float ior)
     {
-        float cos_incident = clamp(ray.dir *  normal, -1, 1);
+        float cos_incident = clamp(ray.dir *  normal, -1.0f, 1.0f);
         float eta1 = 1; // FIXME
         float eta2 = ior;
         if (cos_incident > 0) // if we're leaving the material (from inside to outside)
             std::swap(eta1, eta2);
-        float sin_transmit = eta1 / eta2 * std::sqrtf(std::max(0.0f, 1 - cos_incident * cos_incident));
+        float sin_transmit = eta1 / eta2 * std::sqrt(std::max(0.0f, 1 - cos_incident * cos_incident));
         if (sin_transmit >= 1) // total internal reflection
             return 1;
 
-        float cos_transmit = std::sqrtf(std::max(0.0f, 1 - sin_transmit * sin_transmit));
+        float cos_transmit = std::sqrt(std::max(0.0f, 1 - sin_transmit * sin_transmit));
         cos_incident = std::abs(cos_incident);
         float Rs = ((eta2 * cos_incident) - (eta1 * cos_transmit)) / ((eta2 * cos_incident) + (eta1 * cos_transmit));
         float Rp = ((eta1 * cos_transmit) - (eta2 * cos_transmit)) / ((eta1 * cos_incident) + (eta2 * cos_transmit));
@@ -203,6 +204,7 @@ namespace raytracer
                                 const Vector3f& normal, const uint8_t& depth)
     {
         const auto& material = isec.nearest_polygon->get_material();
+        (void)material;
         float ior = 1.3; //FIXME: should come from MTL
         float reflect_coef = fresnel(ray, normal, ior);
         bool to_outside = (ray.dir * normal) < 0;
@@ -213,14 +215,14 @@ namespace raytracer
         {
             Rayf refract_ray;
             refract_ray.dir = (refract_dir(ray, normal, ior)).normalize();
-            refract_ray.origin = to_outside ? P_v - biased_normal : P_v + biased_normal;
+            refract_ray.o = to_outside ? P_v - biased_normal : P_v + biased_normal;
 
             refract_color = ray_cast(scene, refract_ray, depth + 1);
         }
 
-        Ray reflect_ray;
-        reflect_ray.dir = (reflect_dir(ray, normal, ior)).normalize();
-        reflect_ray.origin = to_outside ? P_v + biased_normal : P_v - biased_normal;
+        Rayf reflect_ray;
+        reflect_ray.dir = (reflect_dir(ray, normal)).normalize();
+        reflect_ray.o = to_outside ? P_v + biased_normal : P_v - biased_normal;
         image::RGBN reflect_color = ray_cast(scene, reflect_ray, depth + 1);
 
         return reflect_color * reflect_coef + refract_color * (1.0f - reflect_coef);
@@ -243,6 +245,7 @@ namespace raytracer
                                                     isec.nearest_u_bary,
                                                     isec.nearest_v_bary);
 
+            const auto& material = isec.nearest_polygon->get_material();
             // intersection point
             Vector3f P_v = ray.o + (ray.dir * isec.nearest_t);
 
@@ -250,7 +253,7 @@ namespace raytracer
             if (material.transparency != 0)
                 color += compute_lights(scene, isec, P_v, normal) * material.transparency;
             if (material.transparency != 1)
-                color += compute_refract(scene, isec, P_v, normal, depth) * (1 - material.transparency);
+                color += compute_refract(scene, ray, isec, P_v, normal, depth) * (1 - material.transparency);
             // FIXME: allow reflection without transparency
 
             return color;

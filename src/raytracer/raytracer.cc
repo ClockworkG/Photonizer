@@ -158,7 +158,23 @@ namespace raytracer
                                  const Intersection& isec, const Vector3f& P_v,
                                  const Vector3f& normal, const uint8_t& depth)
     {
-        image::RGBN color = image::RGBN(0, 0, 0);
+    float fresnel(const Rayf& ray, const Vector3f& normal, float ior)
+    {
+        float cos_incident = clamp(ray.dir *  normal, -1, 1);
+        float eta1 = 1; // FIXME
+        float eta2 = ior;
+        if (cos_incident > 0) // if we're leaving the material (from inside to outside)
+            std::swap(eta1, eta2);
+        float sin_transmit = eta1 / eta2 * std::sqrtf(std::max(0.0f, 1 - cos_incident * cos_incident));
+        if (sin_transmit >= 1) // total internal reflection
+            return 1;
+
+        float cos_transmit = std::sqrtf(std::max(0.0f, 1 - sin_transmit * sin_transmit));
+        cos_incident = std::abs(cos_incident);
+        float Rs = ((eta2 * cos_incident) - (eta1 * cos_transmit)) / ((eta2 * cos_incident) + (eta1 * cos_transmit));
+        float Rp = ((eta1 * cos_transmit) - (eta2 * cos_transmit)) / ((eta1 * cos_incident) + (eta2 * cos_transmit));
+        return (Rs * Rs + Rp * Rp) / 2;
+    }
 
         const auto& material = isec.nearest_polygon->get_material();
 

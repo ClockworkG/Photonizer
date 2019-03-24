@@ -154,10 +154,32 @@ namespace raytracer
     }
 
 
-    image::RGBN compute_specular(const scene::Scene& scene, const Rayf& ray,
-                                 const Intersection& isec, const Vector3f& P_v,
-                                 const Vector3f& normal, const uint8_t& depth)
+    Vector3f reflect_dir(const Rayf& ray, const Vector3f& normal)
     {
+        return ray.dir - (normal * (ray.dir * normal)) * 2;
+    }
+
+    Vector3f refract_dir(const Rayf& ray, const Vector3f& normal, float ior)
+    {
+        float cos_incident = clamp(ray.dir *  normal, -1, 1);
+        float eta1 = 1; // FIXME
+        float eta2 = ior;
+        if (cos_incident > 0) // if we're leaving the material (from inside to outside)
+        {
+            std::swap(eta1, eta2);
+            normal_copy = Vector3f(-normal.x, -normal.y, -normal.z);
+        }
+        else
+            cos_incident = -cos_incident;
+        float eta = eta1 / eta2;
+        float k = 1 - eta * eta * (1 - cos_incident * cos_incident);
+        if (k < 0)
+            return Vector3f(0, 0, 0);
+        else
+            return eta * ray.dir + (eta * cos_incident - std::sqrtf(k)) * normal_copy;
+
+    }
+
     float fresnel(const Rayf& ray, const Vector3f& normal, float ior)
     {
         float cos_incident = clamp(ray.dir *  normal, -1, 1);

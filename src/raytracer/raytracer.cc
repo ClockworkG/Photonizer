@@ -204,33 +204,26 @@ namespace raytracer
     {
         const auto& material = isec.nearest_polygon->get_material();
         float ior = 1.3; //FIXME: should come from MTL
-        image::RGBN refract_color = image::RGBN(0, 0, 0);
         float reflect_coef = fresnel(ray, normal, ior);
         bool to_outside = (ray.dir * normal) < 0;
         Vector3f biased_normal = normal * BIAS;
 
+        image::RGBN refract_color = image::RGBN(0, 0, 0);
         if (reflect_coef < 1)
         {
             Rayf refract_ray;
+            refract_ray.dir = (refract_dir(ray, normal, ior)).normalize();
+            refract_ray.origin = to_outside ? P_v - biased_normal : P_v + biased_normal;
 
-            // compute the refraction direction
-            // compute the refraction origin
-            if (to_outside)
-                refract_ray.origin = P_v - biased_normal;
-            else
-                refract_ray.origin = P_v + biased_normal;
-
-            // cast the refraction ray
             refract_color = ray_cast(scene, refract_ray, depth + 1);
-
         }
 
+        Ray reflect_ray;
+        reflect_ray.dir = (reflect_dir(ray, normal, ior)).normalize();
+        reflect_ray.origin = to_outside ? P_v + biased_normal : P_v - biased_normal;
+        image::RGBN reflect_color = ray_cast(scene, reflect_ray, depth + 1);
 
-        Ray reflect_ray = Ray(P_v + normal * BIAS, R_v);
-        color += reflect_coef * ray_cast(scene, reflect_ray, depth + 1);
-
-        image::RGBN reflect_color = compute_reflect(scene, ray, isec, P_v, normal, depth);
-        return color;
+        return reflect_color * reflect_coef + refract_color * (1.0f - reflect_coef);
     }
 
 

@@ -4,15 +4,15 @@
 
 #include <spdlog/spdlog.h>
 
-#include "ray-tracer.hh"
-#include "chrono.hh"
-
 namespace raytracer
 {
     template <typename Image>
-    Image render(scene_ptr_t scene, photon::PhotonMap&& photon_map)
+    Image render(scene_ptr_t scene, photon::PhotonMap&& photon_map,
+                 const RaytracerConfig& config)
     {
         spdlog::info("Starting raytracing process");
+        spdlog::debug("Using {0} photons in radiance estimate", config.photon_gathering_count);
+        spdlog::debug("Photon gathering with radius {0}", config.photon_gathering_radius);
         double elapsed = 0;
 
         const float img_width = scene->get_width();
@@ -32,7 +32,7 @@ namespace raytracer
             Chrono<std::chrono::seconds> chrono(elapsed);
 
             // Draw Loop
-            RayTracer ray_cast(scene, std::move(photon_map));
+            RayTracer ray_cast(scene, config, std::move(photon_map));
             for (int y = 0; y < img_height; ++y)
             {
                 for (int x = 0; x < img_width; ++x)

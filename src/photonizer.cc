@@ -22,7 +22,8 @@ int main(int argc, char **argv)
     std::string output_file{"output.ppm"};
     std::string photon_file{"photons.pht"};
     std::string photon_map_file{};
-    photon::PhotonTracerConfig config{};
+    photon::PhotonTracerConfig p_config{};
+    raytracer::RaytracerConfig r_config{};
 
     app.require_subcommand();
     app.add_flag("-g,--debug", debug_mode, "Enable debug logging");
@@ -34,10 +35,12 @@ int main(int argc, char **argv)
     auto ray_cmd = app.add_subcommand("trace", "Raytracer commands");
 
     ray_cmd->add_option("-m,--map", photon_map_file, "Photon map file");
+    ray_cmd->add_option("-r,--radius", r_config.photon_gathering_radius, "Photon gathering radius");
+    ray_cmd->add_option("-c,--count", r_config.photon_gathering_count, "Photon gathering count");
     ray_cmd->add_option("output-file", output_file, "PPM output");
     photon_cmd->add_option("output-file", photon_file, "Phton map output file");
-    photon_cmd->add_option("-p,--photons", config.max_photons, "Number of photons to emit");
-    photon_cmd->add_option("-b,--bounces", config.max_bounces, "Number of max bounces per photon");
+    photon_cmd->add_option("-p,--photons", p_config.max_photons, "Number of photons to emit");
+    photon_cmd->add_option("-b,--bounces", p_config.max_bounces, "Number of max bounces per photon");
 
     try {
         app.parse(argc, argv);
@@ -54,7 +57,7 @@ int main(int argc, char **argv)
 
     if (photon_cmd->parsed())
     {
-        auto photon_map = photon::build_photon_map(the_scene, config);
+        auto photon_map = photon::build_photon_map(the_scene, p_config);
         photon_map.serialize(photon_file);
     }
 
@@ -66,7 +69,8 @@ int main(int argc, char **argv)
         auto photon_map = photon::PhotonMap(photon_map_file);
         auto image_output = raytracer::render<image::ImageRGB>(
                 the_scene,
-                std::move(photon_map)
+                std::move(photon_map),
+                r_config
         );
 
         spdlog::info("Writing output to {0}", output_file);

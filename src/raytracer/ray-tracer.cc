@@ -7,14 +7,19 @@
 
 namespace raytracer
 {
-    RayTracer::RayTracer(scene_ptr_t scene)
+    RayTracer::RayTracer(scene_ptr_t scene,
+                         const RaytracerConfig& config)
         : super_t(scene)
         , photon_map_(std::nullopt)
+        , config_(config)
     {}
 
-    RayTracer::RayTracer(scene_ptr_t scene, photon::PhotonMap&& photon_map)
+    RayTracer::RayTracer(scene_ptr_t scene,
+                         const RaytracerConfig& config,
+                         photon::PhotonMap&& photon_map)
         : super_t(scene)
         , photon_map_(std::move(photon_map))
+        , config_(config)
     {}
 
     auto

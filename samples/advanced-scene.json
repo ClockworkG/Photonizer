@@ -17,7 +17,7 @@
         },
         {
             "mesh": "sphere.obj",
-            "position": [-1, 0, -20]
+            "position": [-2.7, -2, -20]
         },
         {
             "mesh": "cube.obj",
@@ -29,6 +29,12 @@
             "kind": "point",
             "position": [0, 3, -20],
             "color": [255, 255, 255],
+            "intensity": 500
+        },
+        {
+            "kind": "directional",
+            "direction": [-1, -0.2, 0],
+            "color": [255, 240, 145],
             "intensity": 500
         }
     ]

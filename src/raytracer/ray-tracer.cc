@@ -24,7 +24,7 @@ namespace raytracer
 
     auto
     RayTracer::on_hit_impl(const Rayf& ray, const Intersection& isec,
-                           uint8_t) const
+                           [[maybe_unused]] uint8_t depth) const
         -> value_type
     {
         image::RGBN color = image::RGBN(0.f, 0.f, 0.f);
@@ -35,7 +35,14 @@ namespace raytracer
         Vector3f P_v = ray.o + (ray.dir * isec.nearest_t);
 
         color += compute_lights(isec, P_v, normal);
-//        color += compute_specular(ray, isec, P_v, normal, depth);
+        color += photon_map_->irradiance_estimate(
+                P_v,
+                normal,
+                config_.photon_gathering_radius,
+                config_.photon_gathering_count
+        ) * 11.f;
+
+        color += compute_specular(ray, isec, P_v, normal, depth);
 
         return color;
     }
@@ -93,6 +100,7 @@ namespace raytracer
                                -dir_light->direction.z);
                 L_v.normalize();
                 intensity = dir_light->intensity;
+                nearest = 500.f;
             }
             else if (const auto *point_light = dynamic_cast<scene::PointLight*>(&light))
             {

@@ -1,6 +1,7 @@
 #include "mesh.hh"
 
 #include <iostream>
+#include <sstream>
 
 #include <tiny_obj_loader.h>
 #include <spdlog/spdlog.h>
@@ -28,6 +29,7 @@ namespace scene
 
         const auto& shape = shapes[0]; // We assume there is only one shape
         std::size_t offset = 0;
+        std::stringstream oss;
         for (std::size_t fv : shape.mesh.num_face_vertices)
         {
             const auto material_id = shape.mesh.material_ids[fv];
@@ -35,19 +37,25 @@ namespace scene
                                 &materials[material_id] :
                                 nullptr;
 
+            if (mat != nullptr)
+                oss << mat->name << '_' << static_cast<const void*>(mat);
+
             Mesh::polygon_t polygon(
                     (mat == nullptr) ?
                     Material() :
                     Material
                     {
-                        mat->name,
+                        oss.str(),
                         mat->dissolve,
                         mat->shininess,
+                        mat->ior,
                         image::RGBN(mat->ambient[0], mat->ambient[1], mat->ambient[2]),
                         image::RGBN(mat->diffuse[0], mat->diffuse[1], mat->diffuse[2]),
                         image::RGBN(mat->specular[0], mat->specular[1], mat->specular[2])
                     }
             );
+
+            oss.clear();
 
             for (std::size_t v = 0; v < fv; v++)
             {

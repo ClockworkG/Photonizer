@@ -33,9 +33,9 @@ namespace photon
         PhotonMap(const std::experimental::filesystem::path& file);
         PhotonMap() = default;
         PhotonMap(const PhotonMap&) = delete;
-        PhotonMap(PhotonMap&&) = delete;
+        PhotonMap(PhotonMap&&) = default;
         PhotonMap& operator=(const PhotonMap&) = delete;
-        PhotonMap& operator=(PhotonMap&&) = delete;
+        PhotonMap& operator=(PhotonMap&&) = default;
 
         void serialize(const std::experimental::filesystem::path& file) const;
         image::RGBN irradiance_estimate(const Vector3f& position,

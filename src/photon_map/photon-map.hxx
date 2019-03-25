@@ -28,16 +28,20 @@ namespace photon
     inline
     PhotonMap::PhotonMap(const std::experimental::filesystem::path& file)
     {
-        spdlog::info("Loading photons from {0}", file.string());
+        if (std::experimental::filesystem::exists(file))
+        {
+            spdlog::info("Loading photons from {0}", file.string());
+            auto file_size = std::experimental::filesystem::file_size(file);
+            auto count = file_size / sizeof (Photon);
+            spdlog::debug("Loading {0} photons", count);
+            tree_ = std::make_unique<KDTree<Photon>>(count);
 
-        auto file_size = std::experimental::filesystem::file_size(file);
-        auto count = file_size / sizeof (Photon);
-        spdlog::debug("Loading {0} photons", count);
-        tree_ = std::make_unique<KDTree<Photon>>(count);
-
-        FILE* raw_file = fopen(file.c_str(), "r");
-        fread(tree_->data().data(), count, sizeof (Photon), raw_file);
-        fclose(raw_file);
+            FILE* raw_file = fopen(file.c_str(), "r");
+            fread(tree_->data().data(), count, sizeof (Photon), raw_file);
+            fclose(raw_file);
+        }
+        else
+            spdlog::info("Using empty photon map");
     }
 
     inline void

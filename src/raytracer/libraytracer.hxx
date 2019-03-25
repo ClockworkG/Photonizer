@@ -10,7 +10,7 @@
 namespace raytracer
 {
     template <typename Image>
-    Image render(scene_ptr_t scene)
+    Image render(scene_ptr_t scene, photon::PhotonMap&& photon_map)
     {
         spdlog::info("Starting raytracing process");
         double elapsed = 0;
@@ -32,7 +32,7 @@ namespace raytracer
             Chrono<std::chrono::seconds> chrono(elapsed);
 
             // Draw Loop
-            RayTracer ray_cast(scene);
+            RayTracer ray_cast(scene, std::move(photon_map));
             for (int y = 0; y < img_height; ++y)
             {
                 for (int x = 0; x < img_width; ++x)

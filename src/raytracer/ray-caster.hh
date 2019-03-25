@@ -33,9 +33,9 @@ namespace raytracer
 
         RayCaster(scene_ptr_t scene, uint8_t max_depth = 4);
         ~RayCaster() = default;
-        RayCaster(const RayCaster&) = default;
+        RayCaster(const RayCaster&) = delete;
         RayCaster(RayCaster&&) = default;
-        RayCaster& operator=(const RayCaster&) = default;
+        RayCaster& operator=(const RayCaster&) = delete;
         RayCaster& operator=(RayCaster&&) = default;
 
         value_type operator()(const Rayf& ray, uint8_t depth = 0) const;

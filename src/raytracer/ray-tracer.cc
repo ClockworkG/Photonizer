@@ -9,11 +9,17 @@ namespace raytracer
 {
     RayTracer::RayTracer(scene_ptr_t scene)
         : super_t(scene)
+        , photon_map_(std::nullopt)
+    {}
+
+    RayTracer::RayTracer(scene_ptr_t scene, photon::PhotonMap&& photon_map)
+        : super_t(scene)
+        , photon_map_(std::move(photon_map))
     {}
 
     auto
     RayTracer::on_hit_impl(const Rayf& ray, const Intersection& isec,
-                           uint8_t depth) const
+                           uint8_t) const
         -> value_type
     {
         image::RGBN color = image::RGBN(0.f, 0.f, 0.f);

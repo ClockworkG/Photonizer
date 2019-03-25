@@ -1,5 +1,6 @@
 #pragma once
 
+#include "photon-map.hh"
 #include "ray-caster.hh"
 #include "rgb.hh"
 
@@ -14,6 +15,7 @@ namespace raytracer
         using value_type = image::RGBN;
 
         RayTracer(scene_ptr_t scene);
+        RayTracer(scene_ptr_t scene, photon::PhotonMap&& photon_map);
         ~RayTracer() = default;
         RayTracer(const RayTracer&) = default;
         RayTracer(RayTracer&&) = default;
@@ -37,5 +39,7 @@ namespace raytracer
 
         static Vector3f interpolate_normals(const scene::Polygon& polygon,
                                             float u_bary, float v_bary);
+
+        std::optional<photon::PhotonMap> photon_map_ = std::nullopt;
     };
 } // namespace raytracer

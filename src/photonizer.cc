@@ -60,9 +60,14 @@ int main(int argc, char **argv)
 
     if (ray_cmd->parsed())
     {
-        auto image_output = raytracer::render<image::ImageRGB>(the_scene);
         image::PPMWriter<image::ImageRGB> ppm_writer{};
         std::ofstream output_stream{output_file};
+
+        auto photon_map = photon::PhotonMap(photon_map_file);
+        auto image_output = raytracer::render<image::ImageRGB>(
+                the_scene,
+                std::move(photon_map)
+        );
 
         spdlog::info("Writing output to {0}", output_file);
         ppm_writer.write(output_stream, image_output);

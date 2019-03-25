@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include "scene.hh"
 #include "ray.hh"
@@ -39,6 +40,9 @@ namespace raytracer
 
         value_type operator()(const Rayf& ray, uint8_t depth = 0) const;
 
+        std::optional<float> get_nearest() const noexcept;
+        void set_nearest(std::optional<float> nearest);
+
     private:
         value_type on_hit(const Rayf& ray,
                           const Intersection& isec,
@@ -54,6 +58,7 @@ namespace raytracer
                                     Intersection& isec);
 
         scene_ptr_t scene_ = nullptr;
+        std::optional<float> nearest_ = std::nullopt;
         uint8_t max_depth_ = 4;
     };
 } // namespace raytracer

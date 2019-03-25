@@ -16,7 +16,7 @@ namespace raytracer
                            uint8_t depth) const
         -> value_type
     {
-        image::RGBN color = image::RGBN(0, 0, 0);
+        image::RGBN color = image::RGBN(0.f, 0.f, 0.f);
         const auto normal = interpolate_normals(*isec.nearest_polygon,
                                                 isec.nearest_u_bary,
                                                 isec.nearest_v_bary);
@@ -24,7 +24,7 @@ namespace raytracer
         Vector3f P_v = ray.o + (ray.dir * isec.nearest_t);
 
         color += compute_lights(isec, P_v, normal);
-        color += compute_specular(ray, isec, P_v, normal, depth);
+//        color += compute_specular(ray, isec, P_v, normal, depth);
 
         return color;
     }
@@ -68,7 +68,7 @@ namespace raytracer
         // foreach light
         for (auto it = scene_->lights().begin(); it != scene_->lights().end(); ++it)
         {
-            Intersection shadow_isec;
+            float nearest = 0.f;
             auto& light = *(*it);
             if (const auto *ambient_light = dynamic_cast<scene::AmbientLight*>(&light))
             {
@@ -87,7 +87,7 @@ namespace raytracer
             {
                 L_v = point_light->position - P_v; // direction of light, but reversed
                 float r2 = L_v.norm();
-                shadow_isec.nearest_t = std::sqrt(r2); // we search obstacles between P and light
+                nearest = std::sqrt(r2); // we search obstacles between P and light
                 L_v.normalize();
                 // square falloff
                 intensity = point_light->intensity / (4 * M_PI * r2);
@@ -98,17 +98,20 @@ namespace raytracer
             tracer.L_v = L_v;
             tracer.color = light.color;
             tracer.diffuse = material.diffuse;
+            tracer.set_nearest(nearest);
 
             const float bias = 0.0001f; // to avoid self intersection
             const Ray light_ray = Ray(P_v + normal * bias, L_v);
 
             color += tracer(light_ray);
+
+            tracer.set_nearest(std::nullopt);
         }
         return color;
     }
 
     auto
-    RayTracer::on_miss_impl(const Rayf& ray) const
+    RayTracer::on_miss_impl(const Rayf&) const
         -> value_type
     {
         return image::RGBN(0.f, 0.f, 0.f);

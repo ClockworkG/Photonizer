@@ -6,15 +6,15 @@ namespace raytracer
         : super_t(scene, max_depth)
     {}
 
-    auto ShadowTracer::on_hit_impl(const Rayf& ray,
-                                   const Intersection& isec,
-                                   uint8_t depth) const
+    auto ShadowTracer::on_hit_impl(const Rayf&,
+                                   const Intersection&,
+                                   uint8_t) const
         -> value_type
     {
         return image::RGBN(0, 0, 0);
     }
 
-    auto ShadowTracer::on_miss_impl(const Rayf& ray) const
+    auto ShadowTracer::on_miss_impl(const Rayf&) const
         -> value_type
     {
         float cos_theta = normal * L_v;

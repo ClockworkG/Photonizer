@@ -44,10 +44,27 @@ namespace raytracer
 
     template <typename T, typename V>
     inline auto
+    RayCaster<T, V>::get_nearest() const noexcept -> std::optional<float>
+    {
+        return nearest_;
+    }
+
+    template <typename T, typename V>
+    inline void
+    RayCaster<T, V>::set_nearest(std::optional<float> nearest)
+    {
+        nearest_ = nearest;
+    }
+
+    template <typename T, typename V>
+    inline auto
     RayCaster<T, V>::intersect(const Rayf& ray) const
         -> Intersection
     {
         Intersection isec;
+
+        if (nearest_)
+            isec.nearest_t = *nearest_;
 
         for (const auto& object : *scene_)
         {

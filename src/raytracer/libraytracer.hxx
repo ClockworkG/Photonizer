@@ -10,6 +10,12 @@ namespace raytracer
     Image render(scene_ptr_t scene, photon::PhotonMap&& photon_map,
                  const RaytracerConfig& config)
     {
+        static_assert(
+                std::is_convertible_v<
+                    typename Tracer::value_type,
+                    typename Image::value_t
+                >
+        );
         spdlog::info("Starting raytracing process");
         spdlog::debug("Using {0} photons in radiance estimate", config.photon_gathering_count);
         spdlog::debug("Photon gathering with radius {0}", config.photon_gathering_radius);

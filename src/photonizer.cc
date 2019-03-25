@@ -67,7 +67,7 @@ int main(int argc, char **argv)
         std::ofstream output_stream{output_file};
 
         auto photon_map = photon::PhotonMap(photon_map_file);
-        auto image_output = raytracer::render<image::ImageRGB>(
+        auto image_output = raytracer::render<image::ImageRGB, raytracer::RayTracer>(
                 the_scene,
                 std::move(photon_map),
                 r_config

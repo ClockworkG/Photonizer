@@ -33,8 +33,8 @@ int main(int argc, char **argv)
     auto photon_cmd = app.add_subcommand("map", "Photon mapping commands");
     auto ray_cmd = app.add_subcommand("trace", "Raytracer commands");
 
+    ray_cmd->add_option("-m,--map", photon_map_file, "Photon map file");
     ray_cmd->add_option("output-file", output_file, "PPM output");
-    ray_cmd->add_option("photon-map", photon_map_file, "Photon map file");
     photon_cmd->add_option("output-file", photon_file, "Phton map output file");
     photon_cmd->add_option("-p,--photons", config.max_photons, "Number of photons to emit");
     photon_cmd->add_option("-b,--bounces", config.max_bounces, "Number of max bounces per photon");
@@ -54,8 +54,7 @@ int main(int argc, char **argv)
 
     if (photon_cmd->parsed())
     {
-        [[maybe_unused]]
-        auto photon_map = photon::build_photon_map(*the_scene, config);
+        auto photon_map = photon::build_photon_map(the_scene, config);
         photon_map.serialize(photon_file);
     }
 

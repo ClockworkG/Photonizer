@@ -26,6 +26,8 @@ namespace cli
 
     private:
         CLI::App app_;
+
+        [[maybe_unused]]
         const char* version_;
 
         std::list<PhotonizerCommand*> subcommands_;

@@ -81,6 +81,14 @@ namespace photon
         return result;
     }
 
+    inline DistanceHeap<Photon>
+    PhotonMap::gather(const Vector3f& position,
+                      float max_dist,
+                      std::size_t max_count) const
+    {
+        return tree_->nearest(position, max_count, max_dist);
+    }
+
     inline
     std::ostream& operator<<(std::ostream& os, const PhotonMap& ph)
     {

@@ -38,6 +38,11 @@ namespace photon
         PhotonMap& operator=(PhotonMap&&) = default;
 
         void serialize(const std::experimental::filesystem::path& file) const;
+
+        DistanceHeap<Photon> gather(const Vector3f& position,
+                                    float max_dist,
+                                    std::size_t max_count) const;
+
         image::RGBN irradiance_estimate(const Vector3f& position,
                                         const Vector3f& normal,
                                         float max_dist,

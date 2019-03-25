@@ -32,25 +32,25 @@
         {
             "kind": "ambient",
             "color": [255, 255, 255],
-            "intensity": 0.15
+            "intensity": 0.05
         },
         {
             "kind": "point",
             "position": [-1, -4, 9],
             "color": [255, 0, 0],
-            "intensity": 85
+            "intensity": 6.5
         },
         {
             "kind": "directional",
             "direction": [1, -1, 0],
             "color": [255, 255, 255],
-            "intensity": 19
+            "intensity": 1.4
         },
         {
             "kind": "directional",
             "direction": [-1, 1, 0],
             "color": [0, 255, 255],
-            "intensity": 10
+            "intensity": 1
         }
     ]
 }

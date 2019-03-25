@@ -3,6 +3,7 @@ if (NOT CMAKE_BUILD_TYPE)
     message(WARNING "Not build type specified. Falling back to DEBUG.")
 endif()
 
+add_subdirectory(cli)
 add_subdirectory(image)
 add_subdirectory(scene)
 add_subdirectory(photon_map)
@@ -13,6 +14,7 @@ target_link_libraries(photonizer
     PRIVATE Boost::program_options
             CLI11
             Spdlog
+            Photonizer::Cli
             Photonizer::Scene
             Photonizer::Image
             Photonizer::Raytracer

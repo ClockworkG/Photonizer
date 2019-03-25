@@ -18,7 +18,7 @@
 
 namespace raytracer
 {
-    #define epsilon 0.0000001
+    #define epsilon 0.0000001f
     #define MAX_DEPTH 4
     #define BIAS 0.0001f // to avoid self intersection
 
@@ -97,7 +97,7 @@ namespace raytracer
         const auto& n1 = polygon[1].second;
         const auto& n2 = polygon[2].second;
 
-        return n0 * (1.0f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
+        return n0 * (1.f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
     }
 
     image::RGBN compute_lights(const scene::Scene& scene, const Intersection& isec,
@@ -146,7 +146,7 @@ namespace raytracer
             {
                 float cos_theta = normal * L_v;
                 float coef = intensity * cos_theta;
-                coef = clamp(coef, 0.0f, 1.0f);
+                coef = clamp(coef, 0.f, 1.f);
                 color += material.diffuse * light.color * coef;
             }
         }
@@ -161,38 +161,38 @@ namespace raytracer
 
     Vector3f refract_dir(const Rayf& ray, const Vector3f& normal, float ior)
     {
-        float cos_incident = clamp(ray.dir * normal, -1.0f, 1.0f);
+        float cos_incident = clamp(ray.dir * normal, -1.f, 1.f);
         float eta1 = 1; // FIXME
         float eta2 = ior;
         Vector3f normal_copy = normal;
-        if (cos_incident > 0) // if we're leaving the material (from inside to outside)
+        if (cos_incident < 0) // if we're entering the material (from outside to inside)
+            cos_incident = -cos_incident;
+        else
         {
             std::swap(eta1, eta2);
             normal_copy = Vector3f(-normal.x, -normal.y, -normal.z);
         }
-        else
-            cos_incident = -cos_incident;
         float eta = eta1 / eta2;
         float k = 1 - eta * eta * (1 - cos_incident * cos_incident);
         if (k < 0)
             return Vector3f(0, 0, 0);
         else
-            return eta * ray.dir + (eta * cos_incident - std::sqrt(k)) * normal_copy;
+            return ray.dir * eta + normal_copy * (eta * cos_incident - std::sqrt(k));
 
     }
 
     float fresnel(const Rayf& ray, const Vector3f& normal, float ior)
     {
-        float cos_incident = clamp(ray.dir *  normal, -1.0f, 1.0f);
+        float cos_incident = clamp(ray.dir *  normal, -1.f, 1.f);
         float eta1 = 1; // FIXME
         float eta2 = ior;
         if (cos_incident > 0) // if we're leaving the material (from inside to outside)
             std::swap(eta1, eta2);
-        float sin_transmit = eta1 / eta2 * std::sqrt(std::max(0.0f, 1 - cos_incident * cos_incident));
+        float sin_transmit = eta1 / eta2 * std::sqrt(std::max(0.f, 1 - cos_incident * cos_incident));
         if (sin_transmit >= 1) // total internal reflection
             return 1;
 
-        float cos_transmit = std::sqrt(std::max(0.0f, 1 - sin_transmit * sin_transmit));
+        float cos_transmit = std::sqrt(std::max(0.f, 1 - sin_transmit * sin_transmit));
         cos_incident = std::abs(cos_incident);
         float Rs = ((eta2 * cos_incident) - (eta1 * cos_transmit)) / ((eta2 * cos_incident) + (eta1 * cos_transmit));
         float Rp = ((eta1 * cos_transmit) - (eta2 * cos_transmit)) / ((eta1 * cos_incident) + (eta2 * cos_transmit));
@@ -207,25 +207,28 @@ namespace raytracer
         (void)material;
         float ior = 1.3; //FIXME: should come from MTL
         float reflect_coef = fresnel(ray, normal, ior);
-        bool to_outside = (ray.dir * normal) < 0;
+        bool from_outside = (ray.dir * normal) < 0;
         Vector3f biased_normal = normal * BIAS;
+
+        //FIXME: debug purpose
+        //reflect_coef = 0;
 
         image::RGBN refract_color = image::RGBN(0, 0, 0);
         if (reflect_coef < 1)
         {
             Rayf refract_ray;
             refract_ray.dir = (refract_dir(ray, normal, ior)).normalize();
-            refract_ray.o = to_outside ? P_v - biased_normal : P_v + biased_normal;
+            refract_ray.o = from_outside ? P_v - biased_normal : P_v + biased_normal;
 
             refract_color = ray_cast(scene, refract_ray, depth + 1);
         }
 
         Rayf reflect_ray;
         reflect_ray.dir = (reflect_dir(ray, normal)).normalize();
-        reflect_ray.o = to_outside ? P_v + biased_normal : P_v - biased_normal;
+        reflect_ray.o = from_outside ? P_v + biased_normal : P_v - biased_normal;
         image::RGBN reflect_color = ray_cast(scene, reflect_ray, depth + 1);
 
-        return reflect_color * reflect_coef + refract_color * (1.0f - reflect_coef);
+        return reflect_color * reflect_coef + refract_color * (1.f - reflect_coef);
     }
 
 
@@ -259,7 +262,7 @@ namespace raytracer
             return color;
         }
         else
-            return image::RGBN(0.0f, 0.0f, 0.0f);
+            return image::RGBN(0.f, 0.f, 0.f);
     }
 
     const image::ImageRGB& render(const scene::Scene& scene)

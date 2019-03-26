@@ -100,12 +100,10 @@ namespace raytracer
         return n0 * (1.f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
     }
 
-    image::RGBN compute_lights(const scene::Scene& scene, const Intersection& isec,
+    image::RGBN compute_lights(const scene::Scene& scene, const scene::Material& material,
                                const Vector3f& P_v, const Vector3f& normal)
     {
         image::RGBN color = image::RGBN(0, 0, 0);
-
-        const auto& material = isec.nearest_polygon->get_material();
 
         Vector3f L_v;
         float intensity;
@@ -200,12 +198,10 @@ namespace raytracer
     }
 
     image::RGBN compute_refract(const scene::Scene& scene, const Rayf& ray,
-                                const Intersection& isec, const Vector3f& P_v,
+                                const scene::Material& material, const Vector3f& P_v,
                                 const Vector3f& normal, const uint8_t& depth)
     {
-        const auto& material = isec.nearest_polygon->get_material();
-        (void)material;
-        float ior = 1.3; //FIXME: should come from MTL
+        float ior = material.refraction_index;
         float reflect_coef = fresnel(ray, normal, ior);
         bool from_outside = (ray.dir * normal) < 0;
         Vector3f biased_normal = normal * BIAS;
@@ -254,9 +250,9 @@ namespace raytracer
 
             // FIXME: use the illum parameter from MTL file
             if (material.transparency != 0)
-                color += compute_lights(scene, isec, P_v, normal) * material.transparency;
+                color += compute_lights(scene, material, P_v, normal) * material.transparency;
             if (material.transparency != 1)
-                color += compute_refract(scene, ray, isec, P_v, normal, depth) * (1 - material.transparency);
+                color += compute_refract(scene, ray, material, P_v, normal, depth) * (1 - material.transparency);
             // FIXME: allow reflection without transparency
 
             return color;

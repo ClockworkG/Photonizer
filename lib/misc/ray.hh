@@ -8,7 +8,7 @@ struct Ray
     Vector3<T> o;
     Vector3<T> dir;
 
-    Ray();
+    Ray() = default;
     Ray(const Vector3<T>& o, const Vector3<T>& dir);
 };
 

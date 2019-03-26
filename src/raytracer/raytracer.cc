@@ -18,9 +18,9 @@
 
 namespace raytracer
 {
-    #define epsilon 0.0000001f
-    #define MAX_DEPTH 4
-    #define BIAS 0.0001f // to avoid self intersection
+    constexpr static inline auto MAX_DEPTH = 4;
+    constexpr static inline auto epsilon = 0.0000001f;
+    constexpr static inline auto BIAS = 0.0001f; // to avoid self intersection
 
     image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray, const uint8_t& depth);
 

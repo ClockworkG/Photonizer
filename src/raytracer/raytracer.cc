@@ -295,7 +295,7 @@ namespace raytracer
                     // Screen space coordinates are in range [-1, 1]
                     float screen_x = (2.0 * (x + 0.5) / img_width - 1.0) * coef_x;
                     float screen_y = (1.0 - 2.0 * (y + 0.5) / img_height) * coef_y;
-                    Vector3f target_pos = Vector3f(screen_x, screen_y, z_min);
+                    Vector3f target_pos = Vector3f(screen_x, screen_y, origin.z + z_min);
 
                     // Compute ray to cast from camera
                     Ray ray = Ray(origin, (target_pos - origin).normalize());

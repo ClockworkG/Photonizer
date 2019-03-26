@@ -16,45 +16,32 @@
             "position": [0, -3, -15]
         },
         {
-            "mesh": "cube.obj",
-            "position": [3, -1, -12]
-        },
-        {
-            "mesh": "sphere.obj",
-            "position": [1, -1, -12]
-        },
-        {
-            "mesh": "sphere-normal-edit.obj",
-            "position": [-1, 1, -12]
-        },
-        {
             "mesh": "glass-sphere.obj",
-            "position": [0, 0, -9]
+            "position": [-0.3, 0, -3.5]
+        },
+        {
+            "mesh": "cube.obj",
+            "position": [0.4, -0.4, -16]
         }
     ],
     "lights": [
         {
+            "kind": "point",
+            "position": [0, 2, -15],
+            "color": [255, 255, 255],
+            "intensity": 50
+        },
+        {
+            "kind": "directional",
+            "direction": [1, -1, -4],
+            "color": [255, 15, 255],
+            "intensity": 6
+        },
+        {
             "kind": "ambient",
             "color": [255, 255, 255],
-            "intensity": 0.09
-        },
-        {
-            "kind": "point",
-            "position": [0, -1, -9],
-            "color": [255, 0, 0],
-            "intensity": 9.8
-        },
-        {
-            "kind": "directional",
-            "direction": [1, -1, 0],
-            "color": [130, 130, 255],
-            "intensity": 1.5
-        },
-        {
-            "kind": "directional",
-            "direction": [-1, 1, -0.5],
-            "color": [0, 255, 255],
-            "intensity": 1
+            "intensity": 0.15
         }
+
     ]
 }

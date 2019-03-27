@@ -30,9 +30,10 @@ namespace scene
         const auto& shape = shapes[0]; // We assume there is only one shape
         std::size_t offset = 0;
         std::stringstream oss;
+        std::size_t face_index = 0;
         for (std::size_t fv : shape.mesh.num_face_vertices)
         {
-            const auto material_id = shape.mesh.material_ids[fv];
+            const auto material_id = shape.mesh.material_ids[face_index];
             const auto* mat = (material_id != -1 && material_id < static_cast<int>(materials.size())) ?
                                 &materials[material_id] :
                                 nullptr;
@@ -72,6 +73,7 @@ namespace scene
             polygons_.push_back(polygon);
 
             offset += fv;
+            face_index++;
         }
     }
 } // namespace scene

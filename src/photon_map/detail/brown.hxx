@@ -6,6 +6,7 @@
 #include <thread>
 
 #include "brown.hh"
+#include "math.hh"
 
 namespace photon::detail
 {
@@ -81,7 +82,7 @@ namespace photon::detail
             if (i == axis)
                 continue;
 
-            indexes_t newer(end - begin + 1);
+            indexes_t newer(end - begin);
             std::size_t lower = 0;
             std::size_t upper = middle - begin + 1;
 
@@ -93,9 +94,15 @@ namespace photon::detail
                     continue;
 
                 if (comp(values[val], median))
-                    newer[lower++] = val;
+                {
+                    newer[lower] = val;
+                    lower = clamp(lower + 1, middle - begin - 1);
+                }
                 else
-                    newer[upper++] = val;
+                {
+                    newer[upper] = val;
+                    upper = clamp(upper + 1, end - begin - 1);
+                }
             }
 
             std::copy(newer.begin(), newer.end(),

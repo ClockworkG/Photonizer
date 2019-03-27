@@ -1,0 +1,27 @@
+{
+    "name": "Advanced Scene",
+    "height": 512,
+    "width": 512,
+    "camera": {
+        "position": [0.0, 0.0, 0.0],
+        "forward": [0.0, 0.0, 1.0],
+        "up": [0.0, 1.0, 0.0],
+        "fov_x": 90,
+        "fov_y": 90,
+        "z_min": 2
+    },
+    "objects": [
+        {
+            "mesh": "room.obj",
+            "position": [0, 0, 10]
+        }
+    ],
+    "lights": [
+        {
+            "kind": "point",
+            "position": [0, 2, 10],
+            "color": [255, 255, 255],
+            "intensity": 200
+        }
+    ]
+}

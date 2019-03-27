@@ -26,7 +26,7 @@ struct Photon
 int main()
 {
     std::vector<Photon> points{};
-    for (std::size_t i = 0; i < 10; i++)
+    for (std::size_t i = 0; i < 5; i++)
     {
         points.emplace_back(Vector3f{static_cast<float>(std::rand() % 500 - 500),
                                      static_cast<float>(std::rand() % 500 - 500),

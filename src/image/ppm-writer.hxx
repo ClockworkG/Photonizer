@@ -9,6 +9,7 @@
 namespace image
 {
     template<>
+    inline
     void PPMWriter<ImageRGB>::write(std::ostream& os, const image_t& image)
     {
         os << "P3\n"

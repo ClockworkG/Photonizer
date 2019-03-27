@@ -5,5 +5,6 @@
 
 namespace raytracer
 {
+    [[deprecated("Move to render defined in libraytracer.hh")]]
     const image::ImageRGB& render(const scene::Scene& scene);
 }

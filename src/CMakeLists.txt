@@ -3,6 +3,7 @@ if (NOT CMAKE_BUILD_TYPE)
     message(WARNING "Not build type specified. Falling back to DEBUG.")
 endif()
 
+add_subdirectory(cli)
 add_subdirectory(image)
 add_subdirectory(scene)
 add_subdirectory(photon_map)
@@ -13,6 +14,7 @@ target_link_libraries(photonizer
     PRIVATE Boost::program_options
             CLI11
             Spdlog
+            Photonizer::Cli
             Photonizer::Scene
             Photonizer::Image
             Photonizer::Raytracer
@@ -20,7 +22,7 @@ target_link_libraries(photonizer
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")
 
 message(STATUS "Building in ${CMAKE_BUILD_TYPE} mode.")
 

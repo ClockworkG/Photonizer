@@ -11,8 +11,20 @@ namespace photon
     {}
 
     template <typename V>
+    KDTree<V>::KDTree(size_type size)
+        : data_(size)
+    {}
+
+    template <typename V>
     inline
     auto KDTree<V>::data() const noexcept -> const data_type&
+    {
+        return data_;
+    }
+
+    template <typename V>
+    inline
+    auto KDTree<V>::data() noexcept -> data_type&
     {
         return data_;
     }
@@ -61,6 +73,10 @@ namespace photon
         -> DistanceHeap<value_type>
     {
         DistanceHeap<value_type> heap(max_count);
+
+        if (data_.size() <= 1)
+            return heap;
+
         max_dist *= max_dist;
         nearest_(query, heap, max_dist, 0);
         return heap;

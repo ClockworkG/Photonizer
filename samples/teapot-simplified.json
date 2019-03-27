@@ -21,19 +21,19 @@
             "kind": "point",
             "position": [0, -1, 14],
             "color": [255, 0, 0],
-            "intensity": 78
+            "intensity": 5.8
         },
         {
             "kind": "directional",
             "direction": [1, -1, 0],
             "color": [255, 255, 255],
-            "intensity": 19
+            "intensity": 1.5
         },
         {
             "kind": "directional",
             "direction": [-1, 1, 0],
             "color": [0, 255, 255],
-            "intensity": 10
+            "intensity": 1
         }
     ]
 }

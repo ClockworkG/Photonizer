@@ -142,7 +142,7 @@ namespace raytracer
         const auto& n1 = polygon[1].second;
         const auto& n2 = polygon[2].second;
 
-        return n0 * (1.0f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
+        return n0 * (1.f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
     }
 
 } // namespace raytracer

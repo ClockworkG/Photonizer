@@ -1,4 +1,5 @@
 #include <cmath>
+#include <algorithm>
 
 #include <spdlog/spdlog.h>
 
@@ -17,8 +18,9 @@
 
 namespace raytracer
 {
-    #define epsilon 0.0000001
-    #define MAX_DEPTH 4
+    constexpr static inline auto MAX_DEPTH = 4;
+    constexpr static inline auto epsilon = 0.0000001f;
+    constexpr static inline auto BIAS = 0.0001f; // to avoid self intersection
 
     image::RGBN ray_cast(const scene::Scene& scene, const Rayf& ray, const uint8_t& depth);
 
@@ -95,17 +97,13 @@ namespace raytracer
         const auto& n1 = polygon[1].second;
         const auto& n2 = polygon[2].second;
 
-        return n0 * (1.0f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
+        return n0 * (1.f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
     }
 
-    image::RGBN compute_lights(const scene::Scene& scene, const Intersection& isec,
+    image::RGBN compute_lights(const scene::Scene& scene, const scene::Material& material,
                                const Vector3f& P_v, const Vector3f& normal)
     {
         image::RGBN color = image::RGBN(0, 0, 0);
-
-        const auto& material = isec.nearest_polygon->get_material();
-        // FIXME: should come from material
-        float albedo = 0.18f / M_PI;
 
         Vector3f L_v;
         float intensity;
@@ -139,15 +137,14 @@ namespace raytracer
             }
 
             // shadow test
-            const float bias = 0.0001f; // to avoid self intersection
-            const Ray light_ray = Ray(P_v + normal * bias, L_v);
+            const Ray light_ray = Ray(P_v + normal * BIAS, L_v);
             intersect(scene, light_ray, shadow_isec);
             // FIXME: could be optimized to not test all the objects after the first intersection
             if (!shadow_isec.intersected)
             {
                 float cos_theta = normal * L_v;
-                float coef = intensity * cos_theta * albedo;
-                coef = clamp(coef, 0.0f, 1.0f);
+                float coef = intensity * cos_theta;
+                coef = clamp(coef, 0.f, 1.f);
                 color += material.diffuse * light.color * coef;
             }
         }
@@ -155,20 +152,79 @@ namespace raytracer
     }
 
 
-    image::RGBN compute_specular(const scene::Scene& scene, const Rayf& ray,
-                                 const Intersection& isec, const Vector3f& P_v,
-                                 const Vector3f& normal, const uint8_t& depth)
+    Vector3f reflect_dir(const Rayf& ray, const Vector3f& normal)
     {
-        image::RGBN color = image::RGBN(0, 0, 0);
+        return ray.dir - (normal * (ray.dir * normal)) * 2;
+    }
 
-        const auto& material = isec.nearest_polygon->get_material();
+    Vector3f refract_dir(const Rayf& ray, const Vector3f& normal, float ior)
+    {
+        float cos_incident = clamp(ray.dir * normal, -1.f, 1.f);
+        float eta1 = 1; // FIXME
+        float eta2 = ior;
+        Vector3f normal_copy = normal;
+        if (cos_incident < 0) // if we're entering the material (from outside to inside)
+            cos_incident = -cos_incident;
+        else
+        {
+            std::swap(eta1, eta2);
+            normal_copy = Vector3f(-normal.x, -normal.y, -normal.z);
+        }
+        float eta = eta1 / eta2;
+        float k = 1 - eta * eta * (1 - cos_incident * cos_incident);
+        if (k < 0)
+            return Vector3f(0, 0, 0);
+        else
+            return ray.dir * eta + normal_copy * (eta * cos_incident - std::sqrt(k));
 
-        const Vector3f R_v = ray.dir - (normal * (ray.dir * normal)) * 2;
-        float bias = 0.0001f; // to avoid self intersection
-        Ray specular_ray = Ray(P_v + normal * bias, R_v);
-        color += material.specular * ray_cast(scene, specular_ray, depth + 1);
+    }
 
-        return color;
+    float fresnel(const Rayf& ray, const Vector3f& normal, float ior)
+    {
+        float cos_incident = clamp(ray.dir *  normal, -1.f, 1.f);
+        float eta1 = 1; // FIXME
+        float eta2 = ior;
+        if (cos_incident > 0) // if we're leaving the material (from inside to outside)
+            std::swap(eta1, eta2);
+        float sin_transmit = eta1 / eta2 * std::sqrt(std::max(0.f, 1 - cos_incident * cos_incident));
+        if (sin_transmit >= 1) // total internal reflection
+            return 1;
+
+        float cos_transmit = std::sqrt(std::max(0.f, 1 - sin_transmit * sin_transmit));
+        cos_incident = std::abs(cos_incident);
+        float Rs = ((eta2 * cos_incident) - (eta1 * cos_transmit)) / ((eta2 * cos_incident) + (eta1 * cos_transmit));
+        float Rp = ((eta1 * cos_transmit) - (eta2 * cos_transmit)) / ((eta1 * cos_incident) + (eta2 * cos_transmit));
+        return (Rs * Rs + Rp * Rp) / 2;
+    }
+
+    image::RGBN compute_refract(const scene::Scene& scene, const Rayf& ray,
+                                const scene::Material& material, const Vector3f& P_v,
+                                const Vector3f& normal, const uint8_t& depth)
+    {
+        float ior = material.refraction_index;
+        float reflect_coef = fresnel(ray, normal, ior);
+        bool from_outside = (ray.dir * normal) < 0;
+        Vector3f biased_normal = normal * BIAS;
+
+        //FIXME: debug purpose
+        //reflect_coef = 0;
+
+        image::RGBN refract_color = image::RGBN(0, 0, 0);
+        if (reflect_coef < 1)
+        {
+            Rayf refract_ray;
+            refract_ray.dir = (refract_dir(ray, normal, ior)).normalize();
+            refract_ray.o = from_outside ? P_v - biased_normal : P_v + biased_normal;
+
+            refract_color = ray_cast(scene, refract_ray, depth + 1);
+        }
+
+        Rayf reflect_ray;
+        reflect_ray.dir = (reflect_dir(ray, normal)).normalize();
+        reflect_ray.o = from_outside ? P_v + biased_normal : P_v - biased_normal;
+        image::RGBN reflect_color = ray_cast(scene, reflect_ray, depth + 1);
+
+        return reflect_color * reflect_coef + refract_color * (1.f - reflect_coef);
     }
 
 
@@ -188,14 +244,21 @@ namespace raytracer
                                                     isec.nearest_u_bary,
                                                     isec.nearest_v_bary);
 
+            const auto& material = isec.nearest_polygon->get_material();
+            // intersection point
             Vector3f P_v = ray.o + (ray.dir * isec.nearest_t);
 
-            color += compute_lights(scene, isec, P_v, normal);
-            color += compute_specular(scene, ray, isec, P_v, normal, depth);
+            // FIXME: use the illum parameter from MTL file
+            if (material.transparency != 0)
+                color += compute_lights(scene, material, P_v, normal) * material.transparency;
+            if (material.transparency != 1)
+                color += compute_refract(scene, ray, material, P_v, normal, depth) * (1 - material.transparency);
+            // FIXME: allow reflection without transparency
+
             return color;
         }
         else
-            return image::RGBN(0.0f, 0.0f, 0.0f);
+            return image::RGBN(0.f, 0.f, 0.f);
     }
 
     const image::ImageRGB& render(const scene::Scene& scene)
@@ -228,7 +291,7 @@ namespace raytracer
                     // Screen space coordinates are in range [-1, 1]
                     float screen_x = (2.0 * (x + 0.5) / img_width - 1.0) * coef_x;
                     float screen_y = (1.0 - 2.0 * (y + 0.5) / img_height) * coef_y;
-                    Vector3f target_pos = Vector3f(screen_x, screen_y, z_min);
+                    Vector3f target_pos = Vector3f(screen_x, screen_y, origin.z + z_min);
 
                     // Compute ray to cast from camera
                     Ray ray = Ray(origin, (target_pos - origin).normalize());

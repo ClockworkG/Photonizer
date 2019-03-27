@@ -14,7 +14,7 @@ namespace scene
         Material& operator=(Material&&) = default;
 
         const std::string name = "default";
-        const float       transparency = 0.f;
+        const float       transparency = 1.f;
         const float       specular_exponent = 0.f;
         const float       refraction_index = 1.f;
         const image::RGBN ambient = image::RGBN(1.f, 0.f, 1.f);

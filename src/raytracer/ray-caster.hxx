@@ -91,6 +91,13 @@ namespace raytracer
             }
         }
 
+        if (isec.nearest_polygon != nullptr)
+        {
+            isec.normal = interpolate_normals(*isec.nearest_polygon,
+                                              isec.nearest_u_bary,
+                                              isec.nearest_v_bary);
+        }
+
         return isec;
     }
 
@@ -123,4 +130,19 @@ namespace raytracer
         isec.t = ac_v * q_v * inv_det;
         return true;
     }
+
+
+    template <typename T, typename V>
+    inline auto
+    RayCaster<T, V>::interpolate_normals(const scene::Polygon& polygon,
+                                         float u_bary, float v_bary)
+        -> Vector3f
+    {
+        const auto& n0 = polygon[0].second;
+        const auto& n1 = polygon[1].second;
+        const auto& n2 = polygon[2].second;
+
+        return n0 * (1.0f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
+    }
+
 } // namespace raytracer

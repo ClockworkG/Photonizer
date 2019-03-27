@@ -37,14 +37,11 @@ namespace raytracer
                                uint8_t depth) const;
         value_type on_miss_impl(const Rayf& ray) const;
 
-        image::RGBN photon_gathering(const Intersection& isec);
         image::RGBN compute_lights(const Intersection& isec,
-                                   const Vector3f& P_v,
-                                   const Vector3f& normal) const;
+                                   const Vector3f& P_v) const;
 
         image::RGBN compute_specular(const Rayf& ray, const Intersection& isec,
                                      const Vector3f& P_v,
-                                     const Vector3f& normal,
                                      uint8_t depth) const;
 
         static Vector3f interpolate_normals(const scene::Polygon& polygon,

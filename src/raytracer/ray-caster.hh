@@ -18,6 +18,7 @@ namespace raytracer
         float nearest_u_bary = 0.f;
         float nearest_v_bary = 0.f;
         const scene::Polygon* nearest_polygon = nullptr;
+        Vector3f normal;
         float t = 0.f;
         float u_bary = 0.f;
         float v_bary = 0.f;
@@ -56,6 +57,9 @@ namespace raytracer
                                     const Vector3f& c_v,
                                     const Rayf& ray,
                                     Intersection& isec);
+
+        static Vector3f interpolate_normals(const scene::Polygon& polygon,
+                                            float u_bary, float v_bary);
 
         scene_ptr_t scene_ = nullptr;
         std::optional<float> nearest_ = std::nullopt;

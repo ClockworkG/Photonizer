@@ -2,7 +2,7 @@ add_library(libphoton STATIC libphoton.cc cli.cc)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")
 
 set_target_properties(libphoton PROPERTIES CXX_STANDARD 17)
 

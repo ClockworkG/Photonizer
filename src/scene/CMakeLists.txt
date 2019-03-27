@@ -5,7 +5,7 @@ add_library(Photonizer::Scene ALIAS libscene)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")
 
 set_target_properties(libscene PROPERTIES CXX_STANDARD 17)
 target_include_directories(libscene PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")

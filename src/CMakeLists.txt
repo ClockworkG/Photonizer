@@ -22,7 +22,7 @@ target_link_libraries(photonizer
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")
 
 message(STATUS "Building in ${CMAKE_BUILD_TYPE} mode.")
 

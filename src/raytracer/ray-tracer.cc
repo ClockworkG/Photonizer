@@ -28,28 +28,24 @@ namespace raytracer
         -> value_type
     {
         image::RGBN color = image::RGBN(0.f, 0.f, 0.f);
-        const auto normal = interpolate_normals(*isec.nearest_polygon,
-                                                isec.nearest_u_bary,
-                                                isec.nearest_v_bary);
-
         Vector3f P_v = ray.o + (ray.dir * isec.nearest_t);
 
-        color += compute_lights(isec, P_v, normal);
+        color += compute_lights(isec, P_v);
         color += photon_map_->irradiance_estimate(
                 P_v,
-                normal,
+                isec.normal,
                 config_.photon_gathering_radius,
                 config_.photon_gathering_count
         ) * 11.f;
 
-        color += compute_specular(ray, isec, P_v, normal, depth);
+        color += compute_specular(ray, isec, P_v, depth);
 
         return color;
     }
 
     auto
     RayTracer::compute_specular(const Rayf& ray, const Intersection& isec,
-                                const Vector3f& P_v, const Vector3f& normal,
+                                const Vector3f& P_v,
                                 uint8_t depth) const
         -> image::RGBN
     {
@@ -57,18 +53,17 @@ namespace raytracer
 
         const auto& material = isec.nearest_polygon->get_material();
 
-        const Vector3f R_v = ray.dir - (normal * (ray.dir * normal)) * 2;
+        const Vector3f R_v = ray.dir - (isec.normal * (ray.dir * isec.normal)) * 2;
         float bias = 0.0001f; // to avoid self intersection
-        Ray specular_ray = Ray(P_v + normal * bias, R_v);
+        Ray specular_ray = Ray(P_v + isec.normal * bias, R_v);
         color += material.specular * (*this)(specular_ray, depth + 1);
 
         return color;
     }
 
     auto
-    RayTracer::compute_lights(const Intersection& isec, const Vector3f& P_v,
-                              const Vector3f& normal) const
-        -> image::RGBN
+    RayTracer::compute_lights(const Intersection& isec, const Vector3f& P_v)
+        const -> image::RGBN
     {
         image::RGBN color = image::RGBN(0, 0, 0);
 
@@ -80,7 +75,7 @@ namespace raytracer
 
         ShadowTracer tracer(scene_, max_depth_);
 
-        tracer.normal = normal;
+        tracer.normal = isec.normal;
         tracer.albedo = 0.18f / M_PI;
 
         // foreach light
@@ -120,7 +115,7 @@ namespace raytracer
             tracer.set_nearest(nearest);
 
             const float bias = 0.0001f; // to avoid self intersection
-            const Ray light_ray = Ray(P_v + normal * bias, L_v);
+            const Ray light_ray = Ray(P_v + isec.normal * bias, L_v);
 
             color += tracer(light_ray);
 
@@ -136,13 +131,4 @@ namespace raytracer
         return image::RGBN(0.f, 0.f, 0.f);
     }
 
-    Vector3f RayTracer::interpolate_normals(const scene::Polygon& polygon,
-                                            float u_bary, float v_bary)
-    {
-        const auto& n0 = polygon[0].second;
-        const auto& n1 = polygon[1].second;
-        const auto& n2 = polygon[2].second;
-
-        return n0 * (1.0f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
-    }
 } // namespace raytracer

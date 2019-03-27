@@ -68,6 +68,9 @@ namespace photon
                                    std::size_t max_count) const
     {
         image::RGBN result(0.f, 0.f, 0.f);
+        if (tree_ == nullptr)
+            return result;
+
         auto nearests = tree_->nearest(position, max_count, max_dist);
 
         if (nearests.size() < 8)
@@ -86,6 +89,9 @@ namespace photon
                       float max_dist,
                       std::size_t max_count) const
     {
+        if (tree_ == nullptr)
+            return DistanceHeap<Photon>(0);
+
         return tree_->nearest(position, max_count, max_dist);
     }
 

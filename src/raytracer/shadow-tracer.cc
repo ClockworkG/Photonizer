@@ -18,8 +18,8 @@ namespace raytracer
         -> value_type
     {
         float cos_theta = normal * L_v;
-        float coef = intensity * cos_theta * albedo;
-        coef = clamp(coef, 0.0f, 1.0f);
+        float coef = intensity * cos_theta;
+        coef = clamp(coef, 0.f, 1.f);
         return diffuse * color * coef;
     }
 } // namespace raytracer

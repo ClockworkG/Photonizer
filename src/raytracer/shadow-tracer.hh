@@ -20,7 +20,6 @@ namespace raytracer
         ShadowTracer& operator=(ShadowTracer&&) = default;
 
         float intensity;
-        float albedo;
         Vector3f normal;
         Vector3f L_v;
         image::RGBN diffuse;

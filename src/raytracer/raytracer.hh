@@ -2,11 +2,9 @@
 
 #include "scene.hh"
 #include "image-rgb.hh"
-#include "photon-map.hh"
-#include "heatmap.hh"
 
 namespace raytracer
 {
-    image::ImageRGB render(const scene::Scene& scene,
-                           const photon::PhotonMap& ph_map);
+    [[deprecated("Move to render defined in libraytracer.hh")]]
+    const image::ImageRGB& render(const scene::Scene& scene);
 }

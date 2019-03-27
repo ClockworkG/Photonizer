@@ -1,6 +1,6 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib pen2.mtl
+mtllib pen.mtl
 o Cylinder.002
 v 2.295126 2.718093 0.153618
 v -0.952893 -1.094485 0.051692

@@ -16,12 +16,12 @@
             "position": [0, -1, -13]
         },
         {
-            "mesh": "glass-sphere.obj",
-            "position": [0, -4, -9]
+            "mesh": "water.obj",
+            "position": [0, -4, -8.7]
         },
         {
             "mesh": "pen.obj",
-            "position": [0, -4, -9]
+            "position": [0, -4, -8.7]
         }
               ],
     "lights": [

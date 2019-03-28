@@ -17,7 +17,7 @@
         },
         {
             "mesh": "tiny-glass-sphere.obj",
-        "position": [-0.3, 0, -4]
+        "position": [-0.3, 0, -6]
         },
         {
             "mesh": "cube.obj",

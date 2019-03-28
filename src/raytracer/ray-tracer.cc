@@ -4,6 +4,8 @@
 #include "directional-light.hh"
 #include "point-light.hh"
 
+#include <algorithm>
+
 namespace raytracer
 {
     constexpr static inline auto BIAS = 0.0001f; // to avoid self intersection
@@ -36,7 +38,7 @@ namespace raytracer
 
         // FIXME: use the illum parameter from MTL file
         if (material.transparency != 0)
-            color += compute_lights(isec, P_v) * material.transparency;
+            color += compute_lights(ray, isec, P_v) * material.transparency;
         if (material.transparency != 1)
             color += compute_refract(ray, isec, P_v, depth) * (1 - material.transparency);
         // FIXME: allow reflection without transparency
@@ -52,9 +54,9 @@ namespace raytracer
     }
 
     static inline
-    Vector3f reflect_dir(const Rayf& ray, const Vector3f& normal)
+    Vector3f reflect_dir(const Vector3f& ray_dir, const Vector3f& normal)
     {
-        return ray.dir - (normal * (ray.dir * normal)) * 2;
+        return ray_dir - (normal * (ray_dir * normal)) * 2;
     }
 
     static inline
@@ -120,7 +122,7 @@ namespace raytracer
         }
 
         Rayf reflect_ray;
-        reflect_ray.dir = (reflect_dir(ray, isec.normal)).normalize();
+        reflect_ray.dir = (reflect_dir(ray.dir, isec.normal)).normalize();
         reflect_ray.o = from_outside ? P_v + biased_normal : P_v - biased_normal;
         image::RGBN reflect_color = (*this)(reflect_ray, depth + 1);
 
@@ -128,7 +130,9 @@ namespace raytracer
     }
 
     auto
-    RayTracer::compute_lights(const Intersection& isec, const Vector3f& P_v)
+    RayTracer::compute_lights(const Rayf& ray,
+                              const Intersection& isec,
+                              const Vector3f& P_v)
         const -> value_type
     {
         image::RGBN color = image::RGBN(0, 0, 0);
@@ -149,9 +153,7 @@ namespace raytracer
             }
             if (const auto *dir_light = dynamic_cast<scene::DirectionalLight*>(&light))
             {
-                L_v = Vector3f(-dir_light->direction.x,
-                               -dir_light->direction.y,
-                               -dir_light->direction.z);
+                L_v = dir_light->direction.inverse();
                 L_v.normalize();
                 intensity = dir_light->intensity;
             }
@@ -159,8 +161,8 @@ namespace raytracer
             {
                 L_v = point_light->position - P_v; // direction of light, but reversed
                 float r2 = L_v.norm();
+                L_v.x /= r2, L_v.y /= r2, L_v.z /= r2; // normalize
                 shadow_isec.nearest_t = std::sqrt(r2); // we search obstacles between P and light
-                L_v.normalize();
                 // square falloff
                 intensity = point_light->intensity / (4 * M_PI * r2);
             }
@@ -171,10 +173,18 @@ namespace raytracer
             // FIXME: could be optimized to not test all the objects after the first intersection
             if (!shadow_isec.intersected)
             {
+                // Diffuse
                 float cos_theta = isec.normal * L_v;
-                float coef = intensity * cos_theta;
-                coef = clamp(coef, 0.f, 1.f);
-                color += material.diffuse * light.color * coef;
+                float diffuse_coef = intensity * cos_theta;
+                diffuse_coef = clamp(diffuse_coef, 0.f, 1.f);
+                color += material.diffuse * light.color * diffuse_coef;
+
+                // Specular
+                Vector3f R = reflect_dir(L_v.inverse(), isec.normal);
+                float specular_coef = R * (ray.dir.inverse());
+                specular_coef = std::pow(std::max(0.f, specular_coef),
+                                         material.specular_exponent);
+                color += material.specular * intensity * specular_coef;
             }
         }
         return color;

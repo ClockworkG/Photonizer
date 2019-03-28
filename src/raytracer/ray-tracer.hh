@@ -37,8 +37,9 @@ namespace raytracer
                                uint8_t depth) const;
         value_type on_miss_impl(const Rayf& ray) const;
 
-        value_type compute_lights(const Intersection& isec,
-                                   const Vector3f& P_v) const;
+        value_type compute_lights(const Rayf& ray,
+                                  const Intersection& isec,
+                                  const Vector3f& P_v) const;
         value_type compute_refract(const Rayf& ray,
                                    const Intersection& isec,
                                    const Vector3f& P_v,

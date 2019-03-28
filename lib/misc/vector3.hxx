@@ -64,6 +64,13 @@ inline Vector3<T>& Vector3<T>::operator-=(const Vector3<T>& b)
     return *this;
 }
 
+
+template <typename T>
+inline Vector3<T> Vector3<T>::inverse() const
+{
+    return Vector3<T>(-this->x, -this->y, -this->z);
+}
+
 template <typename T>
 inline T Vector3<T>::norm()
 {

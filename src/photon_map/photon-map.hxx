@@ -41,7 +41,7 @@ namespace photon
             fclose(raw_file);
         }
         else
-            spdlog::info("Using empty photon map");
+            spdlog::warn("Using empty photon map");
     }
 
     inline void

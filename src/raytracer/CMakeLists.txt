@@ -1,4 +1,4 @@
-add_library(libraytracer STATIC ray-tracer.cc shadow-tracer.cc cli.cc density-tracer.cc)
+add_library(libraytracer STATIC ray-tracer.cc cli.cc density-tracer.cc)
 add_library(Photonizer::Raytracer ALIAS libraytracer)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")

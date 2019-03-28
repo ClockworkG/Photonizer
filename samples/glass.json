@@ -16,8 +16,8 @@
             "position": [0, -3, -15]
         },
         {
-            "mesh": "glass-sphere.obj",
-            "position": [-0.3, 0, -3.5]
+            "mesh": "tiny-glass-sphere.obj",
+        "position": [-0.3, 0, -4]
         },
         {
             "mesh": "cube.obj",
@@ -35,7 +35,7 @@
             "kind": "directional",
             "direction": [1, -1, -4],
             "color": [255, 15, 255],
-            "intensity": 6
+            "intensity": 4
         },
         {
             "kind": "ambient",

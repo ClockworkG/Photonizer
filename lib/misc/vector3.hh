@@ -25,6 +25,8 @@ struct Vector3
 
     T norm();
     Vector3<T>& normalize();
+
+    Vector3<T> inverse() const;
 };
 
 

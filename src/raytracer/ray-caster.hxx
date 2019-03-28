@@ -18,7 +18,8 @@ namespace raytracer
         if (depth > max_depth_)
             return on_miss(ray);
 
-        Intersection isec = intersect(ray);
+        Intersection isec;
+        intersect(ray, isec);
         if (isec.intersected)
             return on_hit(ray, isec, depth);
 
@@ -43,29 +44,9 @@ namespace raytracer
     }
 
     template <typename T, typename V>
-    inline auto
-    RayCaster<T, V>::get_nearest() const noexcept -> std::optional<float>
+    inline
+    void RayCaster<T, V>::intersect(const Rayf& ray, Intersection& isec) const
     {
-        return nearest_;
-    }
-
-    template <typename T, typename V>
-    inline void
-    RayCaster<T, V>::set_nearest(std::optional<float> nearest)
-    {
-        nearest_ = nearest;
-    }
-
-    template <typename T, typename V>
-    inline auto
-    RayCaster<T, V>::intersect(const Rayf& ray) const
-        -> Intersection
-    {
-        Intersection isec;
-
-        if (nearest_)
-            isec.nearest_t = *nearest_;
-
         for (const auto& object : *scene_)
         {
             // FIXME: check bounding volume
@@ -97,8 +78,6 @@ namespace raytracer
                                               isec.nearest_u_bary,
                                               isec.nearest_v_bary);
         }
-
-        return isec;
     }
 
     template <typename T, typename V>

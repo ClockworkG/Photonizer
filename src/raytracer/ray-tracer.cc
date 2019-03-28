@@ -3,7 +3,6 @@
 #include "ambient-light.hh"
 #include "directional-light.hh"
 #include "point-light.hh"
-#include "shadow-tracer.hh"
 
 namespace raytracer
 {
@@ -26,7 +25,7 @@ namespace raytracer
 
     auto
     RayTracer::on_hit_impl(const Rayf& ray, const Intersection& isec,
-                           [[maybe_unused]] uint8_t depth) const
+                           uint8_t depth) const
         -> value_type
     {
         image::RGBN color = image::RGBN(0, 0, 0);
@@ -110,9 +109,6 @@ namespace raytracer
         bool from_outside = (ray.dir * isec.normal) < 0;
         Vector3f biased_normal = isec.normal * BIAS;
 
-        //FIXME: debug purpose
-        //reflect_coef = 0;
-
         image::RGBN refract_color = image::RGBN(0, 0, 0);
         if (reflect_coef < 1)
         {
@@ -136,21 +132,15 @@ namespace raytracer
         const -> value_type
     {
         image::RGBN color = image::RGBN(0, 0, 0);
-
         const auto& material = isec.nearest_polygon->get_material();
-        // FIXME: should come from material
 
         Vector3f L_v;
         float intensity;
 
-        ShadowTracer tracer(scene_, max_depth_);
-
-        tracer.normal = isec.normal;
-
         // foreach light
         for (auto it = scene_->lights().begin(); it != scene_->lights().end(); ++it)
         {
-            float nearest = 0.f;
+            Intersection shadow_isec;
             auto& light = *(*it);
             if (const auto *ambient_light = dynamic_cast<scene::AmbientLight*>(&light))
             {
@@ -164,30 +154,28 @@ namespace raytracer
                                -dir_light->direction.z);
                 L_v.normalize();
                 intensity = dir_light->intensity;
-                nearest = 500.f;
             }
             else if (const auto *point_light = dynamic_cast<scene::PointLight*>(&light))
             {
                 L_v = point_light->position - P_v; // direction of light, but reversed
                 float r2 = L_v.norm();
-                nearest = std::sqrt(r2); // we search obstacles between P and light
+                shadow_isec.nearest_t = std::sqrt(r2); // we search obstacles between P and light
                 L_v.normalize();
                 // square falloff
                 intensity = point_light->intensity / (4 * M_PI * r2);
             }
 
             // shadow test
-            tracer.intensity = intensity;
-            tracer.L_v = L_v;
-            tracer.color = light.color;
-            tracer.diffuse = material.diffuse;
-            tracer.set_nearest(nearest);
-
             const Ray light_ray = Ray(P_v + isec.normal * BIAS, L_v);
-
-            color += tracer(light_ray);
-
-            tracer.set_nearest(std::nullopt);
+            intersect(light_ray, shadow_isec);
+            // FIXME: could be optimized to not test all the objects after the first intersection
+            if (!shadow_isec.intersected)
+            {
+                float cos_theta = isec.normal * L_v;
+                float coef = intensity * cos_theta;
+                coef = clamp(coef, 0.f, 1.f);
+                color += material.diffuse * light.color * coef;
+            }
         }
         return color;
     }

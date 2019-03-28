@@ -50,7 +50,7 @@ namespace raytracer
                           uint8_t depth) const;
         value_type on_miss(const Rayf& ray) const;
 
-        Intersection intersect(const Rayf& ray) const;
+        void intersect(const Rayf& ray, Intersection& isec) const;
 
         static bool moller_trumbore(const Vector3f& a_v,
                                     const Vector3f& b_v,
@@ -62,7 +62,6 @@ namespace raytracer
                                             float u_bary, float v_bary);
 
         scene_ptr_t scene_ = nullptr;
-        std::optional<float> nearest_ = std::nullopt;
         uint8_t max_depth_ = 4;
     };
 } // namespace raytracer

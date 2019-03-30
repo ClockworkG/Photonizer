@@ -74,6 +74,8 @@ namespace scene
         Camera      camera_;
     };
 
+    using scene_ptr_t = std::shared_ptr<const Scene>;
+
     inline Scene::const_iterator Scene::begin() const
     {
         return std::cbegin(objects_);

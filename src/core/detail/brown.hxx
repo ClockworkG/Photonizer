@@ -8,7 +8,7 @@
 #include "brown.hh"
 #include "math.hh"
 
-namespace photon::detail
+namespace core::detail
 {
     template <typename V, typename It>
     auto make_balanced_tree(It begin, It end)
@@ -145,4 +145,4 @@ namespace photon::detail
         }
     }
 
-} // namespace photon
+} // namespace core

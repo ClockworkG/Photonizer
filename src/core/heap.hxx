@@ -2,7 +2,7 @@
 
 #include "heap.hh"
 
-namespace photon
+namespace core
 {
     template <typename V>
     DistanceHeap<V>::DistanceHeap(size_type max_size)
@@ -76,4 +76,4 @@ namespace photon
     {
         return std::cend(data_);
     }
-} // namespace photon
+} // namespace core

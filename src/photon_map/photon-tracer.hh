@@ -8,15 +8,15 @@
 
 namespace photon
 {
-    class PhotonTracer : public raytracer::RayCaster<PhotonTracer, void>
+    class PhotonTracer : public core::RayCaster<PhotonTracer, void>
     {
-        using super_t = raytracer::RayCaster<PhotonTracer, void>;
+        using super_t = core::RayCaster<PhotonTracer, void>;
         friend super_t;
 
     public:
         using photons_t = std::vector<Photon>;
 
-        PhotonTracer(raytracer::scene_ptr_t scene, uint8_t max_depth);
+        PhotonTracer(scene::scene_ptr_t scene, uint8_t max_depth);
         ~PhotonTracer() = default;
         PhotonTracer(const PhotonTracer&) = delete;
         PhotonTracer(PhotonTracer&&) = delete;
@@ -34,7 +34,7 @@ namespace photon
     private:
         void on_miss_impl(const Rayf& ray) const;
         void on_hit_impl(const Rayf& ray,
-                         const raytracer::Intersection& isec,
+                         const core::Intersection& isec,
                          uint8_t depth) const;
 
         mutable std::mt19937 engine_;

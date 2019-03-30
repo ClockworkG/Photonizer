@@ -34,7 +34,7 @@ namespace photon
         }
     }
 
-    PhotonMap build_photon_map(raytracer::scene_ptr_t scene,
+    PhotonMap build_photon_map(scene::scene_ptr_t scene,
                                const PhotonTracerConfig& config)
     {
         spdlog::info("Building photon map");

@@ -7,10 +7,8 @@
 
 namespace raytracer
 {
-    using scene_ptr_t = std::shared_ptr<const scene::Scene>;
-
     template <typename Image>
-    Image render(scene_ptr_t scene, photon::PhotonMap&& photon_map,
+    Image render(scene::scene_ptr_t scene, photon::PhotonMap&& photon_map,
                  const RaytracerConfig& config);
 } // namespace raytracer
 

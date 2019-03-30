@@ -2,7 +2,7 @@
 
 #include "kd-tree.hh"
 
-namespace photon
+namespace core
 {
     template <typename V>
     template <typename It>
@@ -121,4 +121,4 @@ namespace photon
 
         return os;
     }
-} // namespace photon
+} // namespace core

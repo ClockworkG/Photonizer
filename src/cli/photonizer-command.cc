@@ -7,7 +7,7 @@ namespace cli
         : app_(cli.add_subcommand(desc.name, desc.desc))
     {}
 
-    void PhotonizerCommand::operator()(std::shared_ptr<const scene::Scene> scene)
+    void PhotonizerCommand::operator()(scene::scene_ptr_t scene)
     {
         if (app_->parsed())
             execute(scene);

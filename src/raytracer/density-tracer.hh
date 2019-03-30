@@ -6,15 +6,15 @@
 
 namespace raytracer
 {
-    class DensityTracer : public RayCaster<DensityTracer, float>
+    class DensityTracer : public core::RayCaster<DensityTracer, float>
     {
-        using super_t = RayCaster<DensityTracer, float>;
+        using super_t = core::RayCaster<DensityTracer, float>;
         friend super_t;
 
     public:
         using value_type = float;
 
-        DensityTracer(scene_ptr_t scene, const RaytracerConfig& config,
+        DensityTracer(scene::scene_ptr_t scene, const RaytracerConfig& config,
                       photon::PhotonMap&& photon_map);
         ~DensityTracer() = default;
         DensityTracer(const DensityTracer&) = default;
@@ -25,10 +25,10 @@ namespace raytracer
     private:
         value_type on_miss_impl(const Rayf& ray) const;
         value_type on_hit_impl(const Rayf& ray,
-                               const Intersection& isec,
+                               const core::Intersection& isec,
                                uint8_t depth) const;
 
-        float photon_gathering(const Intersection& isec);
+        float photon_gathering(const core::Intersection& isec);
 
         photon::PhotonMap photon_map_;
         RaytracerConfig config_;

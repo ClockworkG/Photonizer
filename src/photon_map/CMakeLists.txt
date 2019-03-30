@@ -10,6 +10,6 @@ target_include_directories(libphoton PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(libphoton PUBLIC Photonizer::Misc
                                        Photonizer::Image
                                        Photonizer::Cli
-                                       Photonizer::Raytracer
+                                       Photonizer::Core
                                        Photonizer::Scene)
 add_library(Photonizer::Photon ALIAS libphoton)

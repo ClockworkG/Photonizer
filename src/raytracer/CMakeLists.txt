@@ -10,4 +10,5 @@ target_include_directories(libraytracer PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(libraytracer PUBLIC Photonizer::Scene
                                           Spdlog
                                           Photonizer::Photon
+                                          Photonizer::Core
                                           Photonizer::Image)

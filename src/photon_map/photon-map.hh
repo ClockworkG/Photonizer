@@ -39,9 +39,9 @@ namespace photon
 
         void serialize(const std::experimental::filesystem::path& file) const;
 
-        DistanceHeap<Photon> gather(const Vector3f& position,
-                                    float max_dist,
-                                    std::size_t max_count) const;
+        core::DistanceHeap<Photon> gather(const Vector3f& position,
+                                          float max_dist,
+                                          std::size_t max_count) const;
 
         image::RGBN irradiance_estimate(const Vector3f& position,
                                         const Vector3f& normal,
@@ -49,7 +49,7 @@ namespace photon
                                         std::size_t max_count) const;
 
     private:
-        std::unique_ptr<KDTree<Photon>> tree_ = nullptr;
+        std::unique_ptr<core::KDTree<Photon>> tree_ = nullptr;
     };
 } // namespace photon
 

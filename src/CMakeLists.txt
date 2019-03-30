@@ -4,6 +4,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 add_subdirectory(cli)
+add_subdirectory(core)
 add_subdirectory(image)
 add_subdirectory(scene)
 add_subdirectory(photon_map)

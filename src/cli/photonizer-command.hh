@@ -22,11 +22,11 @@ namespace cli
         PhotonizerCommand& operator=(const PhotonizerCommand&&) = delete;
         PhotonizerCommand& operator=(PhotonizerCommand&&) = delete;
 
-        void operator()(std::shared_ptr<const scene::Scene> scene);
+        void operator()(scene::scene_ptr_t scene);
         virtual void configure() = 0;
 
     protected:
-        virtual void execute(std::shared_ptr<const scene::Scene> scene) = 0;
+        virtual void execute(scene::scene_ptr_t scene) = 0;
 
         CLI::App* app_;
     };

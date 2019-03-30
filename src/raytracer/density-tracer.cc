@@ -2,7 +2,7 @@
 
 namespace raytracer
 {
-    DensityTracer::DensityTracer(scene_ptr_t scene,
+    DensityTracer::DensityTracer(scene::scene_ptr_t scene,
                          const RaytracerConfig& config,
                          photon::PhotonMap&& photon_map)
         : super_t(scene)
@@ -11,7 +11,7 @@ namespace raytracer
     {}
 
     auto
-    DensityTracer::on_hit_impl(const Rayf& ray, const Intersection& isec,
+    DensityTracer::on_hit_impl(const Rayf& ray, const core::Intersection& isec,
                                uint8_t) const
         -> value_type
     {

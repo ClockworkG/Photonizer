@@ -22,7 +22,7 @@ namespace scene::detail
             Compound result{};
             std::size_t index = 0;
             for ([[maybe_unused]] const auto& [key, value] : pt)
-                result[index++] = value.get<float>("");
+                result[index++] = value.template get<float>("");
 
             return result;
         }

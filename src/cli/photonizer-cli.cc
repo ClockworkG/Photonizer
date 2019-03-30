@@ -6,9 +6,8 @@
 
 namespace cli
 {
-    PhotonizerCLI::PhotonizerCLI(const char* version)
+    PhotonizerCLI::PhotonizerCLI()
         : app_{"Photonizer - raytracer extended with photon mapping"}
-        , version_(version)
     {
         app_.require_subcommand();
         app_.add_flag("-g,--debug", debug_mode_, "Enable debug logging");

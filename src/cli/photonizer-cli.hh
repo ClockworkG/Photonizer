@@ -12,7 +12,7 @@ namespace cli
     class PhotonizerCLI
     {
     public:
-        PhotonizerCLI(const char* version);
+        PhotonizerCLI();
         ~PhotonizerCLI();
         PhotonizerCLI(const PhotonizerCLI&) = delete;
         PhotonizerCLI(PhotonizerCLI&&) = delete;
@@ -26,9 +26,6 @@ namespace cli
 
     private:
         CLI::App app_;
-
-        [[maybe_unused]]
-        const char* version_;
 
         std::list<PhotonizerCommand*> subcommands_;
 

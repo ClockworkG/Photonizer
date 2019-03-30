@@ -139,7 +139,7 @@ namespace raytracer
         const auto& material = isec.nearest_polygon->get_material();
 
         Vector3f L_v;
-        float intensity;
+        float intensity = 0;
 
         // foreach light
         for (auto it = scene_->lights().begin(); it != scene_->lights().end(); ++it)

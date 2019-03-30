@@ -22,24 +22,6 @@ build:all:
             - build
         untracked: true
 
-unit-tests:all:
-    stage: tests
-    script:
-        - make test -C build
-    dependencies:
-        - build:all
-
-upload:doc:
-    stage: doc
-    dependencies:
-        - build:all
-    script:
-        - make doc -C build
-        - mv doc/html/ public/
-    artifacts:
-        paths:
-            - public
-
 render:snapshot:
     stage: snapshot
     dependencies:
@@ -47,9 +29,9 @@ render:snapshot:
     before_script:
         - mkdir "${SNAPSHOT_DIRECTORY}"
     script:
-        - ./build/src/photonizer samples/cornell.json map -p 10000 -b 10
-        - ./build/src/photonizer samples/cornell.json trace ${SNAPSHOT_DIRECTORY}/vanilla.ppm
-        - ./build/src/photonizer samples/cornell.json trace -m photons.pht -c 300 -r 1 photonized.ppm
+        - PHOTONIZER_RESOURCES=$(pwd)/samples/meshes ./build/src/photonizer samples/cornell.json map -p 10000 -b 10
+        - PHOTONIZER_RESOURCES=$(pwd)/samples/meshes ./build/src/photonizer samples/cornell.json trace ${SNAPSHOT_DIRECTORY}/vanilla.ppm
+        - PHOTONIZER_RESOURCES=$(pwd)/samples/meshes ./build/src/photonizer samples/cornell.json trace -m photons.pht -c 300 -r 1 photonized.ppm
     artifacts:
         paths:
             - ${SNAPSHOT_DIRECTORY}

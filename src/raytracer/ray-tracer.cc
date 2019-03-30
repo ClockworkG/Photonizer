@@ -144,7 +144,7 @@ namespace raytracer
         // foreach light
         for (auto it = scene_->lights().begin(); it != scene_->lights().end(); ++it)
         {
-            Intersection shadow_isec;
+            core::Intersection shadow_isec;
             auto& light = *(*it);
             if (const auto *ambient_light = dynamic_cast<scene::AmbientLight*>(&light))
             {

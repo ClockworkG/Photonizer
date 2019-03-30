@@ -5,6 +5,10 @@ stages:
     - tests
     - doc
     - check
+    - snapshot
+
+variables:
+    SNAPSHOT_DIRECTORY: "snapshot_${CI_COMMIT_SHA}"
 
 build:all:
     stage: build
@@ -36,7 +40,16 @@ upload:doc:
         paths:
             - public
 
-clang-tidy:all:
-    stage: check
+render:snapshot:
+    stage: snapshot
+    dependencies:
+        - build:all
+    before_script:
+        - mkdir "${SNAPSHOT_DIRECTORY}"
     script:
-        - find src -name '*.cc' -exec clang-tidy -header-filter='.*' {} -- -Isrc -std=c++17 \;
+        - ./build/src/photonizer samples/cornell.json map -p 10000 -b 10
+        - ./build/src/photonizer samples/cornell.json trace ${SNAPSHOT_DIRECTORY}/vanilla.ppm
+        - ./build/src/photonizer samples/cornell.json trace -m photons.pht -c 300 -r 1 photonized.ppm
+    artifacts:
+        paths:
+            - ${SNAPSHOT_DIRECTORY}

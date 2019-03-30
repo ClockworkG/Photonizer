@@ -7,11 +7,12 @@
 template <typename T>
 struct Vector3
 {
-    T x;
-    T y;
-    T z;
+    T x = T{};
+    T y = T{};
+    T z = T{};
 
-    constexpr Vector3(T x = 0, T y = 0, T z = 0);
+    constexpr Vector3() = default;
+    explicit constexpr Vector3(T x, T y, T z);
 
     T& operator[](size_t index);
     const T& operator[](size_t index) const;

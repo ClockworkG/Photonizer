@@ -28,10 +28,9 @@ render:snapshot:
         - build:all
     before_script:
         - mkdir "${SNAPSHOT_DIRECTORY}"
-    except:
-        - branches
     only:
-        - master
+        refs:
+            - master
     script:
         - PHOTONIZER_RESOURCES=$(pwd)/samples/meshes ./build/src/photonizer samples/cornell.json map -p 10000 -b 10
         - PHOTONIZER_RESOURCES=$(pwd)/samples/meshes ./build/src/photonizer samples/cornell.json trace ${SNAPSHOT_DIRECTORY}/vanilla.ppm

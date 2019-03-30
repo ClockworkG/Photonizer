@@ -5,6 +5,10 @@ stages:
     - tests
     - doc
     - check
+    - snapshot
+
+variables:
+    SNAPSHOT_DIRECTORY: "snapshot_${CI_COMMIT_SHA}"
 
 build:all:
     stage: build
@@ -18,25 +22,20 @@ build:all:
             - build
         untracked: true
 
-unit-tests:all:
-    stage: tests
-    script:
-        - make test -C build
+render:snapshot:
+    stage: snapshot
     dependencies:
         - build:all
-
-upload:doc:
-    stage: doc
-    dependencies:
-        - build:all
+    before_script:
+        - mkdir "${SNAPSHOT_DIRECTORY}"
+    except:
+        - branches
+    only:
+        - master
     script:
-        - make doc -C build
-        - mv doc/html/ public/
+        - PHOTONIZER_RESOURCES=$(pwd)/samples/meshes ./build/src/photonizer samples/cornell.json map -p 10000 -b 10
+        - PHOTONIZER_RESOURCES=$(pwd)/samples/meshes ./build/src/photonizer samples/cornell.json trace ${SNAPSHOT_DIRECTORY}/vanilla.ppm
+        - PHOTONIZER_RESOURCES=$(pwd)/samples/meshes ./build/src/photonizer samples/cornell.json trace -m photons.pht -c 300 -r 1 ${SNAPSHOT_DIRECTORY}/photonized.ppm
     artifacts:
         paths:
-            - public
-
-clang-tidy:all:
-    stage: check
-    script:
-        - find src -name '*.cc' -exec clang-tidy -header-filter='.*' {} -- -Isrc -std=c++17 \;
+            - ${SNAPSHOT_DIRECTORY}

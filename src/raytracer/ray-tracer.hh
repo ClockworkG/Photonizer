@@ -12,17 +12,16 @@ namespace raytracer
         std::size_t photon_gathering_count = 100;
     };
 
-
-    class RayTracer : public RayCaster<RayTracer, image::RGBN>
+    class RayTracer : public core::RayCaster<RayTracer, image::RGBN>
     {
-        using super_t = RayCaster<RayTracer, image::RGBN>;
+        using super_t = core::RayCaster<RayTracer, image::RGBN>;
         friend super_t;
 
     public:
         using value_type = image::RGBN;
 
-        RayTracer(scene_ptr_t scene, const RaytracerConfig& config);
-        RayTracer(scene_ptr_t scene,
+        RayTracer(scene::scene_ptr_t scene, const RaytracerConfig& config);
+        RayTracer(scene::scene_ptr_t scene,
                   const RaytracerConfig& config,
                   photon::PhotonMap&& photon_map);
         ~RayTracer() = default;
@@ -33,15 +32,15 @@ namespace raytracer
 
     private:
         value_type on_hit_impl(const Rayf& ray,
-                               const Intersection& isec,
+                               const core::Intersection& isec,
                                uint8_t depth) const;
         value_type on_miss_impl(const Rayf& ray) const;
 
         value_type compute_lights(const Rayf& ray,
-                                  const Intersection& isec,
+                                  const core::Intersection& isec,
                                   const Vector3f& P_v) const;
         value_type compute_refract(const Rayf& ray,
-                                   const Intersection& isec,
+                                   const core::Intersection& isec,
                                    const Vector3f& P_v,
                                    uint8_t depth) const;
 

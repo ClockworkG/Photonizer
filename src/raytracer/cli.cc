@@ -22,7 +22,7 @@ namespace raytracer::cli
                          "Rendered image output");
     }
 
-    void RaytracerCommand::execute(std::shared_ptr<const scene::Scene> scene)
+    void RaytracerCommand::execute(scene::scene_ptr_t scene)
     {
         if (heatmap_)
             execute_<image::Heatmap<float>, DensityTracer>(scene);

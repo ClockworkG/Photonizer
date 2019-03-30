@@ -5,7 +5,7 @@
 
 #include "point-meta.hh"
 
-namespace photon::detail
+namespace core::detail
 {
     template <typename ValueType>
     class PointComparator
@@ -56,4 +56,4 @@ namespace photon::detail
         > indexes_;
     };
 
-} // namespace photon::detail
+} // namespace core::detail

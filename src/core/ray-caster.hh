@@ -7,7 +7,7 @@
 #include "ray.hh"
 #include "vector3.hh"
 
-namespace raytracer
+namespace core
 {
     using scene_ptr_t = std::shared_ptr<const scene::Scene>;
 
@@ -64,6 +64,6 @@ namespace raytracer
         scene_ptr_t scene_ = nullptr;
         uint8_t max_depth_ = 4;
     };
-} // namespace raytracer
+} // namespace core
 
 #include "ray-caster.hxx"

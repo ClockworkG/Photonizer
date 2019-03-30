@@ -8,8 +8,7 @@
 #include "heap.hh"
 #include "math.hh"
 
-/// Handles photon tracing and storing.
-namespace photon
+namespace core
 {
     /// Data structure to partition space and efficiently store positions.
     template <typename ValueType>
@@ -66,6 +65,6 @@ namespace photon
     template <typename ValueType>
     std::ostream& operator<<(std::ostream&, const KDTree<ValueType>&);
 
-} // namespace photon
+} // namespace core
 
 #include "kd-tree.hxx"

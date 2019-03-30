@@ -22,11 +22,11 @@ namespace raytracer::cli
         void configure() final;
 
     protected:
-        void execute(std::shared_ptr<const scene::Scene> scene) final;
+        void execute(scene::scene_ptr_t scene) final;
 
     private:
         template <typename Image, typename Tracer>
-        void execute_(std::shared_ptr<const scene::Scene> scene);
+        void execute_(scene::scene_ptr_t scene);
 
         std::string output_file_ = "output.ppm";
         std::string photon_map_file_ = "";
@@ -36,7 +36,7 @@ namespace raytracer::cli
 
     template <typename Image, typename Tracer>
     inline
-    void RaytracerCommand::execute_(std::shared_ptr<const scene::Scene> scene)
+    void RaytracerCommand::execute_(scene::scene_ptr_t scene)
     {
         image::PPMWriter<image::ImageRGB> ppm_writer{};
         std::ofstream output_stream{output_file_};

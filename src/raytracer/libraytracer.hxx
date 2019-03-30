@@ -7,7 +7,7 @@
 namespace raytracer
 {
     template <typename Image, typename Tracer>
-    Image render(scene_ptr_t scene, photon::PhotonMap&& photon_map,
+    Image render(scene::scene_ptr_t scene, photon::PhotonMap&& photon_map,
                  const RaytracerConfig& config)
     {
         static_assert(

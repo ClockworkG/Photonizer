@@ -4,7 +4,7 @@
 
 #include "vector3.hh"
 
-namespace photon
+namespace core
 {
     template <typename ValueType>
     struct point_traits
@@ -98,4 +98,4 @@ namespace photon
             return (index + 1) % point_traits<ValueType>::dimension;
         }
     };
-} // namespace photon
+} // namespace core

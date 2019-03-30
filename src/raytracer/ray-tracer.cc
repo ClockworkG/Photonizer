@@ -10,14 +10,14 @@ namespace raytracer
 {
     constexpr static inline auto BIAS = 0.0001f; // to avoid self intersection
 
-    RayTracer::RayTracer(scene_ptr_t scene,
+    RayTracer::RayTracer(scene::scene_ptr_t scene,
                          const RaytracerConfig& config)
         : super_t(scene)
         , photon_map_(std::nullopt)
         , config_(config)
     {}
 
-    RayTracer::RayTracer(scene_ptr_t scene,
+    RayTracer::RayTracer(scene::scene_ptr_t scene,
                          const RaytracerConfig& config,
                          photon::PhotonMap&& photon_map)
         : super_t(scene)
@@ -26,7 +26,7 @@ namespace raytracer
     {}
 
     auto
-    RayTracer::on_hit_impl(const Rayf& ray, const Intersection& isec,
+    RayTracer::on_hit_impl(const Rayf& ray, const core::Intersection& isec,
                            uint8_t depth) const
         -> value_type
     {
@@ -101,7 +101,7 @@ namespace raytracer
     }
 
     auto RayTracer::compute_refract(const Rayf& ray,
-                                    const Intersection& isec,
+                                    const core::Intersection& isec,
                                     const Vector3f& P_v,
                                     uint8_t depth) const
         -> value_type
@@ -131,7 +131,7 @@ namespace raytracer
 
     auto
     RayTracer::compute_lights(const Rayf& ray,
-                              const Intersection& isec,
+                              const core::Intersection& isec,
                               const Vector3f& P_v)
         const -> value_type
     {
@@ -144,7 +144,7 @@ namespace raytracer
         // foreach light
         for (auto it = scene_->lights().begin(); it != scene_->lights().end(); ++it)
         {
-            Intersection shadow_isec;
+            core::Intersection shadow_isec;
             auto& light = *(*it);
             if (const auto *ambient_light = dynamic_cast<scene::AmbientLight*>(&light))
             {

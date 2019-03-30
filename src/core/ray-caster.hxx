@@ -1,6 +1,6 @@
 #pragma once
 
-namespace raytracer
+namespace core
 {
     constexpr static inline auto epsilon = 0.0000001f;
     template <typename T, typename V>
@@ -124,4 +124,4 @@ namespace raytracer
         return n0 * (1.f - u_bary - v_bary) + n1 * u_bary + n2 * v_bary;
     }
 
-} // namespace raytracer
+} // namespace core

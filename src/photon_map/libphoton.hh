@@ -16,6 +16,6 @@ namespace photon
     };
 
     [[nodiscard]]
-    PhotonMap build_photon_map(std::shared_ptr<const scene::Scene> scene,
+    PhotonMap build_photon_map(scene::scene_ptr_t scene,
                                const PhotonTracerConfig& config);
 } // namespace photon

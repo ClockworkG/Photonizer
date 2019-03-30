@@ -7,13 +7,13 @@
 #include "point-meta.hh"
 #include "point-comparator.hh"
 
-namespace photon
+namespace core
 {
     template <typename V>
     class KDTree;
 }
 
-namespace photon::detail
+namespace core::detail
 {
     template <typename ValueType>
     class BrownAlgorithm
@@ -46,6 +46,6 @@ namespace photon::detail
     template <typename ValueType, typename Iterator>
     auto make_balanced_tree(Iterator begin, Iterator end)
         -> typename KDTree<ValueType>::data_type;
-} // namespace photon
+} // namespace core
 
 #include "brown.hxx"

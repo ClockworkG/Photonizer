@@ -5,7 +5,7 @@
 
 #include "point-meta.hh"
 
-namespace photon
+namespace core
 {
 
     template <typename ValueType>
@@ -46,6 +46,6 @@ namespace photon
         data_t data_;
     };
 
-} // namespace photon
+} // namespace core
 
 #include "heap.hxx"

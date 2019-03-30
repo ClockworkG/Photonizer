@@ -20,7 +20,7 @@ namespace photon
         spdlog::info("Balancing KDtree");
         {
             Chrono chrono(elapsed);
-            tree_ = std::make_unique<KDTree<Photon>>(begin, end);
+            tree_ = std::make_unique<core::KDTree<Photon>>(begin, end);
         }
         spdlog::info("Balanced tree obtained in {0} ms", elapsed);
     }
@@ -34,7 +34,7 @@ namespace photon
             auto file_size = std::experimental::filesystem::file_size(file);
             auto count = file_size / sizeof (Photon);
             spdlog::debug("Loading {0} photons", count);
-            tree_ = std::make_unique<KDTree<Photon>>(count);
+            tree_ = std::make_unique<core::KDTree<Photon>>(count);
 
             FILE* raw_file = fopen(file.c_str(), "r");
             fread(tree_->data().data(), count, sizeof (Photon), raw_file);
@@ -84,13 +84,13 @@ namespace photon
         return result;
     }
 
-    inline DistanceHeap<Photon>
+    inline core::DistanceHeap<Photon>
     PhotonMap::gather(const Vector3f& position,
                       float max_dist,
                       std::size_t max_count) const
     {
         if (tree_ == nullptr)
-            return DistanceHeap<Photon>(0);
+            return core::DistanceHeap<Photon>(0);
 
         return tree_->nearest(position, max_count, max_dist);
     }

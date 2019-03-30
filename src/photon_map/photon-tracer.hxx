@@ -4,7 +4,7 @@
 
 namespace photon
 {
-    PhotonTracer::PhotonTracer(raytracer::scene_ptr_t scene, uint8_t max_depth)
+    PhotonTracer::PhotonTracer(scene::scene_ptr_t scene, uint8_t max_depth)
         : super_t(scene, max_depth)
         , engine_(std::random_device()())
         , dist_(0.f, 1.f)
@@ -34,7 +34,7 @@ namespace photon
 
     inline void
     PhotonTracer::on_hit_impl(const Rayf& ray,
-                              const raytracer::Intersection& isec,
+                              const core::Intersection& isec,
                               uint8_t depth) const
     {
         auto hit_point = ray.o + ray.dir * isec.nearest_t;

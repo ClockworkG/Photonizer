@@ -22,7 +22,7 @@ namespace scene::detail
             Compound result{};
             std::size_t index = 0;
             for ([[maybe_unused]] const auto& [key, value] : pt)
-                result[index++] = value.template get<float>("");
+                result[index++] = value.get<float>("");
 
             return result;
         }
@@ -98,6 +98,16 @@ namespace scene::detail
             else if (kind == "ambient")
             {
                 product_->lights_.push_back(factory.make<AmbientLight>());
+            }
+            else if (kind == "square")
+            {
+                auto position = compound_from_ptree<Vector3f>(value.get_child("position"));
+                auto height = value.get<float>("height");
+                auto width = value.get<float>("width");
+
+                product_->lights_.push_back(factory.make<SquareLight>(
+                    position, width, height
+                ));
             }
             else
             {

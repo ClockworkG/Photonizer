@@ -13,6 +13,7 @@ variables:
 build:all:
     stage: build
     before_script:
+        - pacman -Syu --noconfirm --needed openmp
         - mkdir build
         - cd build
     script:
@@ -27,6 +28,7 @@ render:snapshot:
     dependencies:
         - build:all
     before_script:
+        - pacman -Syu --noconfirm --needed openmp
         - mkdir "${SNAPSHOT_DIRECTORY}"
     only:
         refs:

@@ -8,6 +8,7 @@ set_directory_properties(PROPERTIES EP_PREFIX ${CMAKE_BINARY_DIR}/3rd_party)
 ExternalProject_Add(
     objloader-extern
     GIT_REPOSITORY ${OBJLOADER_URL}
+    GIT_TAG v1.0.7
     TIMEOUT 10
     BUILD_COMMAND cmake "${CMAKE_BINARY_DIR}/3rd_party/src/objloader-extern" && make
     UPDATE_COMMAND ""

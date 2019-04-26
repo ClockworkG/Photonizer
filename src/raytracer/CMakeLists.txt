@@ -1,5 +1,3 @@
-find_package(OpenMP)
-
 add_library(libraytracer STATIC ray-tracer.cc cli.cc density-tracer.cc)
 add_library(Photonizer::Raytracer ALIAS libraytracer)
 

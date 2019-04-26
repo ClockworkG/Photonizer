@@ -42,7 +42,7 @@ namespace raytracer
             Tracer ray_cast(scene, config, std::move(photon_map));
 
             // Draw Loop
-            #pragma omp parallel for
+            #pragma omp parallel for schedule(dynamic)
             for (int y = 0; y < img_height; ++y)
             {
                 for (int x = 0; x < img_width; ++x)

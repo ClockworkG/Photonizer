@@ -1,0 +1,48 @@
+{
+    "name": "Cubes",
+    "height": 712,
+    "width": 712,
+    "camera": {
+        "position": [0.0, 0.0, 0.0],
+        "forward": [0.0, 0.0, 1.0],
+        "up": [0.0, 1.0, 0.0],
+        "fov_x": 90,
+        "fov_y": 90,
+        "z_min": -2
+    },
+    "objects": [
+        {
+            "mesh": "cube.obj",
+            "position": [-5, -3, -15]
+        },
+        {
+            "mesh": "cube.obj",
+            "position": [4, 2, -19]
+        },
+        {
+            "mesh": "cube.obj",
+            "position": [0, 4, -22]
+        }
+    ],
+    "lights": [
+        {
+            "kind": "directional",
+            "direction": [1, -1, 0],
+            "color": [255, 255, 255],
+            "intensity": 1.8
+        },
+        {
+            "kind": "directional",
+            "direction": [-1, 1, -1],
+            "color": [255, 255, 255],
+            "intensity": 1
+        },
+        {
+            "kind": "point",
+            "position": [0, 3, -17],
+            "color": [255, 255, 255],
+            "intensity": 60
+        }
+ 
+    ]
+}

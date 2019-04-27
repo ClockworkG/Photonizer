@@ -37,7 +37,7 @@ namespace core
         RayCaster(const RayCaster&) = delete;
         RayCaster(RayCaster&&) = default;
         RayCaster& operator=(const RayCaster&) = delete;
-        RayCaster& operator=(RayCaster&&) = default;
+        RayCaster& operator=(RayCaster&&) = delete;
 
         value_type operator()(const Rayf& ray, uint8_t depth = 0) const;
 

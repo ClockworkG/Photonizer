@@ -31,7 +31,7 @@ namespace scene
         Mesh(const Mesh&) = delete;
         Mesh(Mesh&&) = default;
         Mesh& operator=(const Mesh&) = delete;
-        Mesh& operator=(Mesh&&) = default;
+        Mesh& operator=(Mesh&&) = delete;
         /** \} */
 
         /** \name Iterating

@@ -25,10 +25,10 @@ namespace raytracer
                   const RaytracerConfig& config,
                   photon::PhotonMap&& photon_map);
         ~RayTracer() = default;
-        RayTracer(const RayTracer&) = default;
+        RayTracer(const RayTracer&) = delete;
         RayTracer(RayTracer&&) = default;
-        RayTracer& operator=(const RayTracer&) = default;
-        RayTracer& operator=(RayTracer&&) = default;
+        RayTracer& operator=(const RayTracer&) = delete;
+        RayTracer& operator=(RayTracer&&) = delete;
 
     private:
         value_type on_hit_impl(const Rayf& ray,

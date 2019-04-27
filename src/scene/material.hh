@@ -11,7 +11,7 @@ namespace scene
         Material(const Material&) = delete;
         Material(Material&&) = default;
         Material& operator=(const Material&) = delete;
-        Material& operator=(Material&&) = default;
+        Material& operator=(Material&&) = delete;
 
         const std::string name = "default";
         const float       transparency = 1.f;

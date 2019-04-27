@@ -17,10 +17,10 @@ namespace raytracer
         DensityTracer(scene::scene_ptr_t scene, const RaytracerConfig& config,
                       photon::PhotonMap&& photon_map);
         ~DensityTracer() = default;
-        DensityTracer(const DensityTracer&) = default;
+        DensityTracer(const DensityTracer&) = delete;
         DensityTracer(DensityTracer&&) = default;
-        DensityTracer& operator=(const DensityTracer&) = default;
-        DensityTracer& operator=(DensityTracer&&) = default;
+        DensityTracer& operator=(const DensityTracer&) = delete;
+        DensityTracer& operator=(DensityTracer&&) = delete;
 
     private:
         value_type on_miss_impl(const Rayf& ray) const;

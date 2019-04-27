@@ -1,0 +1,40 @@
+{
+    "name": "Dragon",
+    "height": 712,
+    "width": 712,
+    "camera": {
+        "position": [0.0, 0.0, 0.0],
+        "forward": [0.0, 0.0, 1.0],
+        "up": [0.0, 1.0, 0.0],
+        "fov_x": 90,
+        "fov_y": 90,
+        "z_min": -2
+    },
+    "objects": [
+        {
+            "mesh": "dragon.obj",
+            "position": [0, 0, -30]
+        }
+    ],
+    "lights": [
+        {
+            "kind": "directional",
+            "direction": [1, -1, 0],
+            "color": [255, 255, 255],
+            "intensity": 1.8
+        },
+        {
+            "kind": "directional",
+            "direction": [-1, 1, -1],
+            "color": [0, 0, 255],
+            "intensity": 0.8
+        },
+        {
+            "kind": "point",
+            "position": [0, 3, -12],
+            "color": [0, 255, 255],
+            "intensity": 60
+        }
+ 
+    ]
+}

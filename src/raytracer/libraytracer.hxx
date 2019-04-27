@@ -3,6 +3,7 @@
 #include "libraytracer.hh"
 
 #include <spdlog/spdlog.h>
+#include <omp.h>
 
 namespace raytracer
 {
@@ -34,11 +35,14 @@ namespace raytracer
         const float coef_x = tanf(scene->get_camera().fov_x / 2.0 * M_PI / 180.0) * img_ratio;
         const float coef_y = tanf(scene->get_camera().fov_y / 2.0 * M_PI / 180.0);
 
+
         {
             Chrono<std::chrono::seconds> chrono(elapsed);
 
-            // Draw Loop
             Tracer ray_cast(scene, config, std::move(photon_map));
+
+            // Draw Loop
+            #pragma omp parallel for schedule(dynamic)
             for (int y = 0; y < img_height; ++y)
             {
                 for (int x = 0; x < img_width; ++x)

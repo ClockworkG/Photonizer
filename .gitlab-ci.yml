@@ -23,6 +23,19 @@ build:all:
             - build
         untracked: true
 
+render:dragon:
+    stage: snapshot
+    dependencies:
+        - build:all
+    before_script:
+        - pacman -Syu --noconfirm --needed openmp
+        - mkdir "${SNAPSHOT_DIRECTORY}"
+    script:
+        - PHOTONIZER_RESOURCES=$(pwd)/samples/meshes ./build/src/photonizer samples/dragon.json trace ${SNAPSHOT_DIRECTORY}/dragon.ppm
+    artifacts:
+        paths:
+            - ${SNAPSHOT_DIRECTORY}
+
 render:snapshot:
     stage: snapshot
     dependencies:

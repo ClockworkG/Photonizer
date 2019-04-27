@@ -3,9 +3,7 @@
 #include "libraytracer.hh"
 
 #include <spdlog/spdlog.h>
-#if defined(_OPENMP)
-    #include <omp.h>
-#endif
+#include <omp.h>
 
 namespace raytracer
 {
@@ -44,9 +42,7 @@ namespace raytracer
             Tracer ray_cast(scene, config, std::move(photon_map));
 
             // Draw Loop
-            #if defined(_OPENMP)
-                #pragma omp parallel for schedule(dynamic)
-            #endif
+            #pragma omp parallel for schedule(dynamic)
             for (int y = 0; y < img_height; ++y)
             {
                 for (int x = 0; x < img_width; ++x)

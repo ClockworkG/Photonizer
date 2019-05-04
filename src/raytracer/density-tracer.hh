@@ -15,7 +15,8 @@ namespace raytracer
         using value_type = float;
 
         DensityTracer(scene::scene_ptr_t scene, const RaytracerConfig& config,
-                      photon::PhotonMap&& photon_map);
+                      photon::PhotonMap&& photon_map,
+                      photon::PhotonMap&& caustics);
         ~DensityTracer() = default;
         DensityTracer(const DensityTracer&) = delete;
         DensityTracer(DensityTracer&&) = default;
@@ -31,6 +32,7 @@ namespace raytracer
         float photon_gathering(const core::Intersection& isec);
 
         photon::PhotonMap photon_map_;
+        photon::PhotonMap caustics_;
         RaytracerConfig config_;
     };
 } // namespace raytracer

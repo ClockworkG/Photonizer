@@ -9,7 +9,7 @@ namespace raytracer
 {
     template <typename Image, typename Tracer>
     Image render(scene::scene_ptr_t scene, photon::PhotonMap&& photon_map,
-                 const RaytracerConfig& config)
+                 photon::PhotonMap&& caustics, const RaytracerConfig& config)
     {
         static_assert(
                 std::is_convertible_v<
@@ -39,7 +39,8 @@ namespace raytracer
         {
             Chrono<std::chrono::seconds> chrono(elapsed);
 
-            Tracer ray_cast(scene, config, std::move(photon_map));
+            Tracer ray_cast(scene, config,
+                            std::move(photon_map), std::move(caustics));
 
             // Draw Loop
             #pragma omp parallel for schedule(dynamic)

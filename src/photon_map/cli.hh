@@ -24,6 +24,7 @@ namespace photon::cli
 
     private:
         std::string photon_file_ = "photons.pht";
+        std::string caustics_file_ = "";
         PhotonTracerConfig config_;
     };
 } // namespace photon::cli

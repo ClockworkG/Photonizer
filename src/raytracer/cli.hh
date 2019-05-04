@@ -30,6 +30,7 @@ namespace raytracer::cli
 
         std::string output_file_ = "output.ppm";
         std::string photon_map_file_ = "";
+        std::string caustics_file_ = "";
         raytracer::RaytracerConfig config_;
         bool heatmap_ = false;
     };
@@ -42,9 +43,11 @@ namespace raytracer::cli
         std::ofstream output_stream{output_file_};
 
         auto photon_map = photon::PhotonMap(photon_map_file_);
+        auto caustics = photon::PhotonMap(caustics_file_);
         auto image_output = raytracer::render<Image, Tracer>(
                 scene,
                 std::move(photon_map),
+                std::move(caustics),
                 config_
         );
 

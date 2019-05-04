@@ -4,9 +4,11 @@ namespace raytracer
 {
     DensityTracer::DensityTracer(scene::scene_ptr_t scene,
                          const RaytracerConfig& config,
-                         photon::PhotonMap&& photon_map)
+                         photon::PhotonMap&& photon_map,
+                         photon::PhotonMap&& caustics)
         : super_t(scene)
         , photon_map_(std::move(photon_map))
+        , caustics_(std::move(caustics))
         , config_(config)
     {}
 

@@ -14,6 +14,7 @@ namespace raytracer::cli
     {
         app_->add_flag("--heatmap", heatmap_, "Enable heatmap rendering");
         app_->add_option("-m,--map", photon_map_file_, "Photon map file");
+        app_->add_option("--caustics", caustics_file_, "Caustics file");
         app_->add_option("-r,--radius", config_.photon_gathering_radius,
                          "Photon gathering radius");
         app_->add_option("-c,--count", config_.photon_gathering_count,

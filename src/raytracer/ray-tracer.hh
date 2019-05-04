@@ -23,7 +23,8 @@ namespace raytracer
         RayTracer(scene::scene_ptr_t scene, const RaytracerConfig& config);
         RayTracer(scene::scene_ptr_t scene,
                   const RaytracerConfig& config,
-                  photon::PhotonMap&& photon_map);
+                  photon::PhotonMap&& photon_map,
+                  photon::PhotonMap&& caustics);
         ~RayTracer() = default;
         RayTracer(const RayTracer&) = delete;
         RayTracer(RayTracer&&) = default;
@@ -48,6 +49,7 @@ namespace raytracer
                                             float u_bary, float v_bary);
 
         std::optional<photon::PhotonMap> photon_map_ = std::nullopt;
+        std::optional<photon::PhotonMap> caustics_ = std::nullopt;
         RaytracerConfig config_;
     };
 } // namespace raytracer

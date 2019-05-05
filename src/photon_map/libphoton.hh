@@ -18,4 +18,7 @@ namespace photon
     [[nodiscard]]
     PhotonMap build_photon_map(scene::scene_ptr_t scene,
                                const PhotonTracerConfig& config);
+    [[nodiscard]]
+    PhotonMap build_caustics_map(scene::scene_ptr_t scene,
+                                 const PhotonTracerConfig& config);
 } // namespace photon

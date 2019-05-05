@@ -21,7 +21,7 @@ namespace photon::cli
 
         if (caustics_file_ != "")
         {
-            auto caustics = photon::build_photon_map(scene, config_);
+            auto caustics = photon::build_caustics_map(scene, config_);
             caustics.serialize(caustics_file_);
         }
     }

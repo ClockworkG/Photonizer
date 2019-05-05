@@ -5,9 +5,9 @@
 #include <spdlog/spdlog.h>
 
 #include "chrono.hh"
+#include "photon-tracer.hh"
 #include "point-light.hh"
 #include "ray.hh"
-#include "photon-tracer.hh"
 
 namespace photon
 {
@@ -24,7 +24,7 @@ namespace photon
 
             while (emitted < config.max_photons)
             {
-                Ray ray(light.position, tracer.randomize_direction());
+                Ray ray(light.position, tracer.next_direction());
                 tracer(ray);
                 emitted++;
             }
@@ -32,35 +32,48 @@ namespace photon
             for (auto i = begin; i < tracer.size(); i++)
                 tracer[i].color *= (1 / static_cast<float>(emitted));
         }
+
+        template <typename Tracer>
+        PhotonMap build_map_photon_map_impl(scene::scene_ptr_t scene,
+                                            const PhotonTracerConfig& config)
+        {
+            PhotonTracer tracer(scene, config.max_bounces);
+            double elapsed = 0;
+            {
+                spdlog::info("Tracing photons");
+                spdlog::debug("Emitting {0} photons", config.max_photons);
+                spdlog::debug("Maximum bounces: {0}", config.max_bounces);
+
+                Chrono chrono(elapsed);
+                for (const auto& light : scene->lights())
+                {
+                    tracer.light = light;
+                    if (auto point_light =
+                            std::dynamic_pointer_cast<const scene::PointLight>(light);
+                            point_light != nullptr)
+                    {
+                        emit_photons(tracer, *point_light, config);
+                    }
+                }
+            }
+
+            spdlog::info("Photon tracing finished in {0} ms", elapsed);
+            return PhotonMap(std::cbegin(tracer.get_photons()),
+                             std::cend(tracer.get_photons()));
+        }
     }
 
     PhotonMap build_photon_map(scene::scene_ptr_t scene,
                                const PhotonTracerConfig& config)
     {
         spdlog::info("Building photon map");
+        return build_map_photon_map_impl<PhotonTracer>(scene, config);
+    }
 
-        PhotonTracer tracer(scene, config.max_bounces);
-        double elapsed = 0;
-        {
-            spdlog::info("Tracing photons");
-            spdlog::debug("Emitting {0} photons", config.max_photons);
-            spdlog::debug("Maximum bounces: {0}", config.max_bounces);
-
-            Chrono chrono(elapsed);
-            for (const auto& light : scene->lights())
-            {
-                tracer.light = light;
-                if (auto point_light =
-                        std::dynamic_pointer_cast<const scene::PointLight>(light);
-                        point_light != nullptr)
-                {
-                    emit_photons(tracer, *point_light, config);
-                }
-            }
-        }
-
-        spdlog::info("Photon tracing finished in {0} ms", elapsed);
-        return PhotonMap(std::cbegin(tracer.get_photons()),
-                         std::cend(tracer.get_photons()));
+    PhotonMap build_caustics_map(scene::scene_ptr_t scene,
+                                 const PhotonTracerConfig& config)
+    {
+        spdlog::info("Building caustics map");
+        return build_map_photon_map_impl<PhotonTracer>(scene, config);
     }
 } // namespace photon

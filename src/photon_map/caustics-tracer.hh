@@ -6,24 +6,23 @@
 
 namespace photon
 {
-    class PhotonTracer : public AbstractPhotonTracer
+    class CausticsTracer : public AbstractPhotonTracer
     {
-        using super_t = AbstractPhotonTracer;
+        using super_t = AbstractCausticsTracer;
         friend super_t;
 
     public:
         using photons_t = std::vector<Photon>;
 
-        PhotonTracer(scene::scene_ptr_t scene, uint8_t max_depth);
-        ~PhotonTracer() = default;
-        PhotonTracer(const PhotonTracer&) = delete;
-        PhotonTracer(PhotonTracer&&) = delete;
-        PhotonTracer& operator=(const PhotonTracer&) = delete;
-        PhotonTracer& operator=(PhotonTracer&&) = delete;
+        CausticsTracer(scene::scene_ptr_t scene, uint8_t max_depth);
+        ~CausticsTracer() = default;
+        CausticsTracer(const CausticsTracer&) = delete;
+        CausticsTracer(CausticsTracer&&) = delete;
+        CausticsTracer& operator=(const CausticsTracer&) = delete;
+        CausticsTracer& operator=(CausticsTracer&&) = delete;
 
         std::shared_ptr<const scene::AbstractLight> light = nullptr;
 
-        Vector3f init_direction() const;
         Vector3f next_direction() const;
         void handle_photon(Photon&& photon) const;
         void bounce_photon(const Vector3f& hit_point,

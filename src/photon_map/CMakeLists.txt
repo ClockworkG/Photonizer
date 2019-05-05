@@ -1,4 +1,4 @@
-add_library(libphoton STATIC libphoton.cc cli.cc)
+add_library(libphoton STATIC libphoton.cc cli.cc photon-tracer.cc abstract-photon-tracer.cc)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-Werror -g -O0")

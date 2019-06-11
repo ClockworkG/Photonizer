@@ -26,7 +26,7 @@ namespace raytracer
         const float img_height = scene->get_height();
 
         // Create image buffer
-        auto img = Image(img_height, img_width);
+        Image img(img_height, img_width);
 
         const auto origin = scene->get_camera().position;
         const float z_min = scene->get_camera().z_min;
@@ -47,17 +47,23 @@ namespace raytracer
             {
                 for (int x = 0; x < img_width; ++x)
                 {
-                    // x and y are expressed in raster space
-                    // Screen space coordinates are in range [-1, 1]
-                    float screen_x = (2.0 * (x + 0.5) / img_width - 1.0) * coef_x;
-                    float screen_y = (1.0 - 2.0 * (y + 0.5) / img_height) * coef_y;
-                    Vector3f target_pos = Vector3f(screen_x, screen_y, origin.z + z_min);
+                    for (float y_offset = 0.25f; y_offset < 1.f; y_offset += 0.5f)
+                    {
+                        for (float x_offset = 0.25f; x_offset < 1.f; x_offset += 0.5f)
+                        {
+                            // x and y are expressed in raster space
+                            // Screen space coordinates are in range [-1, 1]
+                            float screen_x = (2.0 * (x + x_offset) / img_width - 1.0) * coef_x;
+                            float screen_y = (1.0 - 2.0 * (y + y_offset) / img_height) * coef_y;
+                            Vector3f target_pos = Vector3f(screen_x, screen_y, origin.z + z_min);
 
-                    // Compute ray to cast from camera
-                    Ray ray = Ray(origin, (target_pos - origin).normalize());
+                            // Compute ray to cast from camera
+                            Ray ray = Ray(origin, (target_pos - origin).normalize());
 
-                    auto pixel_pos = std::pair(y, x);
-                    img[pixel_pos] = ray_cast(ray);
+                            auto pixel_pos = std::pair(y, x);
+                            img[pixel_pos] += ray_cast(ray) * 0.25f;
+                        }
+                    }
                 }
             }
         }

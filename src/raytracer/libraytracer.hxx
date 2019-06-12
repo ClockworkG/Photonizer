@@ -25,6 +25,8 @@ namespace raytracer
         const float img_width = scene->get_width();
         const float img_height = scene->get_height();
 
+        const int sample_rate = 2;
+
         // Create image buffer
         Image img(img_height, img_width);
 
@@ -32,8 +34,8 @@ namespace raytracer
         const float z_min = scene->get_camera().z_min;
 
         const float img_ratio = img_width / img_height;
-        const float coef_x = tanf(scene->get_camera().fov_x / 2.0 * M_PI / 180.0) * img_ratio;
-        const float coef_y = tanf(scene->get_camera().fov_y / 2.0 * M_PI / 180.0);
+        const float coef_x = tanf(scene->get_camera().fov_x / 2.f * M_PI / 180.f) * img_ratio;
+        const float coef_y = tanf(scene->get_camera().fov_y / 2.f * M_PI / 180.f);
 
 
         {
@@ -43,27 +45,21 @@ namespace raytracer
 
             // Draw Loop
             #pragma omp parallel for schedule(dynamic)
-            for (int y = 0; y < img_height; ++y)
+            for (int y = 0; y < sample_rate * img_height; ++y)
             {
-                for (int x = 0; x < img_width; ++x)
+                for (int x = 0; x < sample_rate * img_width; ++x)
                 {
-                    for (float y_offset = 0.25f; y_offset < 1.f; y_offset += 0.5f)
-                    {
-                        for (float x_offset = 0.25f; x_offset < 1.f; x_offset += 0.5f)
-                        {
-                            // x and y are expressed in raster space
-                            // Screen space coordinates are in range [-1, 1]
-                            float screen_x = (2.0 * (x + x_offset) / img_width - 1.0) * coef_x;
-                            float screen_y = (1.0 - 2.0 * (y + y_offset) / img_height) * coef_y;
-                            Vector3f target_pos = Vector3f(screen_x, screen_y, origin.z + z_min);
+                    // x and y are expressed in raster space
+                    // Screen space coordinates are in range [-1, 1]
+                    float screen_x = (2.f * ((float)x + 0.5f) / (sample_rate * img_width) - 1.f) * coef_x;
+                    float screen_y = (1.f - 2.f * ((float)y + 0.5f) / (sample_rate * img_height)) * coef_y;
+                    Vector3f target_pos = Vector3f(screen_x, screen_y, origin.z + z_min);
 
-                            // Compute ray to cast from camera
-                            Ray ray = Ray(origin, (target_pos - origin).normalize());
+                    // Compute ray to cast from camera
+                    Ray ray = Ray(origin, (target_pos - origin).normalize());
 
-                            auto pixel_pos = std::pair(y, x);
-                            img[pixel_pos] += ray_cast(ray) * 0.25f;
-                        }
-                    }
+                    auto pixel_pos = std::pair(y / sample_rate, x / sample_rate);
+                    img[pixel_pos] += ray_cast(ray) * (1.f / (float)(sample_rate * sample_rate));
                 }
             }
         }

@@ -43,6 +43,12 @@ namespace raytracer
                                    const core::Intersection& isec,
                                    const Vector3f& P_v,
                                    uint8_t depth) const;
+        value_type compute_reflect(const Rayf& ray,
+                                   const core::Intersection& isec,
+                                   const Vector3f& P_v,
+                                   uint8_t depth) const;
+
+
 
         static Vector3f interpolate_normals(const scene::Polygon& polygon,
                                             float u_bary, float v_bary);

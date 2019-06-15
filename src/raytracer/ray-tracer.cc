@@ -36,12 +36,14 @@ namespace raytracer
         // intersection point
         Vector3f P_v = ray.o + (ray.dir * isec.nearest_t);
 
-        // FIXME: use the illum parameter from MTL file
         if (material.transparency != 0)
             color += compute_lights(ray, isec, P_v) * material.transparency;
-        if (material.transparency != 1)
+
+        // FIXME: check all enum
+        if (material.illum_param == scene::Illum::REFRACTION_ON_FRESNEL_ON)
             color += compute_refract(ray, isec, P_v, depth) * (1 - material.transparency);
-        // FIXME: allow reflection without transparency
+        else if (material.illum_param == scene::Illum::REFLECTION_ON)
+            color += compute_reflect(ray, isec, P_v, depth);
 
         color += photon_map_->irradiance_estimate(
                 P_v,
@@ -50,8 +52,8 @@ namespace raytracer
                 config_.photon_gathering_count
         ) * 11.f;
 
-        return color;
-    }
+    return color;
+}
 
     static inline
     Vector3f reflect_dir(const Vector3f& ray_dir, const Vector3f& normal)
@@ -127,6 +129,23 @@ namespace raytracer
         image::RGBN reflect_color = (*this)(reflect_ray, depth + 1);
 
         return reflect_color * reflect_coef + refract_color * (1.f - reflect_coef);
+    }
+
+
+    auto RayTracer::compute_reflect(const Rayf& ray,
+                                    const core::Intersection& isec,
+                                    const Vector3f& P_v,
+                                    uint8_t depth) const
+        -> value_type
+    {
+        // FIXME: compute reflect coef with fresnel
+
+        Rayf reflect_ray;
+        reflect_ray.dir = (reflect_dir(ray.dir, isec.normal)).normalize();
+        reflect_ray.o = P_v + (isec.normal * BIAS);
+        image::RGBN reflect_color = (*this)(reflect_ray, depth + 1);
+
+        return reflect_color;
     }
 
     auto

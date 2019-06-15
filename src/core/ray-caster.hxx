@@ -19,7 +19,7 @@ namespace core
             return on_miss(ray);
 
         Intersection isec;
-        intersect(ray, isec);
+        intersect(ray, isec, false);
         if (isec.intersected)
             return on_hit(ray, isec, depth);
 
@@ -45,7 +45,8 @@ namespace core
 
     template <typename T, typename V>
     inline
-    void RayCaster<T, V>::intersect(const Rayf& ray, Intersection& isec) const
+    void RayCaster<T, V>::intersect(const Rayf& ray, Intersection& isec,
+                                    bool shadow_test) const
     {
         for (const auto& object : *scene_)
         {
@@ -69,7 +70,11 @@ namespace core
                     isec.nearest_v_bary = isec.v_bary;
                     isec.nearest_polygon = &polygon;
                 }
+                if (shadow_test && isec.nearest_polygon != nullptr)
+                    break;
             }
+            if (shadow_test && isec.nearest_polygon != nullptr)
+                break;
         }
 
         if (isec.nearest_polygon != nullptr)

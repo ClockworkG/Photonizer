@@ -25,7 +25,7 @@ namespace raytracer
         const float img_width = scene->get_width();
         const float img_height = scene->get_height();
 
-        const int sample_rate = 2;
+        auto sample_rate = config.sample_rate;
 
         // Create image buffer
         Image img(img_height, img_width);
@@ -37,6 +37,10 @@ namespace raytracer
         const float coef_x = tanf(scene->get_camera().fov_x / 2.f * M_PI / 180.f) * img_ratio;
         const float coef_y = tanf(scene->get_camera().fov_y / 2.f * M_PI / 180.f);
 
+        const int nb_locks = img_height * img_width;
+        auto locks = std::vector<omp_lock_t>(nb_locks);
+        for (int i = 0; i < nb_locks; ++i)
+            omp_init_lock(&(locks[i]));
 
         {
             Chrono<std::chrono::seconds> chrono(elapsed);
@@ -44,7 +48,8 @@ namespace raytracer
             Tracer ray_cast(scene, config, std::move(photon_map));
 
             // Draw Loop
-            #pragma omp parallel for schedule(dynamic)
+            #pragma omp parallel for schedule(dynamic) \
+                        shared(img, locks, ray_cast, sample_rate) default(none)
             for (int y = 0; y < sample_rate * img_height; ++y)
             {
                 for (int x = 0; x < sample_rate * img_width; ++x)
@@ -58,11 +63,20 @@ namespace raytracer
                     // Compute ray to cast from camera
                     Ray ray = Ray(origin, (target_pos - origin).normalize());
 
-                    auto pixel_pos = std::pair(y / sample_rate, x / sample_rate);
+                    int pixel_x = x / sample_rate;
+                    int pixel_y = y / sample_rate;
+                    int lock_pos = pixel_x * pixel_y;
+                    auto pixel_pos = std::pair(pixel_y, pixel_x);
+
+                    omp_set_lock(&(locks[lock_pos]));
                     img[pixel_pos] += ray_cast(ray) * (1.f / (float)(sample_rate * sample_rate));
+                    omp_unset_lock(&(locks[lock_pos]));
                 }
             }
         }
+
+        for (int i = 0; i < nb_locks; i++)
+            omp_destroy_lock(&(locks[i]));
 
         spdlog::info("Finished rendering in {0} s", elapsed);
         return img;

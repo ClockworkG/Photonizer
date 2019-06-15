@@ -10,6 +10,8 @@ namespace raytracer
     {
         float photon_gathering_radius = 0.5f;
         std::size_t photon_gathering_count = 100;
+
+        int sample_rate = 1;
     };
 
     class RayTracer : public core::RayCaster<RayTracer, image::RGBN>

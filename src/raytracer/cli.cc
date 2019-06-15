@@ -18,6 +18,8 @@ namespace raytracer::cli
                          "Photon gathering radius");
         app_->add_option("-c,--count", config_.photon_gathering_count,
                          "Photon gathering count");
+        app_->add_option("-a,--anti-aliasing", config_.sample_rate,
+                         "Sample rate of anti-aliasing");
         app_->add_option("output-file", output_file_,
                          "Rendered image output");
     }

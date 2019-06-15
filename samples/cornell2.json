@@ -1,0 +1,50 @@
+{
+    "name": "Cornell Box",
+    "height": 1600,
+    "width": 1600,
+    "camera": {
+        "position": [0.0, 0.0, 0.0],
+        "forward": [0.0, 0.0, 1.0],
+        "up": [0.0, 1.0, 0.0],
+        "fov_x": 90,
+        "fov_y": 90,
+        "z_min": -2
+    },
+    "objects": [
+        {
+            "mesh": "cornellbox.obj",
+            "position": [0, -1, -13]
+        },
+        {
+            "mesh": "metal-sphere.obj",
+            "position": [-4, -6, -20]
+        },
+        {
+            "mesh": "glass-sphere.obj",
+            "position": [-4, -2, -20]
+        },
+        {
+            "mesh": "cube.obj",
+            "position": [2, -6, -21]
+        }
+    ],
+    "lights": [
+        {
+            "kind": "point",
+            "color": [255, 255, 255],
+            "intensity": 60,
+            "position": [0, 2, -20]
+        },
+        {
+            "kind": "ambient",
+            "color": [255, 255, 255],
+            "intensity": 0.1
+        },
+        {
+            "kind": "directional",
+            "color": [255, 178, 145],
+            "intensity": 1,
+            "direction": [-1, -0.2, 0]
+        }
+    ]
+}

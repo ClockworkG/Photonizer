@@ -50,7 +50,7 @@ namespace raytracer
                 isec.normal,
                 config_.photon_gathering_radius,
                 config_.photon_gathering_count
-        ) * 11.f;
+        ) * 30.f;
 
     return color;
 }

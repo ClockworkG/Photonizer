@@ -21,7 +21,7 @@ namespace photon
             x = 2 * dist_(engine_) - 1;
             y = 2 * dist_(engine_) - 1;
             z = 2 * dist_(engine_) - 1;
-        } while (x * x + y * y + z * z > 1);
+        } while (x * x + y * y + z * z > 1 && y > 0);
 
         return Vector3f(x, y, z).normalize();
     }
@@ -42,15 +42,27 @@ namespace photon
         ph.color = light->color * isec.nearest_polygon->get_material().diffuse;
         std::tie(ph.phi, ph.theta) = polar_convert(ray.dir);
 
-        photons_.push_back(std::move(ph));
+        if (isec.nearest_polygon->get_material().transparency >= 0.95f)
+            photons_.push_back(std::move(ph));
 
-        if (true)
+        auto transparency = isec.nearest_polygon->get_material().transparency;
+        if (transparency > 0.2f)
+            return;
+
+        if (dist_(engine_) < 0.8)
         {
-            // FIXME: Not the correct way to bounce a photon
-            // The direction should be restricted to the
-            // upper hemisphere.
-            Ray new_ray(hit_point, randomize_direction());
-            (*this)(new_ray, depth + 1);
+            Vector3f nl = isec.normal * ray.dir < 0 ? isec.normal : isec.normal * -1;
+            float r1 = 2 * M_PI * dist_(engine_);
+            float r2 = dist_(engine_);
+            float r2s = std::sqrt(r2);
+
+            Vector3f w = nl;
+            Vector3f u = ((std::fabs(w.x) > .1 ? Vector3f(0,1,0) : Vector3f(1,0,0)) ^ w);
+            u.normalize();
+            Vector3f v = w ^ u;
+
+            Vector3f d = (u * (cosf(r1) * r2s)) + (v * sinf(r1) * r2s) + (w * sqrtf(1 - r2));
+            d.normalize();
         }
     }
 

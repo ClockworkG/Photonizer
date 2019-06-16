@@ -4,6 +4,8 @@
 #include "ray-caster.hh"
 #include "rgb.hh"
 
+#include <random>
+
 namespace raytracer
 {
     struct RaytracerConfig
@@ -41,6 +43,14 @@ namespace raytracer
         value_type compute_lights(const Rayf& ray,
                                   const core::Intersection& isec,
                                   const Vector3f& P_v) const;
+        value_type compute_light_interaction(const Rayf& ray,
+                                             const scene::AbstractLight& light,
+                                             const core::Intersection& isec,
+                                             core::Intersection& shadow_isec,
+                                             const scene::Material& material,
+                                             const Vector3f& P_v,
+                                             const Vector3f& L_v,
+                                             float intensity) const;
         value_type compute_refract(const Rayf& ray,
                                    const core::Intersection& isec,
                                    const Vector3f& P_v,
@@ -57,5 +67,9 @@ namespace raytracer
 
         std::optional<photon::PhotonMap> photon_map_ = std::nullopt;
         RaytracerConfig config_;
+
+        // random generator for soft shadows
+        mutable std::mt19937 generator_;
+        mutable std::uniform_real_distribution<float> distr_;
     };
 } // namespace raytracer

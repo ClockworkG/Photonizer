@@ -15,7 +15,11 @@ namespace raytracer
         : super_t(scene)
         , photon_map_(std::nullopt)
         , config_(config)
-    {}
+    {
+        std::random_device rand_dev;
+        generator_ = std::mt19937(rand_dev());
+        distr_ = std::uniform_real_distribution<float>(-0.05f, 0.05f);
+    }
 
     RayTracer::RayTracer(scene::scene_ptr_t scene,
                          const RaytracerConfig& config,
@@ -23,7 +27,11 @@ namespace raytracer
         : super_t(scene)
         , photon_map_(std::move(photon_map))
         , config_(config)
-    {}
+    {
+        std::random_device rand_dev;
+        generator_ = std::mt19937(rand_dev());
+        distr_ = std::uniform_real_distribution<float>(-0.15f, 0.15f);
+    }
 
     auto
     RayTracer::on_hit_impl(const Rayf& ray, const core::Intersection& isec,
@@ -154,11 +162,13 @@ namespace raytracer
                               const Vector3f& P_v)
         const -> value_type
     {
-        image::RGBN color = image::RGBN(0, 0, 0);
+        auto color = image::RGBN(0, 0, 0);
         const auto& material = isec.nearest_polygon->get_material();
 
         Vector3f L_v;
         float intensity = 0;
+        int nb_soft_rays = 10;
+        float soft_coef = 1.f / (float)nb_soft_rays;
 
         // foreach light
         for (auto it = scene_->lights().begin(); it != scene_->lights().end(); ++it)
@@ -175,36 +185,68 @@ namespace raytracer
                 L_v = dir_light->direction.inverse();
                 L_v.normalize();
                 intensity = dir_light->intensity;
+                color += compute_light_interaction(ray, light,
+                                                   isec, shadow_isec,
+                                                   material, P_v, L_v,
+                                                   intensity);
             }
             else if (const auto *point_light = dynamic_cast<scene::PointLight*>(&light))
             {
-                L_v = point_light->position - P_v; // direction of light, but reversed
-                float r2 = L_v.norm();
-                L_v.x /= r2, L_v.y /= r2, L_v.z /= r2; // normalize
-                shadow_isec.nearest_t = std::sqrt(r2); // we search obstacles between P and light
-                // square falloff
-                intensity = point_light->intensity / (4 * M_PI * r2);
+                for (int i = 0; i < nb_soft_rays; ++i)
+                {
+                    // add random to light position for soft shadows
+                    auto biased_pos = Vector3f(point_light->position.x + distr_(generator_),
+                                               point_light->position.y + distr_(generator_),
+                                               point_light->position.z + distr_(generator_));
+                    L_v = biased_pos - P_v; // direction of light, but reversed
+                    float r2 = L_v.norm();
+                    L_v.x /= r2, L_v.y /= r2, L_v.z /= r2; // normalize
+
+                    shadow_isec.nearest_t = std::sqrt(r2); // we search obstacles between P and light
+                    // square falloff
+                    intensity = point_light->intensity / (4 * M_PI * r2);
+
+                    color += compute_light_interaction(ray, light,
+                                                       isec, shadow_isec,
+                                                       material, P_v, L_v,
+                                                       intensity) * soft_coef;
+                }
             }
 
-            // shadow test
-            const Ray light_ray = Ray(P_v + isec.normal * BIAS, L_v);
-            intersect(light_ray, shadow_isec);
-            // FIXME: could be optimized to not test all the objects after the first intersection
-            if (!shadow_isec.intersected)
-            {
-                // Diffuse
-                float cos_theta = isec.normal * L_v;
-                float diffuse_coef = intensity * cos_theta;
-                diffuse_coef = clamp(diffuse_coef, 0.f, 1.f);
-                color += material.diffuse * light.color * diffuse_coef;
+        }
+        return color;
+    }
 
-                // Specular
-                Vector3f R = reflect_dir(L_v.inverse(), isec.normal);
-                float specular_coef = R * (ray.dir.inverse());
-                specular_coef = std::pow(std::max(0.f, specular_coef),
-                                         material.specular_exponent);
-                color += material.specular * intensity * specular_coef;
-            }
+    auto
+    RayTracer::compute_light_interaction(const Rayf& ray,
+                                         const scene::AbstractLight& light,
+                                         const core::Intersection& isec,
+                                         core::Intersection& shadow_isec,
+                                         const scene::Material& material,
+                                         const Vector3f& P_v,
+                                         const Vector3f& L_v,
+                                         const float intensity) const
+        -> value_type
+    {
+        auto color = image::RGBN(0, 0, 0);
+
+        // shadow test
+        const Ray light_ray = Ray(P_v + isec.normal * BIAS, L_v);
+        intersect(light_ray, shadow_isec);
+        if (!shadow_isec.intersected)
+        {
+            // Diffuse
+            float cos_theta = isec.normal * L_v;
+            float diffuse_coef = intensity * cos_theta;
+            diffuse_coef = clamp(diffuse_coef, 0.f, 1.f);
+            color += material.diffuse * light.color * diffuse_coef;
+
+            // Specular
+            Vector3f R = reflect_dir(L_v.inverse(), isec.normal);
+            float specular_coef = R * (ray.dir.inverse());
+            specular_coef = std::pow(std::max(0.f, specular_coef),
+                                     material.specular_exponent);
+            color += material.specular * intensity * specular_coef;
         }
         return color;
     }

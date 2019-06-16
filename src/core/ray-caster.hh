@@ -50,7 +50,8 @@ namespace core
                           uint8_t depth) const;
         value_type on_miss(const Rayf& ray) const;
 
-        void intersect(const Rayf& ray, Intersection& isec) const;
+        void intersect(const Rayf& ray, Intersection& isec,
+                       bool shadow_test) const;
 
         static bool moller_trumbore(const Vector3f& a_v,
                                     const Vector3f& b_v,

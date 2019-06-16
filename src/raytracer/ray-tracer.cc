@@ -188,8 +188,7 @@ namespace raytracer
 
             // shadow test
             const Ray light_ray = Ray(P_v + isec.normal * BIAS, L_v);
-            intersect(light_ray, shadow_isec);
-            // FIXME: could be optimized to not test all the objects after the first intersection
+            intersect(light_ray, shadow_isec, true);
             if (!shadow_isec.intersected)
             {
                 // Diffuse
